@@ -12,16 +12,21 @@ chatRouter.get("/listar", autenticarTokenUsuario, (req, res) => {
     controller.listarChats(req, res);
 });
 
+chatRouter.get("/usuario/:idSala", (req, res) => {
+    controller.verUsuariosDaSala(req, res);
+});
+
 chatRouter.post("/usuario", (req, res) => {
     controller.inserirUser(req, res);
 });
 
-chatRouter.get("/mensagem/:fkSala", (req, res) => {
+chatRouter.get("/mensagem/:fkSala", autenticarTokenUsuario, (req, res) => {
     controller.listarMensagens(req, res);
 });
 
 chatRouter.post("/mensagem", (req, res) => {
     controller.inserirMensagem(req, res);
 });
+
 
 export default chatRouter;

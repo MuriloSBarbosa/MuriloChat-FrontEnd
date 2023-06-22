@@ -11,7 +11,7 @@
     flex-direction: column;
     justify-content: flex-start;
     gap: 2rem;
-    background-color: #835afd;
+    background-color: #222;
     align-items: center;
     width: 30vw;
     height: 100vh;
@@ -49,7 +49,7 @@
 }
 
 .itemSala:hover {
-    background: #e476ff;
+    background: var(--colorDefault);
 }
 
 .linhaVertical {

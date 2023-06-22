@@ -21,7 +21,7 @@
 }
 
 .content h1 {
-    color: #835afd;
+    color: var(--colorDefault);;
     font-size: 2.5rem;
 }
 

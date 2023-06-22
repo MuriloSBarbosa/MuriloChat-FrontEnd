@@ -19,7 +19,7 @@
 }
 
 .content h1 {
-    color: #835afd;
+    color: var(--colorDefault);;
     font-size: 2.5rem;
 }
 
@@ -63,7 +63,7 @@
 }
 
 .box input:focus {
-    border: 1px solid #835afd;
+    border: 1px solid var(--colorDefault);;
 }
 
 .box button {
@@ -73,7 +73,7 @@
     height: 2.5rem;
     border-radius: 0.5rem;
     border: 0;
-    background: #835afd;
+    background: var(--colorDefault);;
     color: #fff;
     font-weight: 500;
     font-size: 1rem;
@@ -99,7 +99,7 @@
 }
 
 .box span {
-    color: #835afd;
+    color: var(--colorDefault);;
     cursor: pointer;
     margin-left: 0.25rem;
     transition: 0.1s;

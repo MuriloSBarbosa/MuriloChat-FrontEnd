@@ -44,7 +44,6 @@ export function decodificarToken(token) {
                 reject("Token inválido");
             }
 
-            console.log(decoded);
             resolve(decoded);
         });
     });

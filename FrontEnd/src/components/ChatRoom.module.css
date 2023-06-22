@@ -14,13 +14,15 @@
     height: 10%;
     width: 100%;
     background-color: #29292e;
-    border-bottom: 2px solid #835afd;
+    border-bottom: 2px solid var(--colorDefault);
+    ;
 }
 
 .header h1 {
     font-weight: 500;
     font-size: 2.5rem;
-    color: #835afd;
+    color: var(--colorDefault);
+    ;
 }
 
 .mensagens {
@@ -29,7 +31,7 @@
     align-items: flex-start;
     height: 80vh;
     width: 100%;
-    padding: 0 4rem;
+    padding: 1rem 4rem;
     overflow-y: scroll;
     scroll-behavior: smooth;
     background: url("../assets/bg-grayjpg.jpg");
@@ -47,16 +49,39 @@
 .nomeUsuarioMsg {
     font-weight: 500;
     font-size: 1rem;
-    color: #835afd;
+    color: var(--colorDefault);
 }
 
 .textMsg {
     font-size: 1.2rem;
-    background-color: #835afd;
+    background-color: var(--colorDefault);
     color: #fff;
     padding: 0.5rem;
+    width: max-content;
     border-radius: 0.5rem;
-    border: 1px solid #835afd;
+}
+
+
+.remetente {
+    display: flex;
+    flex-direction: column;
+    align-self: flex-end;
+}
+
+.remetente .textMsg {
+    background-color: #29292e;
+    align-self: flex-end;
+}
+
+.remetente .nomeUsuarioMsg {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.dtMensagem {
+    font-size: 0.8rem;
+    color: #a8a8b3;
+    margin-top: 0.5rem;
 }
 
 .sendBox {
@@ -74,7 +99,8 @@
     width: 80%;
     padding: 0 1rem;
     border-radius: 0.5rem;
-    border: 1px solid #835afd;
+    border: 1px solid var(--colorDefault);
+    ;
     background-color: #fff;
 }
 
@@ -86,7 +112,8 @@
     height: 2.5rem;
     width: 10%;
     border-radius: 0.5rem;
-    background-color: #835afd;
+    background-color: var(--colorDefault);
+    ;
     color: #fff;
     font-weight: 500;
     font-size: 1rem;

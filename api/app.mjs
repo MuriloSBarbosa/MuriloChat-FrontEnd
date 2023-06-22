@@ -20,16 +20,21 @@ const server = app.listen(port, () => {
   console.log(`Servidor iniciado na porta ${port}`);
 });
 
+const ip = {
+  local: 'localhost',
+  redeSpTech: '10.18.7.53'
+}
+
 export const servidorIo = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173',
+    origin: `http://${ip.local}:5173`,
   }
 });
 
 
 servidorIo.on('connection', (socketUser) => {
   console.log('Novo usuário conectado:', socketUser.id);
-  
+
   socketConfig(socketUser);
 
   socketUser.on('disconnect', () => {

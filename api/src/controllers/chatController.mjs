@@ -1,4 +1,5 @@
 import * as model from "../models/chatModel.mjs"
+import { gerarTokenUsuario } from "../config/jwtConfig.mjs";
 
 export async function criarSala(req, res) {
     let { identificador, nome, senha } = req.body;
@@ -36,7 +37,6 @@ export function inserirMensagem(req, res) {
 
 export function listarChats(req, res) {
     let { id } = req.usuario;
-    console.log(req.usuario);
 
     model.listarChats(id)
         .then((chats) => {
@@ -48,12 +48,35 @@ export function listarChats(req, res) {
 
 export function listarMensagens(req, res) {
     let { fkSala } = req.params;
+    let { id } = req.usuario;
 
     model.listarMensagens(fkSala)
         .then((mensagens) => {
+            mensagens.map((mensagem) => {
+                if (mensagem.fkUsuario == id) {
+                    mensagem.isRemetente = true;
+                }
+                delete mensagem.fkUsuario;
+            });
             res.status(200).send(mensagens);
         }).catch((erro) => {
             res.status(500).send("Erro ao listar Mensagens: " + erro);
+        });
+}
+
+export function verUsuariosDaSala(req, res) {
+    let { idSala } = req.params;
+
+    model.verUsuariosDaSala(idSala)
+        .then((usuarios) => {
+            let tokens = [];
+            usuarios.forEach((usuario) => {
+                tokens.push(gerarTokenUsuario(usuario));
+            });
+            console.log(tokens);
+            res.status(200).send(tokens);
+        }).catch((erro) => {
+            res.status(500).send("Erro ao listar usuários da Sala: " + erro);
         });
 }
 

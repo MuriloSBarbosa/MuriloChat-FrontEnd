@@ -21,6 +21,11 @@ export function listarChats(fkUsuario) {
 }
 
 export function listarMensagens(fkSala) {
-    let query = `select u.nome, m.texto, m.dtMensagem from Mensagem m JOIN Usuario u on m.fkUsuario = u.id where fkSala = ${fkSala} order by m.id`;
+    let query = `select u.nome, m.texto, m.dtMensagem, m.fkUsuario from Mensagem m JOIN Usuario u on m.fkUsuario = u.id where fkSala = ${fkSala} order by m.id`;
+    return executar(query);
+}
+
+export function verUsuariosDaSala(idSala) {
+    let query = `select u.* from Chat c JOIN Usuario u on c.fkUsuario = u.id where c.fkSala = ${idSala}`;
     return executar(query);
 }

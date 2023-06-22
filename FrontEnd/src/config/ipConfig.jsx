@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const ip = {
+export const ip = {
     localhost: "localhost",
     ip: "10.18.7.53"
 }
