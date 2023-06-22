@@ -1,0 +1,78 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../config/ipConfig";
+import styles from "./Login.module.css"
+import Modal from "../components/Modal";
+
+function Login() {
+    const [login, setLogin] = useState('');
+    const [senha, setSenha] = useState('');
+    const navigate = useNavigate();
+
+    const [modal, setModal] = useState({
+        title: '',
+        text: ''
+    });
+
+    const [time, setTime] = useState(3000);
+
+    const [showModal, setShowModal] = useState(false);
+
+    function logar() {
+        axiosInstance.post('/usuario/login', {
+            login: login,
+            senha: senha
+        }).then((response) => {
+            if (response.status === 200) {
+                setModal({
+                    title: 'Sucesso',
+                    text: 'Redirecionando...'
+                });
+                sessionStorage.setItem('token', response.data);
+
+                setTimeout(() => {
+                    navigate('/salas');
+                }, time);
+            } else {
+                setModal({
+                    title: 'Erro',
+                    text: 'Login ou senha incorretos'
+                });
+                console.log("Erro ao logar");
+            }
+            setShowModal(true);
+        }).catch((error) => {
+            setModal({
+                title: 'Erro',
+                text: 'Login ou senha incorretos'
+            });
+            console.log(error);
+        });
+    }
+
+    return (
+        <div className={styles.login}>
+            <div className={styles.content}>
+                <h1>Login</h1>
+                <div className={styles.boxes}>
+                    <div className={styles.box}>
+                        <label>Login</label>
+                        <input type="text" value={login} onChange={(e) => { setLogin(e.target.value) }} />
+                    </div>
+                    <div className={styles.box}>
+                        <label>Senha</label>
+                        <input type="password" value={senha} onChange={(e) => { setSenha(e.target.value) }} />
+                    </div>
+                    <div className={styles.box}>
+                        <button onClick={logar}>Entrar</button>
+                        <p>Ainda não logado?<span onClick={() => { navigate('/cadastrar') }}>Cadastre-se</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <Modal showModal={showModal} setShowModal={setShowModal} modal={modal} time={time} />
+        </div >
+    )
+}
+
+export default Login;

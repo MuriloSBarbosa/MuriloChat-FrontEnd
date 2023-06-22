@@ -1,0 +1,59 @@
+.modal {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    pointer-events: none;
+}
+
+.content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #d4d4d4;
+    border-radius: 10px;
+    width: 30%;
+    animation: down 0.5s;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+}
+
+.content h1 {
+    color: #835afd;
+    font-size: 2.5rem;
+}
+
+.modal-content .text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: max-content;
+    height: 100%;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+/* Animação para descer o modal */
+
+@keyframes down {
+    from {
+        transform: translate(0, -100%);
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.desaparecer {
+    animation: fade 0.5s;
+}

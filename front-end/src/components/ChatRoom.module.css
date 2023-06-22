@@ -1,0 +1,101 @@
+.chatRoom {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    background-color: #f5f5f5;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 10%;
+    width: 100%;
+    background-color: #29292e;
+    border-bottom: 2px solid #835afd;
+}
+
+.header h1 {
+    font-weight: 500;
+    font-size: 2.5rem;
+    color: #835afd;
+}
+
+.mensagens {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 80vh;
+    width: 100%;
+    padding: 0 4rem;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    background: url("../assets/bg-grayjpg.jpg");
+}
+
+.mensagem {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.nomeUsuarioMsg {
+    font-weight: 500;
+    font-size: 1rem;
+    color: #835afd;
+}
+
+.textMsg {
+    font-size: 1.2rem;
+    background-color: #835afd;
+    color: #fff;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #835afd;
+}
+
+.sendBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    height: 10%;
+    width: 100%;
+    background-color: #29292e;
+}
+
+.sendBox input {
+    height: 2.5rem;
+    width: 80%;
+    padding: 0 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #835afd;
+    background-color: #fff;
+}
+
+.sendBox input:focus {
+    outline: none;
+}
+
+.sendBox button {
+    height: 2.5rem;
+    width: 10%;
+    border-radius: 0.5rem;
+    background-color: #835afd;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    outline: none;
+    transition: 0.2s;
+}
+
+.sendBox button:hover,
+.sendBox button:focus {
+    background-color: #6f4bd8;
+}

@@ -1,0 +1,62 @@
+.salas {
+    display: flex;
+    justify-content: flex-start;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.contentListaSalas {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 2rem;
+    background-color: #835afd;
+    align-items: center;
+    width: 30vw;
+    height: 100vh;
+    overflow-y: auto;
+    padding-top: 5rem;
+}
+
+.contentListaSalas h1 {
+    color: #FFFF;
+    font-size: 2.5rem;
+}
+
+.listaSalas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.itemSala {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 3rem;
+    width: 90%;
+    border-radius: 0.5rem;
+    border: 1px solid #a8a8b3;
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+    background: #fff ;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.itemSala:hover {
+    background: #e476ff;
+}
+
+.linhaVertical {
+    width: 1px;
+    height: 100vh;
+    background: #a8a8b3;
+}
+.chat {
+    width: 70vw;
+}
