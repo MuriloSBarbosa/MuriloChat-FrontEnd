@@ -26,6 +26,6 @@ export function listarMensagens(fkSala) {
 }
 
 export function verUsuariosDaSala(idSala) {
-    let query = `select u.* from Chat c JOIN Usuario u on c.fkUsuario = u.id where c.fkSala = ${idSala}`;
+    let query = `select u.id, u.nome from Chat c JOIN Usuario u on c.fkUsuario = u.id where c.fkSala = ${idSala}`;
     return executar(query);
 }

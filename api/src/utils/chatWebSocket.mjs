@@ -3,18 +3,31 @@ import executar from "../config/DataBase.mjs";
 import { decodificarToken } from "../config/jwtConfig.mjs";
 import moment from "moment-timezone";
 
-const onlineUsers = [];
+const onlineUsersToken = [];
 
-export default function socketConfig(socketUser) {
-    console.log(socketUser.handshake.auth.usuarios);
-    // Usuarios online
-    if (!onlineUsers.includes(socketUser.handshake.auth.token)) {
-        onlineUsers.push(socketUser.handshake.auth.token);
-    };
+export default async function socketConfig(socketUser) {
 
-    socketUser.emit('onlineUsers', async (onlineUsers) => {
+    try {
+        const tokenDecoded = await decodificarToken(socketUser.handshake.auth.token);
 
-    });
+        // Usuarios online
+        if (onlineUsersToken.length == 0) {
+            onlineUsersToken.push(tokenDecoded.id);
+        }
+
+        onlineUsersToken.forEach((user) => {
+            if (user != tokenDecoded.id) {
+                onlineUsersToken.push(tokenDecoded);
+            }
+        });
+    } catch (error) {
+        console.error(error);
+    }
+
+    console.log("Usuários online:", onlineUsersToken);
+
+    socketUser.emit('onlineUsers', onlineUsersToken);
+
 
     // Evento para entrar em uma sala
     socketUser.on('joinRoom', (room) => {

@@ -126,3 +126,40 @@
 .sendBox button:focus {
     background-color: #6f4bd8;
 }
+
+.usuarios {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    background-color: #29292e;
+    padding: 1rem 4rem;
+}
+
+.usuarios .listaUser {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+}
+
+.user {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.nomeUser {
+    font-size: 1rem;
+    color: #fff;
+}
+
+.statusUser {
+    height: 0.5rem;
+    width: 0.5rem;
+    border-radius: 50%;
+    background-color: #fff;
+    margin-left: 0.5rem;
+}

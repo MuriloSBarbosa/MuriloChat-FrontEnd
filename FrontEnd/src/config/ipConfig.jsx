@@ -1,12 +1,14 @@
 import axios from "axios";
 
-export const ip = {
+const ip = {
     localhost: "localhost",
     ip: "10.18.7.53"
 }
 
+export const ipUse = ip.localhost;
+
 const axiosInstance = axios.create({
-    baseURL: `http://${ip.localhost}:8080`,
+    baseURL: `http://${ipUse}:8080`,
     timeout: 1000,
     headers: {
         "Content-Type": "application/json",

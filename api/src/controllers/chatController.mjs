@@ -56,6 +56,7 @@ export function listarMensagens(req, res) {
                 if (mensagem.fkUsuario == id) {
                     mensagem.isRemetente = true;
                 }
+                mensagem.idColor = mensagem.fkUsuario;
                 delete mensagem.fkUsuario;
             });
             res.status(200).send(mensagens);
@@ -69,12 +70,7 @@ export function verUsuariosDaSala(req, res) {
 
     model.verUsuariosDaSala(idSala)
         .then((usuarios) => {
-            let tokens = [];
-            usuarios.forEach((usuario) => {
-                tokens.push(gerarTokenUsuario(usuario));
-            });
-            console.log(tokens);
-            res.status(200).send(tokens);
+            res.status(200).send(usuarios);
         }).catch((erro) => {
             res.status(500).send("Erro ao listar usuários da Sala: " + erro);
         });
