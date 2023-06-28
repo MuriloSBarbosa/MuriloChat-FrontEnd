@@ -4,6 +4,9 @@ import axiosInstance from "../config/ipConfig";
 import styles from "./Salas.module.css";
 import AdicionarSala from "../components/AdicionarSala";
 import ChatRoom from "../components/ChatRoom";
+import io from 'socket.io-client';
+import { ipUse } from '../config/ipConfig';
+
 
 function Salas() {
     const navigator = useNavigate();
@@ -13,20 +16,29 @@ function Salas() {
     const [identificador, setDescricao] = useState("");
     const [senha, setSenha] = useState("");
     const [salaConfig, setSalaConfig] = useState(null);
+    const [socket, setSocket] = useState(null);
 
     useEffect(() => {
         axiosInstance.get("/chat/listar", {
             headers: {
                 "authorization": "Bearer " + token
             }
-        })
-            .then((res) => {
-                setSalas(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        }).then((res) => {
+            setSalas(res.data);
+        }).catch((err) => {
+            console.log(err);
+        });
 
+        // Entrar no socket
+        const socket = io(`http://${ipUse}:8080`, {
+            auth: { token: token }
+        });
+
+        setSocket(socket);
+
+        return () => {
+            socket.disconnect();
+        };
     }, []);
 
     function adicionarSala() {
@@ -53,7 +65,8 @@ function Salas() {
         setSalaConfig({
             id: id,
             identificador: identificador,
-            nome: nome
+            nome: nome,
+            socket: socket
         });
     }
 

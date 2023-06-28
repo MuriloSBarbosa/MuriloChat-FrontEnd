@@ -1,23 +1,25 @@
 import React, { useEffect, useState, useRef } from 'react';
-import io from 'socket.io-client';
-import { ipUse } from '../config/ipConfig';
 import axiosInstance from "../config/ipConfig";
 import styles from "./ChatRoom.module.css";
 import moment from "moment-timezone"
+import anexos from "../assets/anexos.png";
+import { formatarDataChat } from '../utils/geral.mjs';
 
 const ChatRoom = (props) => {
     const [idSala, setIdSala] = useState(props.salaConfig.id);
     const [room, setRoom] = useState(props.salaConfig.identificador);
+    const socket = props.salaConfig.socket;
+
     const [usuarios, setUsuarios] = useState([]);
+    const [usuariosCarregados, setUsuariosCarregados] = useState(false);
     const [colorsUsed, setColorsUsed] = useState([]);
 
     const tokenUsuario = sessionStorage.getItem("token");
 
-    const [socket, setSocket] = useState(null);
     const [mensagemDigitada, setMensagemDigitada] = useState('');
     const [mensagens, setMensagens] = useState([]);
-
-    const [addUserNome, setAddUserNome] = useState('');
+    const imagemSelecionada = useRef(null);
+    const [previewImage, setPreviewImage] = useState(null);
 
     const chatContainer = useRef(null);
 
@@ -31,10 +33,9 @@ const ChatRoom = (props) => {
                 }
             }
         ).then((res) => {
-            res.data.forEach((user) => {
-                user.color = ramdonColor();
-            });
             setUsuarios(res.data);
+            atualizarCoresUsuarios();
+            setUsuariosCarregados(true);
 
         }).catch((err) => {
             console.log(err);
@@ -50,28 +51,13 @@ const ChatRoom = (props) => {
             }
         ).then((res) => {
             res.data.forEach((msg) => {
-                msg.dtMensagem = formatarData(msg.dtMensagem);
+                msg.dtMensagem = formatarDataChat(msg.dtMensagem);
             });
             setMensagens(res.data);
         }).catch((err) => {
             console.log(err);
         });
 
-        // Entrar no socket
-        const newSocket = io(`http://${ipUse}:8080`, {
-            auth: { token: tokenUsuario }
-        });
-
-        //Setar o socket
-        setSocket(newSocket);
-
-        //Entrar na sala
-        newSocket.emit('joinRoom', room);
-
-        return () => {
-            // Quando sair da página, desconectar do socket
-            newSocket.disconnect();
-        };
 
 
     }, [room]);
@@ -80,41 +66,28 @@ const ChatRoom = (props) => {
         // Se não tiver socket, não faz nada
         if (!socket) return;
 
-        // Adicionar a nova mensagem no array de mensagens
-        const novasMensagens = (novaMensagem) => {
-            if (novaMensagem.token == tokenUsuario) {
-                novaMensagem.isRemetente = true;
-            }
-            delete novaMensagem.token;
-
-            novaMensagem.dtMensagem = formatarData(novaMensagem.dtMensagem);
-
-            setMensagens((anteriores) => [...anteriores, novaMensagem]);
-        };
-
-        // Ouvir o evento 'newMessage'
+        //Entrar na sala
         socket.on('novaMensagem', novasMensagens);
-
-        // Ouvir o evento onlineUsers
-        socket.on('onlineUsers', (idUsuariosOnline) => {
-            setUsuarios((anteriores) => {
-                const usuariosAtualizados = anteriores.map((user) => {
-                    if (idUsuariosOnline.includes(user.id)) {
-                        user.isOnline = true;
-                    } else {
-                        user.isOnline = false;
-                    }
-                    return user;
-                });
-                return usuariosAtualizados;
-            });
-        });
+        socket.on('onlineUsers', usuariosOnline);
 
         return () => {
-            // Parar de ouvir o evento 'newMessage'
-            socket.off('novaMensagem', novasMensagens);
+            // Quando o componente for desmontado, remover os listeners
+            socket.off('novaMensagem');
+            socket.off('onlineUsers');
         };
     }, [socket]);
+
+    const novasMensagens = (novaMensagem) => {
+        console.log(novaMensagem.path);
+        if (novaMensagem.token == tokenUsuario) {
+            novaMensagem.isRemetente = true;
+        }
+        delete novaMensagem.token;
+
+        novaMensagem.dtMensagem = formatarDataChat(novaMensagem.dtMensagem);
+
+        setMensagens((anteriores) => [...anteriores, novaMensagem]);
+    };
 
     useEffect(() => {
         for (const mensagem of mensagens) {
@@ -125,74 +98,126 @@ const ChatRoom = (props) => {
             }
         }
 
-        setTimeout(() => {
-            chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
-        }, 10);
+        chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
     }, [mensagens]);
 
-    function formatarData(data) {
-        let dtMensagem = moment(data).tz("America/Sao_Paulo").format("DD/MM/YYYY");
-
-        if (moment().tz("America/Sao_Paulo").format("DD/MM/YYYY") == dtMensagem) {
-            dtMensagem = "Hoje, às " + moment(data).tz("America/Sao_Paulo").format("HH:mm");
-        } else {
-            dtMensagem = moment(data).tz("America/Sao_Paulo").format("DD/MM/YYYY HH:mm");
-        }
-
-        return dtMensagem;
+    const usuariosOnline = (idUsuariosOnline) => {
+        setUsuarios((anteriores) => {
+            const usuariosAtualizados = anteriores.map((user) => {
+                if (idUsuariosOnline.includes(user.id)) {
+                    user.isOnline = true;
+                } else {
+                    user.isOnline = false;
+                }
+                return user;
+            });
+            return usuariosAtualizados;
+        });
     }
 
-    function enviarMensagem(e) {
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.emit('joinRoom', room);
+
+        console.log(usuarios);
+
+    }, [usuariosCarregados])
+
+    const atualizarCoresUsuarios = () => {
+        setUsuarios((anteriores) => {
+            const usuariosAtualizados = anteriores.map((user) => {
+                user.color = ramdonColor();
+                return user;
+            });
+            return usuariosAtualizados;
+        });
+    }
+
+    const enviarMensagem = (e) => {
         if (e.key !== 'Enter' && e.type != "click") return;
+
         if (mensagemDigitada == "") return;
+
         mensagemDigitada.trim();
-        socket.emit('enviarMensagem', idSala, room, mensagemDigitada, tokenUsuario);
+
+        const mensagem = {
+            idSala,
+            room,
+            mensagemDigitada,
+            tokenUsuario
+        }
+
+        socket.emit('enviarMensagem', mensagem);
+
         setMensagemDigitada('');
     };
 
-    function verificarUser() {
-        const nomeCodificado = encodeURIComponent(addUserNome);
-        axiosInstance.get(`/usuario/verificar/${nomeCodificado}`)
-            .then((res) => {
-                if (res.data) {
-                    const id = Number(addUserNome.split(" ")[1].replaceAll("#", ""));
+    const enviarImagem = () => {
+        const file = imagemSelecionada.current.files[0];
 
-                    addUser(id);
-                } else {
-                    alert("Usuário não encontrado");
-                }
-            }).catch((err) => {
-                console.log(err);
-            });
+        if (!file) return;
+
+        imagemSelecionada.current.value = "";
+
+        const formData = new FormData();
+        const dtMensagem = moment().tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ss");
+
+        formData.append('chatImage', file);
+        formData.append("room", room);
+        formData.append("dtMensagem", dtMensagem);
+
+
+        axiosInstance.post(`http://localhost:8080/chat/mensagem/imagem/${idSala}`, formData, {
+            headers: {
+                "authorization": "Bearer " + tokenUsuario,
+                "Content-Type": "multipart/form-data"
+            }
+        }).then((res) => {
+            cancelarImagem();
+        }).catch((err) => {
+            console.log(err);
+        });
+
+        console.log(formData);
+
     }
 
-    function addUser(idUser) {
-        console.log(idUser);
-        axiosInstance.post("/chat/usuario",
-            {
-                idUser,
-                idSala: idSala
-            },
-            {
-                headers: {
-                    "authorization": "Bearer " + tokenUsuario
-                }
-            })
-            .then((res) => {
-                alert("Usuário adicionado com sucesso");
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }
-
-    function ramdonColor() {
+    const ramdonColor = () => {
         const colors = ["#ff5e00", "#189c18", "#0000ff", "#ff00d4", "#ff00ff", "#00a2ff", "#c30000"];
-        const index = Math.floor(Math.random() * colors.length);
-        if (colorsUsed.includes(colors[index])) {
+        const indexSorteado = Math.floor(Math.random() * colors.length);
+        const corSorteada = colors[indexSorteado];
+
+        if (colorsUsed.length == colors.length) {
+            setColorsUsed([]);
+        }
+
+        if (colorsUsed.includes(corSorteada)) {
             return ramdonColor();
         }
-        return colors[index];
+
+        return corSorteada;
+    }
+
+    const inserirImagem = () => {
+        const [image] = imagemSelecionada.current.files;
+
+        if (!image) return;
+
+        try {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewImage(reader.result);
+            };
+            reader.readAsDataURL(image);
+        } catch (err) {
+            alert("Erro ao carregar imagem");
+        }
+    }
+
+    const cancelarImagem = () => {
+        setPreviewImage(null);
+        imagemSelecionada.current.value = "";
     }
 
 
@@ -203,7 +228,7 @@ const ChatRoom = (props) => {
                     {usuarios.map((user, index) => (
                         <div className={styles.user} key={index}>
                             <div className={styles.nomeUser}>{user.nome}</div>
-                            <div className={styles.statusUser} style={{ backgroundColor: user.isOnline ? "#00ff00" : "#ff0000" }}></div>
+                            <div className={styles.statusUser} style={{ backgroundColor: user.isOnline ? "#00ff00" : "#e73f5d" }}></div>
                         </div>
                     ))}
                 </div>
@@ -216,25 +241,36 @@ const ChatRoom = (props) => {
                             {!msg.isRemetente && msg.nome}
                             <span className={styles.dtMensagem}>{msg.dtMensagem}</span>
                         </div>
-                        <div className={styles.textMsg}>{msg.texto}</div>
+                        <div className={styles.textMsg}>
+                            {msg.texto && msg.texto}
+                            {msg.path && <img src={msg.path} alt="imagem" />}
+                        </div>
                     </div>
                 ))}
             </div>
 
+            {previewImage &&
+                <div className={styles.preview}>
+                    {previewImage ? <img src={previewImage} alt="preview" /> : null}
+                    <div className={styles.buttons}>
+                        <button onClick={cancelarImagem} className={styles.cancelarImg}>Cancelar</button>
+                        <button onClick={enviarImagem}>Enviar Imagem</button>
+                    </div>
+                </div>
+            }
+
             <div className={styles.sendBox}>
+                <div className={styles.anexos}>
+                    <label htmlFor="image">
+                        <img src={anexos} alt="clip" />
+                    </label>
+                    <input type="file" id='image' accept="image/*" ref={imagemSelecionada} onChange={inserirImagem} />
+                </div>
                 <input type="text" value={mensagemDigitada} onChange={(e) => setMensagemDigitada(e.target.value)} placeholder="Digite sua mensagem"
                     onKeyDown={(e) => { enviarMensagem(e) }} />
                 <button onClick={(e) => { enviarMensagem(e) }}>Enviar</button>
             </div>
 
-            <div className={styles.addUser} style={{ display: "none" }}>
-                <h2>Adicionar usuario ao chat</h2>
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                    <label>Nome</label>
-                    <input type="text" value={addUserNome} onChange={(e) => setAddUserNome(e.target.value)} />
-                    <button onClick={verificarUser}>Adicionar</button>
-                </div>
-            </div>
         </div>
     );
 };

@@ -10,8 +10,8 @@ export function inserirUser(fkSala, fkUsuario) {
     return executar(query);
 }
 
-export function inserirMensagem(fkUsuario, fkChat, texto, dtMensagem) {
-    let query = `insert into Mensagem values (null,${fkUsuario},${fkChat},'${texto}','${dtMensagem}')`;
+export function inserirMensagem(idUsuario, idSala, mensagem, dtAgora) {
+    let query = `INSERT INTO Mensagem values (null,${idUsuario},${idSala},'${mensagem}','${dtAgora}')`;
     return executar(query);
 }
 

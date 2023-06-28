@@ -1,5 +1,5 @@
 import * as model from "../models/chatModel.mjs"
-import { gerarTokenUsuario } from "../config/jwtConfig.mjs";
+import { servidorIo } from "../../app.mjs";
 
 export async function criarSala(req, res) {
     let { identificador, nome, senha } = req.body;
@@ -24,16 +24,6 @@ export function inserirUser(req, res) {
         });
 }
 
-export function inserirMensagem(req, res) {
-    let { fkUsuario, fkChat, texto, dtMensagem } = req.body;
-
-    model.inserirMensagem(fkUsuario, fkChat, texto, dtMensagem)
-        .then(() => {
-            res.status(201).send("Mensagem cadastrada com sucesso!");
-        }).catch((erro) => {
-            res.status(500).send("Erro ao cadastrar Mensagem: " + erro);
-        });
-}
 
 export function listarChats(req, res) {
     let { id } = req.usuario;
@@ -76,3 +66,28 @@ export function verUsuariosDaSala(req, res) {
         });
 }
 
+
+export function inserirMensagemImagem(req, res) {
+    let { fkSala } = req.params;
+    let { id, nome } = req.usuario;
+    let token = req.headers.authorization.split(" ")[1];
+    let { path } = req.file;
+    let { room, dtMensagem } = req.body;
+
+    console.log("Path: " + path);
+    console.log("Room: " + room);
+    console.log("dtMensagem: " + dtMensagem);
+
+
+    const mensagem = {
+        id,
+        nome,
+        path,
+        token,
+        dtMensagem
+    }
+
+    servidorIo.to(room).emit('novaMensagem', mensagem);
+
+    res.send("ok");
+}

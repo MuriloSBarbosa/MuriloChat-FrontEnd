@@ -1,6 +1,7 @@
 import express from "express"
 import * as controller from "../controllers/chatController.mjs"
 import { autenticarTokenUsuario } from "../config/jwtConfig.mjs";
+import { upload } from "../utils/multerConfig.mjs";
 
 const chatRouter = express.Router();
 
@@ -28,5 +29,8 @@ chatRouter.post("/mensagem", (req, res) => {
     controller.inserirMensagem(req, res);
 });
 
+chatRouter.post("/mensagem/imagem/:fkSala", autenticarTokenUsuario, upload.single("chatImage"), (req, res) => {
+    controller.inserirMensagemImagem(req, res);
+})
 
 export default chatRouter;

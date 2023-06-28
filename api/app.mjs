@@ -2,6 +2,7 @@ import express from 'express';
 import { Server } from 'socket.io';
 import socketConfig from './src/utils/chatWebSocket.mjs';
 import cors from 'cors';
+import { setarOnline, desconectar } from './src/utils/chatWebSocket.mjs';
 
 const app = express();
 
@@ -32,12 +33,15 @@ export const servidorIo = new Server(server, {
 });
 
 
-servidorIo.on('connection', (socketUser) => {
+servidorIo.on('connection', async (socketUser) => {
+
   console.log('Novo usuário conectado:', socketUser.id);
+  servidorIo.emit("onlineUsers", await setarOnline(socketUser));
 
-  socketConfig(socketUser);
+  await socketConfig(socketUser);
 
-  socketUser.on('disconnect', () => {
+  socketUser.on('disconnect', async () => {
+    servidorIo.emit("onlineUsers", await desconectar(socketUser));
     console.log('Usuário desconectado:', socketUser.id);
   });
 });
