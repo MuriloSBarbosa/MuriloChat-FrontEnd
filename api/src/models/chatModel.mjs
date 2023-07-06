@@ -11,7 +11,12 @@ export function inserirUser(fkSala, fkUsuario) {
 }
 
 export function inserirMensagem(idUsuario, idSala, mensagem, dtAgora) {
-    let query = `INSERT INTO Mensagem values (null,${idUsuario},${idSala},'${mensagem}','${dtAgora}')`;
+    let query = `INSERT INTO Mensagem values (null,${idUsuario},${idSala},'${mensagem}','${dtAgora}',null)`;
+    return executar(query);
+}
+
+export function inserirMensagemImagem(idUsuario, idSala, srcImage, dtAgora) {
+    let query = `INSERT INTO Mensagem values (null,${idUsuario},${idSala},null,'${dtAgora}','${srcImage}')`;
     return executar(query);
 }
 
@@ -21,7 +26,7 @@ export function listarChats(fkUsuario) {
 }
 
 export function listarMensagens(fkSala) {
-    let query = `select u.nome, m.texto, m.dtMensagem, m.fkUsuario from Mensagem m JOIN Usuario u on m.fkUsuario = u.id where fkSala = ${fkSala} order by m.id`;
+    let query = `select u.nome, m.texto, m.dtMensagem, m.fkUsuario, m.srcImage from Mensagem m JOIN Usuario u on m.fkUsuario = u.id where fkSala = ${fkSala} order by m.id`;
     return executar(query);
 }
 
@@ -29,3 +34,4 @@ export function verUsuariosDaSala(idSala) {
     let query = `select u.id, u.nome from Chat c JOIN Usuario u on c.fkUsuario = u.id where c.fkSala = ${idSala}`;
     return executar(query);
 }
+

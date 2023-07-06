@@ -4,12 +4,13 @@
   "description": "",
   "main": "app.mjs",
   "scripts": {
-    "start": "nodemon app.mjs"
+    "dev": "nodemon app.mjs"
   },
   "author": "Murilo",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
+    "esm": "^3.2.25",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "moment": "^2.29.4",

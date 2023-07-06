@@ -19,11 +19,8 @@ function Salas() {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        axiosInstance.get("/chat/listar", {
-            headers: {
-                "authorization": "Bearer " + token
-            }
-        }).then((res) => {
+        axiosInstance.get("/chat/listar")
+        .then((res) => {
             setSalas(res.data);
         }).catch((err) => {
             console.log(err);

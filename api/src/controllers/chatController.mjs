@@ -1,5 +1,12 @@
 import * as model from "../models/chatModel.mjs"
 import { servidorIo } from "../../app.mjs";
+import path from "path";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const moduleURL = new URL(import.meta.url);
+const modulePath = dirname(fileURLToPath(moduleURL));
+
 
 export async function criarSala(req, res) {
     let { identificador, nome, senha } = req.body;
@@ -68,26 +75,42 @@ export function verUsuariosDaSala(req, res) {
 
 
 export function inserirMensagemImagem(req, res) {
-    let { fkSala } = req.params;
-    let { id, nome } = req.usuario;
-    let token = req.headers.authorization.split(" ")[1];
-    let { path } = req.file;
-    let { room, dtMensagem } = req.body;
+    const { fkSala } = req.params;
+    const { id, nome } = req.usuario;
+    const token = req.headers.authorization.split(" ")[1];
+    const { filename } = req.file;
+    const { room, dtMensagem } = req.body;
 
-    console.log("Path: " + path);
-    console.log("Room: " + room);
-    console.log("dtMensagem: " + dtMensagem);
-
+    if (!filename || !room || !dtMensagem) {
+        return res.status(400).send("Dados inválidos");
+    }
+    const srcImage = encodeURI(filename);
 
     const mensagem = {
         id,
         nome,
-        path,
+        srcImage,
         token,
         dtMensagem
     }
 
-    servidorIo.to(room).emit('novaMensagem', mensagem);
+    servidorIo.to(Number(room)).emit('novaMensagem', mensagem);
 
-    res.send("ok");
+
+    model.inserirMensagemImagem(id, fkSala, srcImage, dtMensagem)
+        .then(() => {
+            res.status(201).send("Mensagem cadastrada com sucesso!");
+        }).catch((erro) => {
+            res.status(500).send("Erro ao cadastrar Mensagem: " + erro);
+        });
+
+}
+
+export function buscarImagem(req, res) {
+
+    const nomeImagem = req.params.nomeImagem;
+
+    const caminho = path.join(modulePath, '..', '..', 'public', 'uploads', decodeURI(nomeImagem));
+
+    return res.sendFile(caminho, { headers: { 'Content-Type': 'image/jpeg' } });
 }

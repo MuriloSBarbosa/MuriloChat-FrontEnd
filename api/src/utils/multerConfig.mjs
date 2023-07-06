@@ -5,7 +5,7 @@ import moment from "moment";
 // o nome do arquivo é composto pela data e hora atual, e o nome original do arquivo
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "./src/uploads");
+        cb(null, "./public/uploads");
     }, filename: (req, file, cb) => {
         cb(null, `${moment().format("YYYY-MM-DD-HH[h]-mm[m]-ss[s]")}-${file.originalname}`);
     }

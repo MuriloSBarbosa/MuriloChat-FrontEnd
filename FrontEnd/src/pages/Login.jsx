@@ -18,7 +18,8 @@ function Login() {
 
     const [showModal, setShowModal] = useState(false);
 
-    function logar() {
+    function logar(e) {
+        e.preventDefault();
         axiosInstance.post('/usuario/login', {
             login: login,
             senha: senha
@@ -54,7 +55,7 @@ function Login() {
         <div className={styles.login}>
             <div className={styles.content}>
                 <h1>Login</h1>
-                <div className={styles.boxes}>
+                <form className={styles.boxes} onSubmit={(e) => {logar(e)}}>
                     <div className={styles.box}>
                         <label>Login</label>
                         <input type="text" value={login} onChange={(e) => { setLogin(e.target.value) }} />
@@ -64,10 +65,10 @@ function Login() {
                         <input type="password" value={senha} onChange={(e) => { setSenha(e.target.value) }} />
                     </div>
                     <div className={styles.box}>
-                        <button onClick={logar}>Entrar</button>
+                        <button>Entrar</button>
                         <p>Ainda não logado?<span onClick={() => { navigate('/cadastrar') }}>Cadastre-se</span></p>
                     </div>
-                </div>
+                </form>
             </div>
 
             <Modal showModal={showModal} setShowModal={setShowModal} modal={modal} time={time} />

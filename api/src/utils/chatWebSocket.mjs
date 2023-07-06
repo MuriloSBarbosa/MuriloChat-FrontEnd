@@ -10,7 +10,13 @@ export default async function socketConfig(socketUser) {
     // Evento para entrar em uma sala
     socketUser.on('joinRoom', (room) => {
         socketUser.join(room);
-        console.log("Cliente entrou na sala: ", room);
+        console.log("joinRoom");
+        console.log(`Cliente ${socketUser.id} entrou na sala: ${room}`);
+        servidorIo.emit("onlineUsers", mapearId(onlineUsers))
+    });
+
+    socketUser.on('carregarOnline', () => {
+        console.log("carregarOnline");
         servidorIo.emit("onlineUsers", mapearId(onlineUsers))
     });
 

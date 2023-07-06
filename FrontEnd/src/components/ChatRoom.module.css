@@ -35,8 +35,11 @@
     padding: 1rem 4rem;
     overflow-y: scroll;
     scroll-behavior: smooth;
+    scroll-padding-bottom: 100vh;
+    /* Adjust the value to ensure the container starts at the bottom */
     background: url("../assets/bg-grayjpg.jpg");
 }
+
 
 .mensagem {
     display: flex;
@@ -53,20 +56,29 @@
     color: var(--colorDefault);
 }
 
+.dtMensagem {
+    font-size: 0.8rem;
+    margin-left: 1vw;
+    color: #a8a8b3;
+    margin-top: 0.5rem;
+}
+
+
 .textMsg {
     font-size: 1.2rem;
     background-color: var(--colorDefault);
     color: #fff;
     padding: 0.5rem;
-    width: max-content;
+    max-width: 60%;
     border-radius: 0.5rem;
 }
 
+.textMsg img {
+    max-height: 30vh;
+}
 
 .remetente {
-    display: flex;
-    flex-direction: column;
-    align-self: flex-end;
+    align-items: flex-end;
 }
 
 .remetente .textMsg {
@@ -74,15 +86,8 @@
     align-self: flex-end;
 }
 
-.remetente .nomeUsuarioMsg {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.dtMensagem {
-    font-size: 0.8rem;
-    color: #a8a8b3;
-    margin-top: 0.5rem;
+.remetente .dtMensagem {
+    padding-left: 0;
 }
 
 .sendBox {

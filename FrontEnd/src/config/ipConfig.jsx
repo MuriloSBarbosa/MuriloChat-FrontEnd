@@ -16,5 +16,15 @@ const axiosInstance = axios.create({
     },
 })
 
+axiosInstance.interceptors.request.use((config) => {
+    const tokenUsuario = sessionStorage.getItem('token');
+
+    if (tokenUsuario) {
+        config.headers['authorization'] = `Bearer ${tokenUsuario}`;
+    }
+
+    return config;
+});
+
 export default axiosInstance;
 

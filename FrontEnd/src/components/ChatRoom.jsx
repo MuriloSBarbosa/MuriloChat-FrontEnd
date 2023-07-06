@@ -27,16 +27,12 @@ const ChatRoom = (props) => {
 
         // Carregar usuarios da sala 
         axiosInstance.get("/chat/usuario/" + idSala,
-            {
-                headers: {
-                    "authorization": "Bearer " + tokenUsuario
-                }
-            }
         ).then((res) => {
             setUsuarios(res.data);
             atualizarCoresUsuarios();
-            setUsuariosCarregados(true);
-
+            setTimeout(() => {
+                setUsuariosCarregados(true);
+            }, 100);
         }).catch((err) => {
             console.log(err);
         });
@@ -44,11 +40,6 @@ const ChatRoom = (props) => {
 
         // Carregar mensagens anteriores
         axiosInstance.get("/chat/mensagem/" + idSala,
-            {
-                headers: {
-                    "authorization": "Bearer " + tokenUsuario
-                }
-            }
         ).then((res) => {
             res.data.forEach((msg) => {
                 msg.dtMensagem = formatarDataChat(msg.dtMensagem);
@@ -58,7 +49,7 @@ const ChatRoom = (props) => {
             console.log(err);
         });
 
-
+        socket.emit('joinRoom', room);
 
     }, [room]);
 
@@ -78,7 +69,6 @@ const ChatRoom = (props) => {
     }, [socket]);
 
     const novasMensagens = (novaMensagem) => {
-        console.log(novaMensagem.path);
         if (novaMensagem.token == tokenUsuario) {
             novaMensagem.isRemetente = true;
         }
@@ -98,8 +88,11 @@ const ChatRoom = (props) => {
             }
         }
 
-        chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
+        setTimeout(() => {
+            chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
+        }, 100);
     }, [mensagens]);
+
 
     const usuariosOnline = (idUsuariosOnline) => {
         setUsuarios((anteriores) => {
@@ -118,11 +111,11 @@ const ChatRoom = (props) => {
     useEffect(() => {
         if (!socket) return;
 
-        socket.emit('joinRoom', room);
+        socket.emit('carregarOnline');
 
         console.log(usuarios);
 
-    }, [usuariosCarregados])
+    }, [usuariosCarregados]);
 
     const atualizarCoresUsuarios = () => {
         setUsuarios((anteriores) => {
@@ -167,10 +160,8 @@ const ChatRoom = (props) => {
         formData.append("room", room);
         formData.append("dtMensagem", dtMensagem);
 
-
         axiosInstance.post(`http://localhost:8080/chat/mensagem/imagem/${idSala}`, formData, {
             headers: {
-                "authorization": "Bearer " + tokenUsuario,
                 "Content-Type": "multipart/form-data"
             }
         }).then((res) => {
@@ -178,8 +169,6 @@ const ChatRoom = (props) => {
         }).catch((err) => {
             console.log(err);
         });
-
-        console.log(formData);
 
     }
 
@@ -220,7 +209,6 @@ const ChatRoom = (props) => {
         imagemSelecionada.current.value = "";
     }
 
-
     return (
         <div className={styles.chatRoom}>
             <div className={styles.usuarios}>
@@ -228,6 +216,7 @@ const ChatRoom = (props) => {
                     {usuarios.map((user, index) => (
                         <div className={styles.user} key={index}>
                             <div className={styles.nomeUser}>{user.nome}</div>
+                            {console.log(usuarios)}
                             <div className={styles.statusUser} style={{ backgroundColor: user.isOnline ? "#00ff00" : "#e73f5d" }}></div>
                         </div>
                     ))}
@@ -236,14 +225,18 @@ const ChatRoom = (props) => {
 
             <div className={styles.mensagens} ref={chatContainer}>
                 {mensagens.map((msg, index) => (
-                    <div className={msg.isRemetente ? `${styles.mensagem}, ${styles.remetente}` : styles.mensagem} key={index}>
+                    <div className={msg.isRemetente ? `${styles.mensagem} ${styles.remetente}` : styles.mensagem} key={index}>
                         <div className={styles.nomeUsuarioMsg} style={{ color: msg.color }}>
                             {!msg.isRemetente && msg.nome}
                             <span className={styles.dtMensagem}>{msg.dtMensagem}</span>
                         </div>
                         <div className={styles.textMsg}>
                             {msg.texto && msg.texto}
-                            {msg.path && <img src={msg.path} alt="imagem" />}
+                            {msg.srcImage &&
+                                <a href={`http://localhost:8080/chat/imagem/${msg.srcImage}`}>
+                                    <img src={`http://localhost:8080/chat/imagem/${msg.srcImage}`} alt="imagem" />
+                                </a>
+                            }
                         </div>
                     </div>
                 ))}
