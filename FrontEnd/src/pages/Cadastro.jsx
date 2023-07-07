@@ -17,7 +17,8 @@ function Cadastro() {
     const [time, setTime] = useState(3000);
     const [showModal, setShowModal] = useState(false);
 
-    function Cadastrar() {
+    function Cadastrar(e) {
+        e.preventDefault();
         axiosInstance.post('/usuario', {
             nome: nome,
             login: login,
@@ -41,10 +42,11 @@ function Cadastro() {
         });
     }
 
+    const verificarCampos = nome === '' || login === '' || senha === '';
     return (
         <>
             <div className={styles.login}>
-                <div className={styles.content}>
+                <form className={styles.content} onSubmit={(e) => Cadastrar(e)}>
                     <h1>Cadastrar</h1>
                     <div className={styles.boxes}>
                         <div className={styles.box}>
@@ -60,10 +62,10 @@ function Cadastro() {
                             <input type="password" value={senha} onChange={(e) => { setSenha(e.target.value) }} />
                         </div>
                         <div className={styles.box}>
-                            <button onClick={Cadastrar}>Cadastrar</button>
+                            <button disabled={verificarCampos}>Cadastrar</button>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
 
             <Modal showModal={showModal} setShowModal={setShowModal} modal={modal} time={time} />

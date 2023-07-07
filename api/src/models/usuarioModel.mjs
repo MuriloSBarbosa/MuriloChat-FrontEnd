@@ -10,8 +10,8 @@ export function verificarUsuario(login, senha) {
     return executar(query);
 }
 
-export function verificarNome(id, nome) {
-    let query = `select * from Usuario where id = ${id} and nome = '${nome}';`;
+export function verificarNome(nome) {
+    let query = `select id from Usuario where nome = '${nome}';`;
     return executar(query);
 }
 

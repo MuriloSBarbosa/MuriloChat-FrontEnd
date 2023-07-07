@@ -51,11 +51,13 @@ function Login() {
         });
     }
 
+    const verificarCampos = login === '' || senha === '';
+
     return (
         <div className={styles.login}>
             <div className={styles.content}>
                 <h1>Login</h1>
-                <form className={styles.boxes} onSubmit={(e) => {logar(e)}}>
+                <form className={styles.boxes} onSubmit={(e) => { logar(e) }}>
                     <div className={styles.box}>
                         <label>Login</label>
                         <input type="text" value={login} onChange={(e) => { setLogin(e.target.value) }} />
@@ -65,7 +67,7 @@ function Login() {
                         <input type="password" value={senha} onChange={(e) => { setSenha(e.target.value) }} />
                     </div>
                     <div className={styles.box}>
-                        <button>Entrar</button>
+                        <button disabled={verificarCampos}>Entrar</button>
                         <p>Ainda não logado?<span onClick={() => { navigate('/cadastrar') }}>Cadastre-se</span></p>
                     </div>
                 </form>

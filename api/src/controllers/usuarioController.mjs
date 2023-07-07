@@ -32,32 +32,26 @@ export function verificarUsuario(req, res) {
 }
 
 export function verificarNome(req, res) {
-    let nomeHash = req.params.nome;
-    nomeHash = decodeURIComponent(nomeHash);
+    let { nome } = req.params;
+    nome = decodeURIComponent(nome);
 
-    if (!nomeHash) {
+    if (!nome) {
         res.status(404).send("Nome não foi informado");
         return;
     }
 
-    let [nome, id] = nomeHash.split(" ");
-    id = Number(id.replaceAll("#", ""));
-
-    if (!nome || !id) {
-        res.status(204).send("Nome inválido!");
-        return;
-    }
-
-    model.verificarNome(id, nome)
+    model.verificarNome(nome)
         .then((usuario) => {
-            if (usuario == 0) {
-                res.status(204).send(false);
-            } else if (usuario > 1) {
-                res.status(500).send(false);
+            [usuario] = usuario;
+            console.log(usuario);
+            if (!usuario) {
+                console.log("Não existe");
+                return res.status(204).send();
             } else {
-                res.status(200).send(true);
+                console.log("Existe");
+                return res.status(200).json(usuario.id);
             }
         }).catch((erro) => {
-            res.status(500).send("Erro ao verificar Usuário: " + erro);
+            return res.status(500).send("Erro ao verificar Usuário: " + erro);
         });
 }

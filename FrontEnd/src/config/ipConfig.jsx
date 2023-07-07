@@ -1,11 +1,6 @@
 import axios from "axios";
 
-const ip = {
-    localhost: "localhost",
-    ip: "10.18.7.53"
-}
-
-export const ipUse = ip.localhost;
+export const ipUse = "localhost";
 
 const axiosInstance = axios.create({
     baseURL: `http://${ipUse}:8080`,

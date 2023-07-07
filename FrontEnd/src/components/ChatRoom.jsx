@@ -4,40 +4,41 @@ import styles from "./ChatRoom.module.css";
 import moment from "moment-timezone"
 import anexos from "../assets/anexos.png";
 import { formatarDataChat } from '../utils/geral.mjs';
+import AdicionarUsuario from './AdicionarUsuario';
+import { ipUse } from '../config/ipConfig';
 
 const ChatRoom = (props) => {
     const [idSala, setIdSala] = useState(props.salaConfig.id);
     const [room, setRoom] = useState(props.salaConfig.identificador);
     const socket = props.salaConfig.socket;
+    const tokenUsuario = sessionStorage.getItem("token");
 
     const [usuarios, setUsuarios] = useState([]);
-    const [usuariosCarregados, setUsuariosCarregados] = useState(false);
     const [colorsUsed, setColorsUsed] = useState([]);
 
-    const tokenUsuario = sessionStorage.getItem("token");
+    const [showAddUser, setShowAddUser] = useState(false);
 
     const [mensagemDigitada, setMensagemDigitada] = useState('');
     const [mensagens, setMensagens] = useState([]);
+    const [usuarioAnterior, setUsuarioAnterior] = useState(null);
+
     const imagemSelecionada = useRef(null);
     const [previewImage, setPreviewImage] = useState(null);
 
     const chatContainer = useRef(null);
 
+    const [idsUsuariosOnline, setIdsUsuariosOnline] = useState({});
+
+
     useEffect(() => {
+        carregarUsuarios();
+        carregarMensagens();
 
-        // Carregar usuarios da sala 
-        axiosInstance.get("/chat/usuario/" + idSala,
-        ).then((res) => {
-            setUsuarios(res.data);
-            atualizarCoresUsuarios();
-            setTimeout(() => {
-                setUsuariosCarregados(true);
-            }, 100);
-        }).catch((err) => {
-            console.log(err);
-        });
+        socket.emit('joinRoom', room);
 
+    }, [room]);
 
+    const carregarMensagens = () => {
         // Carregar mensagens anteriores
         axiosInstance.get("/chat/mensagem/" + idSala,
         ).then((res) => {
@@ -47,12 +48,24 @@ const ChatRoom = (props) => {
             setMensagens(res.data);
         }).catch((err) => {
             console.log(err);
+        })
+    }
+
+    const carregarUsuarios = () => {
+        // Load users in the room
+        axiosInstance.get("/chat/usuario/" + idSala,
+        ).then((res) => {
+            const usuarios = res.data;
+            setUsuarios(usuarios);
+
+            atualizarCoresUsuarios();
+
+        }).catch((err) => {
+            console.log(err);
         });
+    }
 
-        socket.emit('joinRoom', room);
-
-    }, [room]);
-
+    // useEfect usuarios carrgarONline
     useEffect(() => {
         // Se não tiver socket, não faz nada
         if (!socket) return;
@@ -95,31 +108,37 @@ const ChatRoom = (props) => {
 
 
     const usuariosOnline = (idUsuariosOnline) => {
-        setUsuarios((anteriores) => {
-            const usuariosAtualizados = anteriores.map((user) => {
-                if (idUsuariosOnline.includes(user.id)) {
-                    user.isOnline = true;
-                } else {
-                    user.isOnline = false;
-                }
-                return user;
+
+        // Convert array to Set for faster lookup
+        const idSockerOnlineSet = new Set(idUsuariosOnline);
+
+        setIdsUsuariosOnline((idOnline) => {
+            let idsOnline = { ...idOnline };
+
+            // Set online users
+            idSockerOnlineSet.forEach((userId) => {
+                // no json, colocar [] é a mesma coisa que colocar ., mas pode ser usado quando o nome da propriedade tem espaço ou é um numero
+                idsOnline[userId] = true;
             });
-            return usuariosAtualizados;
+
+            // Set offline users
+            for (let userId in idsOnline) {
+                // Quando percorre um json com for in, o valor da variavel é a chave, ou seja, o atributo, que sempre é uma string
+                if (!idSockerOnlineSet.has(parseInt(userId))) {
+                    idsOnline[userId] = false;
+                }
+            }
+
+            return idsOnline;
         });
-    }
+    };
 
-    useEffect(() => {
-        if (!socket) return;
 
-        socket.emit('carregarOnline');
-
-        console.log(usuarios);
-
-    }, [usuariosCarregados]);
 
     const atualizarCoresUsuarios = () => {
         setUsuarios((anteriores) => {
             const usuariosAtualizados = anteriores.map((user) => {
+                if (user.color) return user;
                 user.color = ramdonColor();
                 return user;
             });
@@ -160,7 +179,7 @@ const ChatRoom = (props) => {
         formData.append("room", room);
         formData.append("dtMensagem", dtMensagem);
 
-        axiosInstance.post(`http://localhost:8080/chat/mensagem/imagem/${idSala}`, formData, {
+        axiosInstance.post(`/chat/mensagem/imagem/${idSala}`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data"
             }
@@ -185,6 +204,11 @@ const ChatRoom = (props) => {
             return ramdonColor();
         }
 
+        if (colorsUsed.length == 0) {
+            setColorsUsed([corSorteada]);
+        }
+
+        setColorsUsed((anteriores) => [...anteriores, corSorteada]);
         return corSorteada;
     }
 
@@ -216,12 +240,15 @@ const ChatRoom = (props) => {
                     {usuarios.map((user, index) => (
                         <div className={styles.user} key={index}>
                             <div className={styles.nomeUser}>{user.nome}</div>
-                            {console.log(usuarios)}
-                            <div className={styles.statusUser} style={{ backgroundColor: user.isOnline ? "#00ff00" : "#e73f5d" }}></div>
+                            <div className={styles.statusUser} style={{ backgroundColor: idsUsuariosOnline[user.id] ? "#00ff00" : "#e73f5d" }}></div>
                         </div>
                     ))}
+                    <button className={styles.iconAddUser} onClick={() => setShowAddUser(true)}>+</button>
                 </div>
             </div>
+
+            <AdicionarUsuario idSala={idSala} showAddUser={showAddUser} setShowAddUser={setShowAddUser}
+                carregarUsuarios={carregarUsuarios} />
 
             <div className={styles.mensagens} ref={chatContainer}>
                 {mensagens.map((msg, index) => (
@@ -233,8 +260,8 @@ const ChatRoom = (props) => {
                         <div className={styles.textMsg}>
                             {msg.texto && msg.texto}
                             {msg.srcImage &&
-                                <a href={`http://localhost:8080/chat/imagem/${msg.srcImage}`}>
-                                    <img src={`http://localhost:8080/chat/imagem/${msg.srcImage}`} alt="imagem" />
+                                <a href={`http://${ipUse}:8080/chat/imagem/${msg.srcImage}`}>
+                                    <img src={`http://${ipUse}:8080/chat/imagem/${msg.srcImage}`} alt="imagem" />
                                 </a>
                             }
                         </div>

@@ -48,6 +48,10 @@ select {
   outline: none;
 }
 
+button {
+  cursor: pointer;
+}
+
 /*
   7. Avoid text overflows
 */

@@ -150,6 +150,22 @@
     width: 100%;
 }
 
+.iconAddUser {
+    height: 30px;
+    width: 30px;
+    font-size: 20px;
+    text-align: center;
+    background-color: #6f4bd8;
+    color: #fff;
+    border-radius: 100%;
+    border: none;
+    transition: 0.3s;
+}
+
+.iconAddUser:hover {
+    filter: brightness(0.8);
+}
+
 .user {
     display: flex;
     flex-direction: row;

@@ -20,11 +20,11 @@ function Salas() {
 
     useEffect(() => {
         axiosInstance.get("/chat/listar")
-        .then((res) => {
-            setSalas(res.data);
-        }).catch((err) => {
-            console.log(err);
-        });
+            .then((res) => {
+                setSalas(res.data);
+            }).catch((err) => {
+                console.log(err);
+            });
 
         // Entrar no socket
         const socket = io(`http://${ipUse}:8080`, {
@@ -44,11 +44,6 @@ function Salas() {
                 nome: nome,
                 identificador: identificador,
                 senha: senha
-            },
-            {
-                headers: {
-                    "authorization": "Bearer " + token
-                }
             })
             .then((res) => {
                 console.log(res.data);

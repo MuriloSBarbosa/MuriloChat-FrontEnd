@@ -21,7 +21,7 @@ export async function criarSala(req, res) {
 
 
 export function inserirUser(req, res) {
-    let { idSala, idUser } = req.body;
+    const { idSala, idUser } = req.body;
 
     model.inserirUser(idSala, idUser)
         .then(() => {
