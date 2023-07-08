@@ -37,9 +37,16 @@
     scroll-behavior: smooth;
     scroll-padding-bottom: 100vh;
     /* Adjust the value to ensure the container starts at the bottom */
-    background: url("../assets/bg-grayjpg.jpg");
+    background: url("../../assets/bg-grayjpg.jpg");
 }
 
+.mensagemContent {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+}
 
 .mensagem {
     display: flex;
@@ -50,6 +57,20 @@
     margin-bottom: 1rem;
 }
 
+.isAddUser {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.isAddUser p {
+    color: #343434;
+    background-color: #bdbdbd;
+    padding: 0 0.5rem;
+}
+
 .nomeUsuarioMsg {
     font-weight: 500;
     font-size: 1rem;
@@ -58,11 +79,9 @@
 
 .dtMensagem {
     font-size: 0.8rem;
-    margin-left: 1vw;
     color: #a8a8b3;
     margin-top: 0.5rem;
 }
-
 
 .textMsg {
     font-size: 1.2rem;
@@ -71,6 +90,8 @@
     padding: 0.5rem;
     max-width: 60%;
     border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .textMsg img {
@@ -86,8 +107,26 @@
     align-self: flex-end;
 }
 
-.remetente .dtMensagem {
-    padding-left: 0;
+.rolar {
+    position: absolute;
+    bottom: 5rem;
+    right: 2rem;
+    margin: 1rem;
+    height: 3rem;
+    width: 3rem;
+    border-radius: 100%;
+    border: none;
+    background-color: #6f4bd8;
+    transform: rotate(90deg);
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
 .sendBox {
@@ -106,7 +145,6 @@
     padding: 0 1rem;
     border-radius: 0.5rem;
     border: 1px solid var(--colorDefault);
-    ;
     background-color: #fff;
 }
 
@@ -119,7 +157,6 @@
     width: 10%;
     border-radius: 0.5rem;
     background-color: var(--colorDefault);
-    ;
     color: #fff;
     font-weight: 500;
     font-size: 1rem;
@@ -133,58 +170,6 @@
     background-color: #6f4bd8;
 }
 
-.usuarios {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
-    background-color: #29292e;
-    padding: 1rem 4rem;
-}
-
-.usuarios .listaUser {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 100%;
-}
-
-.iconAddUser {
-    height: 30px;
-    width: 30px;
-    font-size: 20px;
-    text-align: center;
-    background-color: #6f4bd8;
-    color: #fff;
-    border-radius: 100%;
-    border: none;
-    transition: 0.3s;
-}
-
-.iconAddUser:hover {
-    filter: brightness(0.8);
-}
-
-.user {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-.nomeUser {
-    font-size: 1rem;
-    color: #fff;
-}
-
-.statusUser {
-    height: 0.5rem;
-    width: 0.5rem;
-    border-radius: 50%;
-    background-color: #fff;
-    margin-left: 0.5rem;
-}
 
 .anexos input {
     display: none;
@@ -194,6 +179,38 @@
     height: 2rem;
     width: 2rem;
     cursor: pointer;
+}
+
+.verImagem {
+    position: absolute;
+    top: -2vh;
+    left: -30vw;
+    padding: 1rem;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(41, 41, 46, 0.81);
+}
+
+.verImagem img {
+    height: 80vh;
+    width: 80vw;
+    object-fit: contain;
+}
+
+.verImagem button {
+    position: absolute;
+    top: 10%;
+    right: 8%;
+    background-color: #e73f5d;
+    border: none;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 100%;
+    font-size: 1.5rem;
+    color: #fff;
 }
 
 .preview {

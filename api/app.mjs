@@ -33,23 +33,6 @@ export const servidorIo = new Server(server, {
   }
 });
 
-const socket = [20, 23];
-
-const json = {
-  20: true,
-  23: true
-}
-
-json["s"] = "Teste2";
-json[4] = "Teste3";
-
-for (const js in json) {
-  console.log("aqui");
-  console.log(js);
-}
-
-console.log(json);
-
 servidorIo.on('connection', async (socketUser) => {
 
   console.log('Novo usuário conectado:', socketUser.id);

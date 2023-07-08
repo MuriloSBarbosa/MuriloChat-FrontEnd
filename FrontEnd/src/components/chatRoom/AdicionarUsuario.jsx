@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import axiosInstance from "../config/ipConfig";
+import axiosInstance from "../../config/ipConfig";
 import styles from "./AdicionarUsuario.module.css"
+import moment from "moment-timezone";
 
 function AdicionarUsuario(props) {
     const [addUserNome, setAddUserNome] = useState('');
@@ -22,8 +23,9 @@ function AdicionarUsuario(props) {
         axiosInstance.get(`/usuario/verificar/${nomeCodificado}`)
             .then((res) => {
                 if (res.data) {
-                    const id = res.data;
-                    addUser(id);
+                    const id = res.data.id;
+                    const nome = res.data.nome;
+                    addUser(id,nome);
                 } else {
                     setMessage("⚠ Usuário não encontrado");
                     setShowMessage(true);
@@ -33,11 +35,14 @@ function AdicionarUsuario(props) {
             });
     }
 
-    function addUser(idUser) {
+    function addUser(idUser, nome) {
         axiosInstance.post("/chat/usuario",
             {
                 idUser,
-                idSala: props.idSala
+                nomeUser: nome,
+                idSala: props.idSala,
+                room: props.room,
+                dtAdd: moment().tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ss")
             })
             .then((res) => {
                 setMessage("Usuário adicionado com sucesso");
@@ -51,6 +56,10 @@ function AdicionarUsuario(props) {
                 }, 2000)
             })
             .catch((err) => {
+                if (err.response.status === 409) {
+                    setMessage("⚠ Usuário já está na sala");
+                    setShowMessage(true);
+                }
                 console.log(err);
             });
     }

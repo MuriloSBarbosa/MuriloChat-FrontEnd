@@ -11,7 +11,7 @@ export function verificarUsuario(login, senha) {
 }
 
 export function verificarNome(nome) {
-    let query = `select id from Usuario where nome = '${nome}';`;
+    let query = `select id, nome from Usuario where nome = '${nome}';`;
     return executar(query);
 }
 

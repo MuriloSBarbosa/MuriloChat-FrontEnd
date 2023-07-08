@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../config/ipConfig";
 import styles from "./Salas.module.css";
 import AdicionarSala from "../components/AdicionarSala";
-import ChatRoom from "../components/ChatRoom";
+import ChatRoom from "../components/chatRoom/ChatRoom";
 import io from 'socket.io-client';
 import { ipUse } from '../config/ipConfig';
 
@@ -17,6 +17,8 @@ function Salas() {
     const [senha, setSenha] = useState("");
     const [salaConfig, setSalaConfig] = useState(null);
     const [socket, setSocket] = useState(null);
+
+    const [salaSelecionada, setSalaSelecionada] = useState([]);
 
     useEffect(() => {
         axiosInstance.get("/chat/listar")
@@ -53,13 +55,20 @@ function Salas() {
             });
     }
 
-    function irParaSala(id, identificador, nome) {
+    function irParaSala(id, identificador, nome, index) {
         setSalaConfig({
             id: id,
             identificador: identificador,
             nome: nome,
             socket: socket
         });
+
+        salas.map((sala) => {
+            sala.selecionada = false;
+        });
+
+        salas[index].selecionada = true;
+
     }
 
     return (
@@ -70,7 +79,7 @@ function Salas() {
                         <h1>Lista de Salas</h1>
                         <div className={styles.listaSalas}>
                             {salas.map((sala, index) => (
-                                <div className={styles.itemSala} onClick={() => { irParaSala(sala.id, sala.identificador, sala.nome) }} key={index}>{sala.nome}</div>
+                                <div className={`${styles.itemSala} ${sala.selecionada ? styles.selecionada : null}`} onClick={() => { irParaSala(sala.id, sala.identificador, sala.nome, index) }} key={index}>{sala.nome}</div>
                             ))}
                         </div>
                     </div>
@@ -78,10 +87,11 @@ function Salas() {
                     <div className={styles.chat}>
                         {salaConfig ? <ChatRoom salaConfig={salaConfig} /> : "Selecione uma sala"}
                     </div>
-                </div>
+                </div >
 
                 :
-                <div>Você não está logado</div>}
+                <div>Você não está logado</div>
+            }
         </>
     )
 }

@@ -43,7 +43,7 @@ async function enviarMensagem(mensagem) {
         const idUsuario = tokenDecoded.id;
         const nome = tokenDecoded.nome;
 
-        servidorIo.to(room).emit('novaMensagem', { nome, texto: mensagemDigitada, token: tokenUsuario });
+        servidorIo.to(room).emit('novaMensagem', { nome, texto: mensagemDigitada, token: tokenUsuario, idColor: idUsuario });
 
         const dtAgora = moment().tz('America/Sao_Paulo').format('YYYY-MM-DD HH:mm:ss');
 

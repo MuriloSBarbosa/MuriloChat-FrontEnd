@@ -20,15 +20,37 @@ export async function criarSala(req, res) {
 }
 
 
-export function inserirUser(req, res) {
-    const { idSala, idUser } = req.body;
+export async function inserirUser(req, res) {
+    try {
+        const { idSala, idUser, room, nomeUser, dtAdd } = req.body;
+        const { tokenUsuario } = req.headers.authorization.split(" ")[1];
+        const { nome } = req.usuario;
 
-    model.inserirUser(idSala, idUser)
-        .then(() => {
-            res.status(201).send("Chat cadastrado com sucesso!");
-        }).catch((erro) => {
-            res.status(500).send("Erro ao cadastrar Chat: " + erro);
-        });
+        const usuario = await model.verificarUsuarioNaSala(idSala, idUser);
+
+        if (usuario.length > 0) {
+            return res.status(409).send("Usuário já está na sala");
+        }
+
+        await model.inserirUser(idSala, idUser);
+
+        const mensagem = {
+            idSala,
+            room,
+            texto: `${nome} adicionou ${nomeUser} ao chat`,
+            tokenUsuario,
+            isAddUser: true
+        };
+
+        servidorIo.to(Number(room)).emit('addUser');
+        servidorIo.to(Number(room)).emit('novaMensagem', mensagem);
+
+        const salvarMensagem = await model.inserirMensagem(idUser, idSala, mensagem.texto, dtAdd, true);
+
+        return res.status(201).send("Chat cadastrado com sucesso!");
+    } catch (erro) {
+        return res.status(500).send("Erro ao cadastrar Chat: " + erro);
+    }
 }
 
 
@@ -53,6 +75,7 @@ export function listarMensagens(req, res) {
                 if (mensagem.fkUsuario == id) {
                     mensagem.isRemetente = true;
                 }
+                mensagem.isAddUser = mensagem.isAddUser == 1 ? true : false;
                 mensagem.idColor = mensagem.fkUsuario;
                 delete mensagem.fkUsuario;
             });

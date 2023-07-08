@@ -5,13 +5,18 @@ export function cadastrarSala(nome, identificador, senha) {
     return executar(query);
 }
 
+export function verificarUsuarioNaSala(idSala, idUser) {
+    let query = `select u.nome from Chat c join usuario u on u.id = c.fkUsuario where c.fkSala = ${idSala} and c.fkUsuario = ${idUser}`;
+    return executar(query);
+}
+
 export function inserirUser(fkSala, fkUsuario) {
     let query = `insert into Chat values (null,${fkSala},${fkUsuario})`;
     return executar(query);
 }
 
-export function inserirMensagem(idUsuario, idSala, mensagem, dtAgora) {
-    let query = `INSERT INTO Mensagem values (null,${idUsuario},${idSala},'${mensagem}','${dtAgora}',null)`;
+export function inserirMensagem(idUsuario, idSala, mensagem, dtAgora, isAddUser) {
+    let query = `INSERT INTO Mensagem values (null,${idUsuario},${idSala},'${mensagem}','${dtAgora}',null, ${isAddUser ? 1 : 0})`;
     return executar(query);
 }
 
@@ -26,7 +31,7 @@ export function listarChats(fkUsuario) {
 }
 
 export function listarMensagens(fkSala) {
-    let query = `select u.nome, m.texto, m.dtMensagem, m.fkUsuario, m.srcImage from Mensagem m JOIN Usuario u on m.fkUsuario = u.id where fkSala = ${fkSala} order by m.id`;
+    let query = `select u.nome, m.texto, m.dtMensagem, m.fkUsuario, m.srcImage, m.isAddUser from Mensagem m JOIN Usuario u on m.fkUsuario = u.id where fkSala = ${fkSala} order by m.id`;
     return executar(query);
 }
 

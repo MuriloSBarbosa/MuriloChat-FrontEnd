@@ -49,7 +49,7 @@ export function verificarNome(req, res) {
                 return res.status(204).send();
             } else {
                 console.log("Existe");
-                return res.status(200).json(usuario.id);
+                return res.status(200).json(usuario);
             }
         }).catch((erro) => {
             return res.status(500).send("Erro ao verificar Usuário: " + erro);

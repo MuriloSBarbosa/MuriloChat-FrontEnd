@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import axiosInstance from "../config/ipConfig";
+import axiosInstance from "../../config/ipConfig";
 import styles from "./ChatRoom.module.css";
 import moment from "moment-timezone"
-import anexos from "../assets/anexos.png";
-import { formatarDataChat } from '../utils/geral.mjs';
+import anexos from "../../assets/anexos.png";
+import { formatarDataChat } from '../../utils/geral.mjs';
 import AdicionarUsuario from './AdicionarUsuario';
-import { ipUse } from '../config/ipConfig';
+import { ipUse } from '../../config/ipConfig';
+import Usuarios from './Usuarios';
 
 const ChatRoom = (props) => {
     const [idSala, setIdSala] = useState(props.salaConfig.id);
@@ -14,37 +15,46 @@ const ChatRoom = (props) => {
     const tokenUsuario = sessionStorage.getItem("token");
 
     const [usuarios, setUsuarios] = useState([]);
-    const [colorsUsed, setColorsUsed] = useState([]);
-
-    const [showAddUser, setShowAddUser] = useState(false);
 
     const [mensagemDigitada, setMensagemDigitada] = useState('');
     const [mensagens, setMensagens] = useState([]);
-    const [usuarioAnterior, setUsuarioAnterior] = useState(null);
+
+    const [showImage, setShowImage] = useState(false);
+    const [imagemClicada, setImagemClicada] = useState(false);
 
     const imagemSelecionada = useRef(null);
     const [previewImage, setPreviewImage] = useState(null);
 
     const chatContainer = useRef(null);
 
-    const [idsUsuariosOnline, setIdsUsuariosOnline] = useState({});
+    const [showRolar, setShowRolar] = useState(false);
 
 
     useEffect(() => {
         carregarUsuarios();
         carregarMensagens();
 
+        chatContainer.current.addEventListener("scroll", verificarRolar);
+
         socket.emit('joinRoom', room);
+
+
+        return () => {
+            chatContainer.current.removeEventListener("scroll", verificarRolar);
+        };
 
     }, [room]);
 
     const carregarMensagens = () => {
-        // Carregar mensagens anteriores
         axiosInstance.get("/chat/mensagem/" + idSala,
         ).then((res) => {
             res.data.forEach((msg) => {
                 msg.dtMensagem = formatarDataChat(msg.dtMensagem);
             });
+
+            setTimeout(() => {
+                chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
+            }, 100);
             setMensagens(res.data);
         }).catch((err) => {
             console.log(err);
@@ -55,41 +65,57 @@ const ChatRoom = (props) => {
         // Load users in the room
         axiosInstance.get("/chat/usuario/" + idSala,
         ).then((res) => {
-            const usuarios = res.data;
-            setUsuarios(usuarios);
 
-            atualizarCoresUsuarios();
+            const usuarios = res.data;
+
+            let colorUsed = []
+
+            usuarios.forEach((user) => {
+                if (colorUsed.length == 7) {
+                    colorUsed = [];
+                }
+
+                do {
+                    user.color = ramdonColor();
+                } while (colorUsed.includes(user.color));
+
+                colorUsed.push(user.color);
+
+                return user;
+            });
+
+            setUsuarios(usuarios);
 
         }).catch((err) => {
             console.log(err);
         });
     }
 
-    // useEfect usuarios carrgarONline
     useEffect(() => {
-        // Se não tiver socket, não faz nada
-        if (!socket) return;
-
-        //Entrar na sala
         socket.on('novaMensagem', novasMensagens);
-        socket.on('onlineUsers', usuariosOnline);
-
         return () => {
-            // Quando o componente for desmontado, remover os listeners
             socket.off('novaMensagem');
-            socket.off('onlineUsers');
         };
-    }, [socket]);
+    }, [usuarios]);
 
     const novasMensagens = (novaMensagem) => {
         if (novaMensagem.token == tokenUsuario) {
             novaMensagem.isRemetente = true;
         }
+
+        for (const user of usuarios) {
+            if (novaMensagem.idColor == user.id) {
+                novaMensagem.color = user.color;
+                break;
+            }
+        }
+
         delete novaMensagem.token;
 
-        novaMensagem.dtMensagem = formatarDataChat(novaMensagem.dtMensagem);
+        novaMensagem.dtMensagem = formatarDataChat(novaMensagem.dtMensagem)
 
         setMensagens((anteriores) => [...anteriores, novaMensagem]);
+
     };
 
     useEffect(() => {
@@ -97,54 +123,32 @@ const ChatRoom = (props) => {
             for (const user of usuarios) {
                 if (mensagem.idColor == user.id) {
                     mensagem.color = user.color;
+                    break;
                 }
             }
         }
 
         setTimeout(() => {
-            chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
+            if (chatContainer.current.scrollTop + chatContainer.current.clientHeight >= chatContainer.current.scrollHeight * 0.96) {
+                chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
+            }
+
         }, 100);
     }, [mensagens]);
 
-
-    const usuariosOnline = (idUsuariosOnline) => {
-
-        // Convert array to Set for faster lookup
-        const idSockerOnlineSet = new Set(idUsuariosOnline);
-
-        setIdsUsuariosOnline((idOnline) => {
-            let idsOnline = { ...idOnline };
-
-            // Set online users
-            idSockerOnlineSet.forEach((userId) => {
-                // no json, colocar [] é a mesma coisa que colocar ., mas pode ser usado quando o nome da propriedade tem espaço ou é um numero
-                idsOnline[userId] = true;
-            });
-
-            // Set offline users
-            for (let userId in idsOnline) {
-                // Quando percorre um json com for in, o valor da variavel é a chave, ou seja, o atributo, que sempre é uma string
-                if (!idSockerOnlineSet.has(parseInt(userId))) {
-                    idsOnline[userId] = false;
-                }
-            }
-
-            return idsOnline;
-        });
-    };
-
-
-
-    const atualizarCoresUsuarios = () => {
-        setUsuarios((anteriores) => {
-            const usuariosAtualizados = anteriores.map((user) => {
-                if (user.color) return user;
-                user.color = ramdonColor();
-                return user;
-            });
-            return usuariosAtualizados;
-        });
+    const rolarParaBaixo = () => {
+        chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
     }
+
+    const verificarRolar = () => {
+        const { scrollTop, clientHeight, scrollHeight } = chatContainer.current;
+
+        if (scrollTop + clientHeight >= scrollHeight * 0.96) {
+            setShowRolar(true);
+        } else {
+            setShowRolar(false);
+        }
+    };
 
     const enviarMensagem = (e) => {
         if (e.key !== 'Enter' && e.type != "click") return;
@@ -192,23 +196,10 @@ const ChatRoom = (props) => {
     }
 
     const ramdonColor = () => {
-        const colors = ["#ff5e00", "#189c18", "#0000ff", "#ff00d4", "#ff00ff", "#00a2ff", "#c30000"];
+        const colors = ["#ff5e00", "#1FD11F", "#0000ff", "#ff00d4", "#FF2D61", "#00a2ff", "#c30000"];
         const indexSorteado = Math.floor(Math.random() * colors.length);
         const corSorteada = colors[indexSorteado];
 
-        if (colorsUsed.length == colors.length) {
-            setColorsUsed([]);
-        }
-
-        if (colorsUsed.includes(corSorteada)) {
-            return ramdonColor();
-        }
-
-        if (colorsUsed.length == 0) {
-            setColorsUsed([corSorteada]);
-        }
-
-        setColorsUsed((anteriores) => [...anteriores, corSorteada]);
         return corSorteada;
     }
 
@@ -233,41 +224,57 @@ const ChatRoom = (props) => {
         imagemSelecionada.current.value = "";
     }
 
+    const verificarExibicaoNome = (index, msg) => {
+        if (index == 0 || msg.isRemetente) return null;
+
+        if (msg.nome == mensagens[index - 1].nome) return null;
+
+        return msg.nome;
+    }
+
+    const verImagem = (imagem) => {
+        setImagemClicada(`http://${ipUse}:8080/chat/imagem/${imagem}`);
+        setShowImage(true);
+    }
+
     return (
         <div className={styles.chatRoom}>
-            <div className={styles.usuarios}>
-                <div className={styles.listaUser}>
-                    {usuarios.map((user, index) => (
-                        <div className={styles.user} key={index}>
-                            <div className={styles.nomeUser}>{user.nome}</div>
-                            <div className={styles.statusUser} style={{ backgroundColor: idsUsuariosOnline[user.id] ? "#00ff00" : "#e73f5d" }}></div>
-                        </div>
-                    ))}
-                    <button className={styles.iconAddUser} onClick={() => setShowAddUser(true)}>+</button>
-                </div>
-            </div>
-
-            <AdicionarUsuario idSala={idSala} showAddUser={showAddUser} setShowAddUser={setShowAddUser}
-                carregarUsuarios={carregarUsuarios} />
+            <Usuarios usuarios={usuarios} socket={socket} carregarUsuarios={carregarUsuarios} idSala={idSala} room={room} />
 
             <div className={styles.mensagens} ref={chatContainer}>
                 {mensagens.map((msg, index) => (
-                    <div className={msg.isRemetente ? `${styles.mensagem} ${styles.remetente}` : styles.mensagem} key={index}>
-                        <div className={styles.nomeUsuarioMsg} style={{ color: msg.color }}>
-                            {!msg.isRemetente && msg.nome}
-                            <span className={styles.dtMensagem}>{msg.dtMensagem}</span>
-                        </div>
-                        <div className={styles.textMsg}>
-                            {msg.texto && msg.texto}
-                            {msg.srcImage &&
-                                <a href={`http://${ipUse}:8080/chat/imagem/${msg.srcImage}`}>
-                                    <img src={`http://${ipUse}:8080/chat/imagem/${msg.srcImage}`} alt="imagem" />
-                                </a>
-                            }
-                        </div>
+                    <div className={styles.mensagemContent} key={index}>
+                        {msg.isAddUser ? <div className={`${styles.mensagem} ${styles.isAddUser}`}><p>{msg.texto}</p></div> :
+                            <div className={msg.isRemetente ? `${styles.mensagem} ${styles.remetente}` : styles.mensagem} >
+                                <div className={styles.nomeUsuarioMsg} style={{ color: msg.color }}>
+                                    {verificarExibicaoNome(index, msg)}
+                                </div>
+                                <div className={styles.textMsg}>
+                                    {msg.texto && msg.texto}
+                                    {msg.srcImage &&
+                                        <button onClick={() => verImagem(msg.srcImage)}>
+                                            <img src={`http://${ipUse}:8080/chat/imagem/${msg.srcImage}`} alt="imagem" />
+                                        </button>
+                                    }
+                                    <span className={styles.dtMensagem}>{msg.dtMensagem}</span>
+                                </div>
+                            </div>
+                        }
                     </div>
                 ))}
+                <button style={showRolar ? { display: "none" } : null} className={styles.rolar} onClick={rolarParaBaixo}>
+                    {">"}
+                </button>
             </div>
+
+            {showImage &&
+                <div className={styles.verImagem}>
+                    <img src={imagemClicada} alt="" />
+                    <button onClick={() => { setImagemClicada(null); setShowImage(false) }}>
+                        X
+                    </button>
+                </div>
+            }
 
             {previewImage &&
                 <div className={styles.preview}>
