@@ -1,9 +1,10 @@
 import express from "express";
 import * as controller from "../controllers/usuarioController.mjs";
+import { upload } from "../utils/multerConfig.mjs";
 
 const userRouter = express.Router()
 
-userRouter.post("/", (req, res) => {
+userRouter.post("/", upload.single("perfilImage"), (req, res) => {
     controller.cadastrarUsuario(req, res);
 });
 
@@ -14,5 +15,9 @@ userRouter.post("/login", (req, res) => {
 userRouter.get("/verificar/:nome", (req, res) => {
     controller.verificarNome(req, res);
 });
+
+userRouter.get("/imagem/:nomeImagem", (req, res) => {
+    controller.buscarImagem(req, res);
+})
 
 export default userRouter;  

@@ -5,9 +5,14 @@ import moment from "moment";
 // o nome do arquivo é composto pela data e hora atual, e o nome original do arquivo
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
+        if (file.fieldname == "perfilImage") {
+            cb(null, "./public/perfil");
+            return;
+        }
         cb(null, "./public/uploads");
+
     }, filename: (req, file, cb) => {
-        cb(null, `${moment().format("YYYY-MM-DD-HH[h]-mm[m]-ss[s]")}-${file.originalname}`);
+        cb(null, `${moment().format("YYYY-MM-DD-HH[h]-mm[m]-ss[s]-SSS[ml]")}-${file.originalname}`);
     }
 });
 
@@ -28,3 +33,4 @@ export const filtro = (req, file, cb) => {
 // o upload recebe dois parametros, o primeiro é o storage, que é o local onde o arquivo será salvo	
 // e o segundo é o filtro, que é o tipo de arquivo que será aceito    
 export const upload = multer({ storage, filtro });
+

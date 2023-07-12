@@ -2,23 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../config/ipConfig";
 import styles from "./Salas.module.css";
-import AdicionarSala from "../components/AdicionarSala";
+import AdicionarSala from "../components/Salas/AdicionarSala";
 import ChatRoom from "../components/chatRoom/ChatRoom";
 import io from 'socket.io-client';
 import { ipUse } from '../config/ipConfig';
 
 
 function Salas() {
-    const navigator = useNavigate();
     const [salas, setSalas] = useState([]);
     const [token, setToken] = useState(sessionStorage.getItem("token"));
-    const [nome, setNome] = useState("");
-    const [identificador, setDescricao] = useState("");
-    const [senha, setSenha] = useState("");
     const [salaConfig, setSalaConfig] = useState(null);
     const [socket, setSocket] = useState(null);
 
-    const [salaSelecionada, setSalaSelecionada] = useState([]);
 
     useEffect(() => {
         axiosInstance.get("/chat/listar")
@@ -39,21 +34,6 @@ function Salas() {
             socket.disconnect();
         };
     }, []);
-
-    function adicionarSala() {
-        axiosInstance.post("/chat/sala",
-            {
-                nome: nome,
-                identificador: identificador,
-                senha: senha
-            })
-            .then((res) => {
-                console.log(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }
 
     function irParaSala(id, identificador, nome, index) {
         setSalaConfig({
@@ -85,7 +65,12 @@ function Salas() {
                     </div>
                     <div className={styles.linhaVertical}></div>
                     <div className={styles.chat}>
-                        {salaConfig ? <ChatRoom salaConfig={salaConfig} /> : "Selecione uma sala"}
+                        {salaConfig ? <ChatRoom salaConfig={salaConfig} /> :
+                            <div className={styles.bemvindo}>
+                                <h1>Bem-vindo(a) ao <span className={styles.logo}>Murilo<span>Chat!</span></span></h1>
+                                <p>Selecione uma sala para começar a conversar</p>
+                            </div>
+                        }
                     </div>
                 </div >
 

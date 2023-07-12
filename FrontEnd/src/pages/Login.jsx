@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../config/ipConfig";
 import styles from "./Login.module.css"
-import Modal from "../components/Modal";
+import Modal from "../components/modal/Modal";
 
 function Login() {
     const [login, setLogin] = useState('');
@@ -59,7 +59,7 @@ function Login() {
                 <h1>Login</h1>
                 <form className={styles.boxes} onSubmit={(e) => { logar(e) }}>
                     <div className={styles.box}>
-                        <label>Login</label>
+                        <label>Nome</label>
                         <input type="text" value={login} onChange={(e) => { setLogin(e.target.value) }} />
                     </div>
                     <div className={styles.box}>

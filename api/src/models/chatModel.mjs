@@ -31,7 +31,7 @@ export function listarChats(fkUsuario) {
 }
 
 export function listarMensagens(fkSala) {
-    let query = `select u.nome, m.texto, m.dtMensagem, m.fkUsuario, m.srcImage, m.isAddUser from Mensagem m JOIN Usuario u on m.fkUsuario = u.id where fkSala = ${fkSala} order by m.id`;
+    let query = `select u.nome, u.perfilSrc, m.texto, m.dtMensagem, m.fkUsuario, m.srcImage, m.isAddUser from Mensagem m JOIN Usuario u on m.fkUsuario = u.id where fkSala = ${fkSala} order by m.id`;
     return executar(query);
 }
 

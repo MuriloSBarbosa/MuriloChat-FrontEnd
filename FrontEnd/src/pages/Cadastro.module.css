@@ -1,0 +1,183 @@
+.cadastro {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #222;
+}
+
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    background-color: #29292e;
+    padding: 3rem 4rem;
+    width: 40vw;
+    height: 90vh;
+}
+
+.content .title {
+    color: var(--colorDefault);
+    font-size: 2rem;
+}
+
+
+.content .stepForm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+
+.steps {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+}
+
+.step {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    color: #a8a8b3;
+    font-weight: 500;
+    transition: 0.2s;
+    font-size: 0.9rem;
+    transition: 1s;
+}
+
+
+.step .circle {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: #a8a8b3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    color: #fff;
+    font-weight: 500;
+}
+
+@keyframes stepTransition {
+    from {
+        background: #a8a8b3;
+    }
+
+    to {
+        background: var(--colorDefault);
+    }
+
+}
+
+.step.active .circle {
+    animation: stepTransition 0.2s;
+    background: var(--colorDefault);
+}
+
+.step.active {
+    color: var(--colorDefault);
+}
+
+.stepForm {
+    height: 55vh;
+}
+
+.stepForm h1 {
+    color: #fff;
+    font-size: 1.3rem;
+}
+
+.boxes {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: max-content;
+    height: 100%;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    height: 100%;
+}
+
+.box label {
+    color: #9d9d9d;
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.box input {
+    width: 100%;
+    height: 2rem;
+    border-radius: 0.5rem;
+    border: 1px solid #a8a8b3;
+    padding: 0 1rem;
+    background: #fff;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    outline: none;
+}
+
+.box p {
+    color: #ff0000;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.box input:focus {
+    border: 1px solid var(--colorDefault);
+}
+
+.cadastro button {
+    align-self: center;
+    width: max-content;
+    padding: 0 2rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    border: 0;
+    background: var(--colorDefault);
+    color: #fff;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: 0.2s;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+
+.cadastro button:disabled {
+    background: #a8a8b3;
+    cursor: not-allowed;
+}
+
+.box button:hover {
+    filter: brightness(0.9);
+    transform: translateY(-2px);
+}
+
+.box button:active {
+    transform: translateY(0);
+}
+
+.buttons {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}

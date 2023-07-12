@@ -18,6 +18,7 @@ const ChatRoom = (props) => {
 
     const [mensagemDigitada, setMensagemDigitada] = useState('');
     const [mensagens, setMensagens] = useState([]);
+    const [perfilCache, setPerfilCache] = useState({});
 
     const [showImage, setShowImage] = useState(false);
     const [imagemClicada, setImagemClicada] = useState(false);
@@ -126,6 +127,12 @@ const ChatRoom = (props) => {
                     break;
                 }
             }
+
+            if (!mensagem.perfilSrc) {
+                mensagem.perfilSrc = "src/assets/default-avatar.jpg";
+            } else {
+                mensagem.perfilSrc = `http://${ipUse}:8080/usuario/imagem/${encodeURI(mensagem.perfilSrc)}`;
+            }
         }
 
         setTimeout(() => {
@@ -225,12 +232,20 @@ const ChatRoom = (props) => {
     }
 
     const verificarExibicaoNome = (index, msg) => {
-        if (index == 0 || msg.isRemetente) return null;
+        if (index === 0 || msg.isRemetente) return null;
 
-        if (msg.nome == mensagens[index - 1].nome) return null;
+        if (!mensagens[index - 1].isAddUser) {
+            if (msg.nome === mensagens[index - 1].nome) return null;
+        }
 
-        return msg.nome;
-    }
+        return (
+            <div className={styles.userContent}>
+                <img src={msg.perfilSrc} alt="Imagem de perfil" />
+                {msg.nome}
+            </div>
+        );
+    };
+
 
     const verImagem = (imagem) => {
         setImagemClicada(`http://${ipUse}:8080/chat/imagem/${imagem}`);

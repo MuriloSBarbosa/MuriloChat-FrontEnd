@@ -77,9 +77,26 @@
     color: var(--colorDefault);
 }
 
+.userContent {
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+}
+
+.userContent img {
+    position: absolute;
+    height: 2rem;
+    width: 2rem;
+    left: -2.5rem;
+    border-radius: 100%;
+    margin-right: 0.5rem;
+}
+
 .dtMensagem {
     font-size: 0.8rem;
-    color: #a8a8b3;
+    color: rgb(107, 107, 107);
     margin-top: 0.5rem;
 }
 
@@ -89,7 +106,7 @@
     color: #fff;
     padding: 0.5rem;
     max-width: 60%;
-    border-radius: 0.5rem;
+    border-radius: 0rem 0.5rem 0.5rem 0.5rem;
     display: flex;
     flex-direction: column;
 }
@@ -105,6 +122,11 @@
 .remetente .textMsg {
     background-color: #29292e;
     align-self: flex-end;
+    border-radius: 0.5rem;
+}
+
+.remetente .dtMensagem{
+    color: #a8a8b3;
 }
 
 .rolar {

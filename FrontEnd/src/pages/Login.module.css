@@ -4,7 +4,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: #f8f8f8;
+    background: #222;
 }
 
 .content {
@@ -14,12 +14,12 @@
     align-items: center;
     border-radius: 0.5rem;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    background: #fff;
+    background-color: #29292e;
     padding: 3rem 4rem;
 }
 
 .content h1 {
-    color: var(--colorDefault);;
+    color: var(--colorDefault);
     font-size: 2.5rem;
 }
 
@@ -44,7 +44,7 @@
 }
 
 .box label {
-    color: #5e5e61;
+    color: #9d9d9d;
     font-size: 1.125rem;
     font-weight: 500;
     margin-bottom: 0.5rem;
@@ -63,7 +63,8 @@
 }
 
 .box input:focus {
-    border: 1px solid var(--colorDefault);;
+    border: 1px solid var(--colorDefault);
+    ;
 }
 
 .box button {
@@ -73,7 +74,8 @@
     height: 2.5rem;
     border-radius: 0.5rem;
     border: 0;
-    background: var(--colorDefault);;
+    background: var(--colorDefault);
+    ;
     color: #fff;
     font-weight: 500;
     font-size: 1rem;
@@ -99,7 +101,8 @@
 }
 
 .box span {
-    color: var(--colorDefault);;
+    color: var(--colorDefault);
+    ;
     cursor: pointer;
     margin-left: 0.25rem;
     transition: 0.1s;

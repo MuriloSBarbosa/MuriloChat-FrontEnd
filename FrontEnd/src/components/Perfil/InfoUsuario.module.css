@@ -1,0 +1,155 @@
+.infoUsuario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    background-color: #29292e;
+}
+
+.infoUsuario button {
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.infoUsuario button:hover {
+    filter: brightness(0.8);
+}
+
+.infoUsuario h1 {
+    margin: 5rem 0;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--colorDefault);
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.content hr {
+    width: 1px;
+    height: 50vh;
+    background-color: #bababa;
+}
+
+.block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+}
+
+.block h2 {
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.fotoPerfil img {
+    border-radius: 50%;
+    width: 15vw;
+    object-fit: cover;
+}
+
+.fotoPerfil .buttons,
+.box .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.fotoPerfil .buttons button,
+.box .buttons button {
+    padding: 0.3rem 1rem;
+    border-radius: 5px;
+}
+
+.defaultEdit {
+    position: relative;
+}
+
+.fotoPerfil .editImage {
+    position: absolute;
+    bottom: 1rem;
+    right: 0;
+    background-color: transparent;
+    border: none;
+    height: max-content;
+    width: max-content;
+}
+
+.fotoPerfil button img {
+    border-radius: 0;
+    width: 2rem;
+    height: 2rem;
+}
+
+.cancelar {
+    background-color: #bababa;
+}
+
+.salvar {
+    background-color: #00e100;
+}
+
+
+.boxes {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    gap: 1rem;
+    padding: 1rem 4rem;
+}
+
+.box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+}
+
+.box h2 {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.box p {
+    color: #ff0000;
+}
+
+.box input {
+    width: 80%;
+    padding: 2px 10px;
+}
+
+.box .editIcon {
+    position: absolute;
+    bottom: 17px;
+    right: 2rem;
+    background-color: transparent;
+    border: none;
+}
+
+.box button img {
+    border-radius: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+
+.box .mudarSenha {
+    padding: 0.3rem 1rem;
+    border-radius: 5px;
+    background-color: var(--colorDefault);
+}

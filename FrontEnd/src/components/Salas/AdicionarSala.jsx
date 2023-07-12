@@ -1,7 +1,23 @@
 import React from "react";
+import axiosInstance from "../../config/ipConfig";
 
 
 function AdicionarSala() {
+    function adicionarSala() {
+        axiosInstance.post("/chat/sala",
+            {
+                nome: nome,
+                identificador: identificador,
+                senha: senha
+            })
+            .then((res) => {
+                console.log(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+
     return (
         <div>
             <button>Adicionar Sala</button>
