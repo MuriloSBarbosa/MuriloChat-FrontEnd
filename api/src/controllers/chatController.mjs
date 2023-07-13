@@ -45,7 +45,7 @@ export async function inserirUser(req, res) {
         servidorIo.to(Number(room)).emit('addUser');
         servidorIo.to(Number(room)).emit('novaMensagem', mensagem);
 
-        const salvarMensagem = await model.inserirMensagem(idUser, idSala, mensagem.texto, dtAdd, true);
+        await model.inserirMensagem(idUser, idSala, mensagem.texto, dtAdd, true);
 
         return res.status(201).send("Chat cadastrado com sucesso!");
     } catch (erro) {

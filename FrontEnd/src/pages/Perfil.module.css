@@ -1,6 +1,5 @@
 .perfil {
     display: flex;
-    flex-direction: row;
     justify-content: flex-start;
     width: 100vw;
     height: 100vh;
@@ -8,6 +7,7 @@
 
 .menu {
     display: flex;
+    position: relative;
     flex-direction: column;
     justify-content: flex-start;
     gap: 2rem;
@@ -24,8 +24,17 @@
     font-size: 2.5rem;
 }
 
+.menuList {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
 .menuItem {
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: space-between;
     height: 3rem;
@@ -52,5 +61,33 @@
 }
 
 .conteudo {
-    width: 70vw;
+    width: 80vw;
+}
+
+.menu button {
+    position: absolute;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    transition: 0.2s;
+}
+
+
+.menu button:hover {
+    filter: brightness(0.8);
+}
+
+.menu button img {
+    width: 2rem;
+    height: 2rem;
+}
+
+.voltarImg {
+    top: 1rem;
+    right: 1rem;
+}
+
+.logout {
+    top: 1rem;
+    left: 1rem;
 }

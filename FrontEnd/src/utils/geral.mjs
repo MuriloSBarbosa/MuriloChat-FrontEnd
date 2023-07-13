@@ -1,8 +1,12 @@
 import moment from "moment-timezone";
 
+export function deslogar() {
+    sessionStorage.removeItem("token");
+    window.location.reload();
+}
+
 export const formatarDataChat = (data) => {
     let dtMensagem = moment(data).tz("America/Sao_Paulo").format("DD/MM/YYYY");
-
     if (moment().tz("America/Sao_Paulo").format("DD/MM/YYYY") == dtMensagem) {
         dtMensagem = "Hoje, às " + moment(data).tz("America/Sao_Paulo").format("HH:mm");
     } else {
@@ -23,3 +27,4 @@ export const dataURLtoFile = (dataurl, filename) => {
 
     return new File([u8arr], filename, { type: mime });
 }
+

@@ -10,13 +10,10 @@ export default async function socketConfig(socketUser) {
     // Evento para entrar em uma sala
     socketUser.on('joinRoom', (room) => {
         socketUser.join(room);
-        console.log("joinRoom");
-        console.log(`Cliente ${socketUser.id} entrou na sala: ${room}`);
         servidorIo.emit("onlineUsers", mapearId(onlineUsers))
     });
 
     socketUser.on('carregarOnline', () => {
-        console.log("carregarOnline");
         servidorIo.emit("onlineUsers", mapearId(onlineUsers))
     });
 
@@ -26,7 +23,6 @@ export default async function socketConfig(socketUser) {
 
     socketUser.on('leaveRoom', (room) => {
         socketUser.leave(room);
-        console.log(`Cliente saiu da sala: ${room}`);
     });
 }
 
@@ -43,10 +39,19 @@ async function enviarMensagem(mensagem) {
         const idUsuario = tokenDecoded.id;
         const nome = tokenDecoded.nome;
         const perfilSrc = tokenDecoded.perfilSrc;
-
-        servidorIo.to(room).emit('novaMensagem', { nome, texto: mensagemDigitada, token: tokenUsuario, idColor: idUsuario, perfilSrc });
-
         const dtAgora = moment().tz('America/Sao_Paulo').format('YYYY-MM-DD HH:mm:ss');
+
+        const novaMensagem = {
+            nome,
+            texto: mensagemDigitada,
+            token: tokenUsuario,
+            idColor: idUsuario,
+            perfilSrc: perfilSrc,
+            dtMensagem: dtAgora
+        }
+
+        servidorIo.to(room).emit('novaMensagem', novaMensagem);
+
 
         await modelChat.inserirMensagem(idUsuario, idSala, mensagemDigitada, dtAgora);
 
@@ -71,8 +76,6 @@ export async function setarOnline(socketUser) {
             onlineUsers.push({ idUser: tokenDecoded.id, idSocket: socketUser.id });
         }
 
-        console.log("Usuários online:", onlineUsers);
-
     } catch (error) {
         console.error(error);
     }
@@ -95,7 +98,6 @@ export async function desconectar(socketUser) {
             onlineUsers.splice(index, 1);
         }
 
-        console.log("Usuários online:", onlineUsers);
     } catch (error) {
         console.error(error);
     }

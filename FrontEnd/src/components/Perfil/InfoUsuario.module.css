@@ -1,4 +1,5 @@
 .infoUsuario {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -152,4 +153,68 @@
     padding: 0.3rem 1rem;
     border-radius: 5px;
     background-color: var(--colorDefault);
+}
+
+.modalSenha {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #00000080;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    width: 30%;
+    padding: 2rem 1rem;
+    background-color: #29292e;
+    color: #fff;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.modal h2 {
+    font-size: 1.5rem;
+}
+
+.modal .boxes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 1rem;
+}
+
+.modal .box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.modal .box label {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.modal .box input {
+    width: 100%;
+    padding: 2px 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+.modal .box .buttons{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 1rem;
 }

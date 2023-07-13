@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../config/ipConfig";
 import styles from "./Login.module.css"
-import Modal from "../components/modal/Modal";
+import Modal from "../components/Modal/Modal.jsx";
 
 function Login() {
     const [login, setLogin] = useState('');
@@ -25,27 +25,20 @@ function Login() {
             senha: senha
         }).then((response) => {
             if (response.status === 200) {
-                setModal({
-                    title: 'Sucesso',
-                    text: 'Redirecionando...'
-                });
-                sessionStorage.setItem('token', response.data);
 
-                setTimeout(() => {
-                    navigate('/salas');
-                }, time);
+                sessionStorage.setItem('token', response.data);
+                navigate('/salas');
             } else {
                 setModal({
                     title: 'Erro',
-                    text: 'Login ou senha incorretos'
+                    text: 'Login e/ou senha incorretos'
                 });
-                console.log("Erro ao logar");
+                setShowModal(true);
             }
-            setShowModal(true);
         }).catch((error) => {
             setModal({
-                title: 'Erro',
-                text: 'Login ou senha incorretos'
+                title: 'Erro ao fazer login',
+                text: 'Login e/ou senha incorretos'
             });
             console.log(error);
         });

@@ -35,14 +35,11 @@ export const servidorIo = new Server(server, {
 
 servidorIo.on('connection', async (socketUser) => {
 
-  console.log('Novo usuário conectado:', socketUser.id);
-
   servidorIo.emit("onlineUsers", await setarOnline(socketUser));
 
   await socketConfig(socketUser);
 
   socketUser.on('disconnect', async () => {
     servidorIo.emit("onlineUsers", await desconectar(socketUser));
-    console.log('Usuário desconectado:', socketUser.id);
   });
 });

@@ -15,3 +15,28 @@ export function verificarNome(nome) {
     return executar(query);
 }
 
+export function alterarImagem(id, nome) {
+    let query = `update Usuario set perfilSrc = ${nome ? `'${nome}'` : null} where id = ${id};`;
+    return executar(query);
+}
+
+export function alterarNome(id, nome) {
+    let query = `update Usuario set nome = '${nome}' where id = ${id};`;
+    return executar(query);
+}
+
+export function verificarSenha(id, senha) {
+    let query = `select * from Usuario where id = ${id} and senha = '${senha}'`;
+    return executar(query);
+}
+
+export function alterarSenha(id, senha) {
+    let query = `update Usuario set senha = '${senha}' where id = ${id};`;
+    return executar(query);
+}
+
+export function atualizarToken(id) {
+    let query = `select * from Usuario where id = ${id}`;
+    return executar(query);
+
+}

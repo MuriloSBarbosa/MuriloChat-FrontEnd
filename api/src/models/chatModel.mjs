@@ -21,7 +21,7 @@ export function inserirMensagem(idUsuario, idSala, mensagem, dtAgora, isAddUser)
 }
 
 export function inserirMensagemImagem(idUsuario, idSala, srcImage, dtAgora) {
-    let query = `INSERT INTO Mensagem values (null,${idUsuario},${idSala},null,'${dtAgora}','${srcImage}')`;
+    let query = `INSERT INTO Mensagem values (null,${idUsuario},${idSala},null,'${dtAgora}','${srcImage}',0)`;
     return executar(query);
 }
 

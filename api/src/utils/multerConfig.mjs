@@ -33,4 +33,3 @@ export const filtro = (req, file, cb) => {
 // o upload recebe dois parametros, o primeiro é o storage, que é o local onde o arquivo será salvo	
 // e o segundo é o filtro, que é o tipo de arquivo que será aceito    
 export const upload = multer({ storage, filtro });
-

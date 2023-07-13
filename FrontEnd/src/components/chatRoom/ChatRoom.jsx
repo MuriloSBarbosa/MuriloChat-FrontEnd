@@ -7,6 +7,7 @@ import { formatarDataChat } from '../../utils/geral.mjs';
 import AdicionarUsuario from './AdicionarUsuario';
 import { ipUse } from '../../config/ipConfig';
 import Usuarios from './Usuarios';
+import Resizer from 'react-image-file-resizer';
 
 const ChatRoom = (props) => {
     const [idSala, setIdSala] = useState(props.salaConfig.id);
@@ -33,37 +34,14 @@ const ChatRoom = (props) => {
 
     useEffect(() => {
         carregarUsuarios();
-        carregarMensagens();
 
         chatContainer.current.addEventListener("scroll", verificarRolar);
 
         socket.emit('joinRoom', room);
 
-
-        return () => {
-            chatContainer.current.removeEventListener("scroll", verificarRolar);
-        };
-
     }, [room]);
 
-    const carregarMensagens = () => {
-        axiosInstance.get("/chat/mensagem/" + idSala,
-        ).then((res) => {
-            res.data.forEach((msg) => {
-                msg.dtMensagem = formatarDataChat(msg.dtMensagem);
-            });
-
-            setTimeout(() => {
-                chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
-            }, 100);
-            setMensagens(res.data);
-        }).catch((err) => {
-            console.log(err);
-        })
-    }
-
     const carregarUsuarios = () => {
-        // Load users in the room
         axiosInstance.get("/chat/usuario/" + idSala,
         ).then((res) => {
 
@@ -92,8 +70,25 @@ const ChatRoom = (props) => {
         });
     }
 
+    const carregarMensagens = () => {
+        axiosInstance.get("/chat/mensagem/" + idSala,
+        ).then((res) => {
+            res.data.forEach((msg) => {
+                msg = formatarMensagens(msg);
+            });
+
+            setTimeout(() => {
+                chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
+            }, 100);
+            setMensagens(res.data);
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+
     useEffect(() => {
         socket.on('novaMensagem', novasMensagens);
+        carregarMensagens();
         return () => {
             socket.off('novaMensagem');
         };
@@ -103,38 +98,34 @@ const ChatRoom = (props) => {
         if (novaMensagem.token == tokenUsuario) {
             novaMensagem.isRemetente = true;
         }
-
-        for (const user of usuarios) {
-            if (novaMensagem.idColor == user.id) {
-                novaMensagem.color = user.color;
-                break;
-            }
-        }
-
         delete novaMensagem.token;
 
-        novaMensagem.dtMensagem = formatarDataChat(novaMensagem.dtMensagem)
+        novaMensagem = formatarMensagens(novaMensagem);
 
         setMensagens((anteriores) => [...anteriores, novaMensagem]);
 
     };
 
-    useEffect(() => {
-        for (const mensagem of mensagens) {
-            for (const user of usuarios) {
-                if (mensagem.idColor == user.id) {
-                    mensagem.color = user.color;
-                    break;
-                }
-            }
-
-            if (!mensagem.perfilSrc) {
-                mensagem.perfilSrc = "src/assets/default-avatar.jpg";
-            } else {
-                mensagem.perfilSrc = `http://${ipUse}:8080/usuario/imagem/${encodeURI(mensagem.perfilSrc)}`;
+    const formatarMensagens = (mensagem) => {
+        for (const user of usuarios) {
+            if (mensagem.idColor == user.id) {
+                mensagem.color = user.color;
+                break;
             }
         }
 
+        if (!mensagem.perfilSrc) {
+            mensagem.perfilSrc = "src/assets/default-avatar.jpg";
+        } else if (mensagem.perfilSrc) {
+            mensagem.perfilSrc = `http://${ipUse}:8080/usuario/imagem/${encodeURI(mensagem.perfilSrc)}`;
+        }
+
+        mensagem.dtMensagem = formatarDataChat(mensagem.dtMensagem)
+
+        return mensagem;
+    }
+
+    useEffect(() => {
         setTimeout(() => {
             if (chatContainer.current.scrollTop + chatContainer.current.clientHeight >= chatContainer.current.scrollHeight * 0.96) {
                 chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
@@ -186,21 +177,32 @@ const ChatRoom = (props) => {
         const formData = new FormData();
         const dtMensagem = moment().tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ss");
 
-        formData.append('chatImage', file);
-        formData.append("room", room);
-        formData.append("dtMensagem", dtMensagem);
+        Resizer.imageFileResizer(
+            file,
+            800, // Largura máxima desejada
+            800, // Altura máxima desejada
+            'JPEG', // Formato da imagem de saída (pode ser 'JPEG', 'PNG', 'WEBP', etc.)
+            70, // Qualidade da imagem (0-100)
+            0, // Rotação da imagem (em graus, 0 = sem rotação)
+            (blob) => {
+                // O redimensionamento e compressão foram concluídos, o blob contém a nova imagem
+                formData.append('chatImage', blob);
+                formData.append("room", room);
+                formData.append("dtMensagem", dtMensagem);
 
-        axiosInstance.post(`/chat/mensagem/imagem/${idSala}`, formData, {
-            headers: {
-                "Content-Type": "multipart/form-data"
-            }
-        }).then((res) => {
-            cancelarImagem();
-        }).catch((err) => {
-            console.log(err);
-        });
-
-    }
+                axiosInstance.post(`/chat/mensagem/imagem/${idSala}`, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
+                }).then((res) => {
+                    cancelarImagem();
+                }).catch((err) => {
+                    console.log(err);
+                });
+            },
+            'blob' // Tipo de saída, 'blob' retorna um objeto Blob
+        );
+    };
 
     const ramdonColor = () => {
         const colors = ["#ff5e00", "#1FD11F", "#0000ff", "#ff00d4", "#FF2D61", "#00a2ff", "#c30000"];
@@ -216,15 +218,26 @@ const ChatRoom = (props) => {
         if (!image) return;
 
         try {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreviewImage(reader.result);
-            };
-            reader.readAsDataURL(image);
+            Resizer.imageFileResizer(
+                image,
+                800, // Largura máxima desejada
+                800, // Altura máxima desejada
+                'JPEG', // Formato da imagem de saída (pode ser 'JPEG', 'PNG', 'WEBP', etc.)
+                70, // Qualidade da imagem (0-100)
+                0, // Rotação da imagem (em graus, 0 = sem rotação)
+                (resizedImage) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        setPreviewImage(reader.result);
+                    };
+                    reader.readAsDataURL(resizedImage);
+                },
+                'blob' // Tipo de saída, 'blob' retorna um objeto Blob
+            );
         } catch (err) {
             alert("Erro ao carregar imagem");
         }
-    }
+    };
 
     const cancelarImagem = () => {
         setPreviewImage(null);
@@ -245,7 +258,6 @@ const ChatRoom = (props) => {
             </div>
         );
     };
-
 
     const verImagem = (imagem) => {
         setImagemClicada(`http://${ipUse}:8080/chat/imagem/${imagem}`);

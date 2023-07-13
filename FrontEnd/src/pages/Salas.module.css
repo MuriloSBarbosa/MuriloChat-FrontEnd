@@ -10,6 +10,7 @@
 
 .contentListaSalas {
     display: flex;
+    position: relative;
     flex-direction: column;
     justify-content: flex-start;
     gap: 2rem;
@@ -69,13 +70,11 @@
 }
 
 .chat {
-    width: 70vw;
-    height: 100%;
+    width: 80vw;
+    height: 100vh;
     display: flex;
     position: relative;
     flex-direction: column;
-    height: 100vh;
-    width: 100%;
 }
 
 .bemvindo {
@@ -104,4 +103,26 @@
 
 .bemvindo .logo span {
     color: #FFFF;
+}
+
+.contentListaSalas button {
+    position: absolute;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    transition: 0.2s;
+}
+
+.contentListaSalas button:hover {
+    filter: brightness(0.8);
+}
+
+.config {
+    right: 1rem;
+    top: 1rem;
+}
+
+.logout {
+    left: 1rem;
+    top: 1rem;
 }
