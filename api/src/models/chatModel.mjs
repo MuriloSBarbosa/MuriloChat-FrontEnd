@@ -1,7 +1,7 @@
 import executar from "../config/DataBase.mjs";
 
-export function cadastrarSala(nome, identificador, senha) {
-    let query = `insert into Sala values (null,'${nome}' ,'${identificador}','${senha}')`;
+export function cadastrarSala(nome, identificador) {
+    let query = `insert into Sala values (null,'${nome}' ,'${identificador}')`;
     return executar(query);
 }
 

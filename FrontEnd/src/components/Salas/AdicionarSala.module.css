@@ -1,0 +1,81 @@
+.adicionarSala {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 27vw;
+    background-color: rgba(0, 0, 0, 0.684);
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background-color: #29292e;
+    color: #fff;
+    height: 30%;
+    width: 90%;
+}
+
+.title {
+    font-size: 1.5rem;
+}
+
+.box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    margin-top: 1rem;
+    gap: 0.5rem;
+    width: 70%;
+}
+
+.box label {
+    font-size: 1rem;
+}
+
+.box input {
+    width: 100%;
+    height: 2rem;
+    border-radius: 5px;
+    border: 1px solid #a8a8b3;
+    padding: 10px 10px;
+}
+
+.salaCriada {
+    color: rgb(0, 198, 0);
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    width: 100%;
+}
+
+.buttons button {
+    position: static;
+    width: 30%;
+    border-radius: 5px;
+    border: 0;
+    background-color: #835afd;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1rem;
+    margin-top: 2rem;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.cancelar {
+    background-color: #767676 !important;
+}

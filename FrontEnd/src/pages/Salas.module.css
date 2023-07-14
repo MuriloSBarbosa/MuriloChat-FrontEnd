@@ -12,27 +12,101 @@
     display: flex;
     position: relative;
     flex-direction: column;
-    justify-content: flex-start;
-    gap: 2rem;
-    background-color: #222;
+    justify-content: center;
     align-items: center;
+    background-color: #222;
     width: 30vw;
     height: 100vh;
     overflow-y: auto;
-    padding-top: 5rem;
+    padding-top: 3rem;
 }
 
-.contentListaSalas h1 {
-    color: #FFFF;
-    font-size: 2.5rem;
+.contentListaSalas {
+    position: relative;
 }
 
-.listaSalas {
+.config {
+    width: 2.5rem;
+    right: 1rem;
+    top: 1rem;
+}
+
+.logout {
+    width: 2.5rem;
+    left: 1rem;
+    top: 1rem;
+}
+
+.contentListaSalas .title {
+    position: relative;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.contentListaSalas .title h1 {
+    color: #FFFF;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.contentListaSalas .title .adicionarSala {
+    position: static;
+    cursor: pointer;
+    color: #fff;
+    border: 2px solid #fff;
+    height: 1.7rem;
+    width: 1.7rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pesquisar {
+    display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
+    margin: 2rem 0;
+}
+
+.pesquisar input {
+    width: 85%;
+    padding: 0.3rem 1rem;
+    border: 1px solid #fff;
+    background-color: #29292e;
+    filter: brightness(1.4);
+    color: #fff;
+}
+
+.adicionarSala p {
+    font-size: 1.7rem;
+    font-weight: 200;
+}
+
+.listaSalas {
+    width: 100%;
+    height: 75%;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.3rem;
+}
+
+.listaSalas::-webkit-scrollbar {
+    width: 0.5rem;
+}
+
+.listaSalas::-webkit-scrollbar-track {
+    background: #353535;
+}
+
+.listaSalas::-webkit-scrollbar-thumb {
+    background: #191919;
 }
 
 .itemSala {
@@ -40,19 +114,19 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    height: 3rem;
     width: 90%;
     border-radius: 0.5rem;
-    border: 1px solid #a8a8b3;
-    padding: 0 1rem;
+    border: 1px solid #fff;
+    padding: 0.6rem 1rem;
     margin-bottom: 1rem;
-    background: #fff;
+    background: #222;
+    color: #FFFF;
     cursor: pointer;
     transition: 0.2s;
 }
 
 .itemSala:hover {
-    background: #d8a5ff;
+    background: #29292e;
 }
 
 .selecionada {
@@ -115,14 +189,4 @@
 
 .contentListaSalas button:hover {
     filter: brightness(0.8);
-}
-
-.config {
-    right: 1rem;
-    top: 1rem;
-}
-
-.logout {
-    left: 1rem;
-    top: 1rem;
 }

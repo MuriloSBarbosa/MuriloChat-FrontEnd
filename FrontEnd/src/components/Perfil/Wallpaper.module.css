@@ -1,0 +1,134 @@
+.wallpaper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2rem;
+    width: 100%;
+    height: 100vh;
+    background-color: #29292e;
+}
+
+.wallpaper button {
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.wallpaper button:hover {
+    filter: brightness(0.8);
+}
+
+.title h2 {
+    font-size: 2rem;
+    color: var(--colorDefault);
+    margin-top: 4rem;
+}
+
+.previewImg {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    height: 50vh;
+    width: 40vw;
+    border-radius: 0.5rem;
+}
+
+.previewImg img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.5rem;
+    object-fit: cover;
+}
+
+.previewMensagens {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-around;
+    width: 100%;
+    height: 100%;
+    padding: 0 2rem;
+    border-radius: 0.5rem;
+    z-index: 1;
+}
+
+.mensagem {
+    position: relative;
+    padding: 1rem 2rem;
+    background-color: var(--colorDefault);
+    border-radius: 0 0.5rem 0 0;
+}
+
+.mensagem::before {
+    content: 'Hello!';
+    color: #fff;
+    position: absolute;
+    font-size: 0.6rem;
+    left: 10%;
+    top: 30%;
+}
+
+.mensagem.rigth {
+    background-color: #000;
+    align-self: flex-end;
+    border-radius: 0.5rem;
+}
+
+.mensagem.rigth::before {
+    content: 'Hi!';
+}
+
+.editButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.editButton label {
+    color: #000;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    background-color: var(--colorDefault);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.editButton label:hover {
+    filter: brightness(0.8);
+}
+
+.editButton input {
+    display: none;
+}
+
+.editButton button {
+
+    color: #000;
+    font-size: 1rem;
+    padding: 0.3rem 1rem;
+    border-radius: 0.5rem;
+    background-color: #7f7f7f;
+}
+
+.editLuminosidade {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.editLuminosidade label {
+    color: #fff;
+    font-size: 1.2rem
+}
+
+.editLuminosidade input {
+    width: 20vw;
+}

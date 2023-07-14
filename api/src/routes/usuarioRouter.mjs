@@ -45,4 +45,25 @@ userRouter.patch("/imagem/remover", autenticarTokenUsuario, (req, res) => {
     controller.removerImagem(req, res);
 })
 
+userRouter.get("/wallpaper", autenticarTokenUsuario, (req, res) => {
+    const wallpaper = req.usuario.wallpaperSrc;
+    const luminosidade = req.usuario.wallpaperLuminosidade;
+    res.send({ wallpaper, luminosidade });
+})
+userRouter.get("/wallpaper/:wallpaperSrc", (req, res) => {
+    controller.buscarWallpaper(req, res);
+})
+
+userRouter.patch("/wallpaper", autenticarTokenUsuario, upload.single("wallpaperImage"), (req, res) => {
+    controller.alterarWallpaper(req, res);
+})
+
+userRouter.patch("/wallpaper/remover", autenticarTokenUsuario, (req, res) => {
+    controller.removerWallpaper(req, res);
+})
+
+userRouter.patch("/wallpaper/luminosidade", autenticarTokenUsuario, (req, res) => {
+    controller.alterarLuminosidade(req, res);
+})
+
 export default userRouter;  

@@ -3,17 +3,38 @@ import { servidorIo } from "../../app.mjs";
 import path from "path";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import moment from "moment-timezone";
 
 const moduleURL = new URL(import.meta.url);
 const modulePath = dirname(fileURLToPath(moduleURL));
 
 
 export async function criarSala(req, res) {
-    let { identificador, nome, senha } = req.body;
+    let { identificador, nome } = req.body;
+    let { id: idUsuario, nome: nomeUser } = req.usuario;
+    let { tokenUsuario } = req.headers.authorization.split(" ")[1];
+    identificador = decodeURI(identificador);
+
     try {
-        const sala = await model.cadastrarSala(nome, identificador, senha);
-        await model.inserirChat(sala.insertId, req.usuario.id);
-        res.status(201).send("Chat cadastrado com sucesso!");
+        const sala = await model.cadastrarSala(nome, identificador);
+        await model.inserirUser(sala.insertId, idUsuario);
+
+        const mensagem = {
+            idSala: sala.insertId,
+            room: identificador,
+            texto: `${nomeUser} criou o chat`,
+            tokenUsuario,
+            isAddUser: true
+        };
+
+        const dtAdd = moment().tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ss");
+
+        servidorIo.to(Number(identificador)).emit('addUser');
+        servidorIo.to(Number(identificador)).emit('novaMensagem', mensagem);
+
+        await model.inserirMensagem(idUsuario, sala.insertId, mensagem.texto, dtAdd, true);
+
+        res.status(201).json({ idSala: sala.insertId, identificador });
     } catch (erro) {
         res.status(500).send("Erro ao cadastrar Chat: " + erro);
     }
@@ -117,8 +138,7 @@ export function inserirMensagemImagem(req, res) {
         dtMensagem
     }
 
-    servidorIo.to(Number(room)).emit('novaMensagem', mensagem);
-
+    servidorIo.to(decodeURI(room)).emit('novaMensagem', mensagem);
 
     model.inserirMensagemImagem(id, fkSala, srcImage, dtMensagem)
         .then(() => {
@@ -137,3 +157,4 @@ export function buscarImagem(req, res) {
 
     return res.sendFile(caminho, { headers: { 'Content-Type': 'image/jpeg' } });
 }
+

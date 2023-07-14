@@ -1,7 +1,7 @@
 import executar from "../config/DataBase.mjs";
 
 export function cadastrarUsuario(nome, senha, perfilSrc) {
-    let query = `insert into Usuario values (null,'${nome}','${senha}', '${perfilSrc}')`;
+    let query = `insert into Usuario values (null,'${nome}','${senha}', '${perfilSrc}', null, 100)`;
     return executar(query);
 }
 
@@ -38,5 +38,19 @@ export function alterarSenha(id, senha) {
 export function atualizarToken(id) {
     let query = `select * from Usuario where id = ${id}`;
     return executar(query);
+}
 
+export function alterarWallpaper(id, nome) {
+    let query = `update Usuario set wallpaperSrc = '${nome}' where id = ${id};`;
+    return executar(query);
+}
+
+export function removerWallpaper(id) {
+    let query = `update Usuario set wallpaperSrc = null, wallpaperLuminosidade = 100 where id = ${id};`;
+    return executar(query);
+}
+
+export function alterarLuminosidade(id, luminosidade) {
+    let query = `update Usuario set wallpaperLuminosidade = ${luminosidade} where id = ${id};`;
+    return executar(query);
 }

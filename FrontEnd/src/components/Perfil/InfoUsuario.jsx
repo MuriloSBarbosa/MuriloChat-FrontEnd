@@ -173,7 +173,6 @@ const InfoUsuario = () => {
         setNomeIndiponivel(false); setNomeEdit(nome)
     }
 
-
     const confirmaSenhaAntiga = async () => {
         let senha = senhaAntiga.trim();
         return axiosInstance.get(`/usuario/verificarSenha/${senha}`

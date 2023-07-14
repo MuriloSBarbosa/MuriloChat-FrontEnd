@@ -5,7 +5,9 @@ export function gerarTokenUsuario(usuario) {
         id: usuario.id,
         nome: usuario.nome,
         login: usuario.login,
-        perfilSrc: usuario.perfilSrc
+        perfilSrc: usuario.perfilSrc,
+        wallpaperSrc: usuario.wallpaperSrc,
+        wallpaperLuminosidade: usuario.wallpaperLuminosidade
     };
 
     const token = jwt.sign(payload, "tokenUserChatMurilo", { expiresIn: '1d' });

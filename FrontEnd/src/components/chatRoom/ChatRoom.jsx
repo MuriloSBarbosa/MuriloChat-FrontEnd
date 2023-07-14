@@ -4,22 +4,22 @@ import styles from "./ChatRoom.module.css";
 import moment from "moment-timezone"
 import anexos from "../../assets/anexos.png";
 import { formatarDataChat } from '../../utils/geral.mjs';
-import AdicionarUsuario from './AdicionarUsuario';
 import { ipUse } from '../../config/ipConfig';
 import Usuarios from './Usuarios';
 import Resizer from 'react-image-file-resizer';
+import arrow from "../../assets/arrow.png";
+import WallpaperImage from "../../assets/wallpaper-default.jpg";
 
 const ChatRoom = (props) => {
     const [idSala, setIdSala] = useState(props.salaConfig.id);
     const [room, setRoom] = useState(props.salaConfig.identificador);
-    const socket = props.salaConfig.socket;
+    const [socket, setSocket] = useState(props.salaConfig.socket);
     const tokenUsuario = sessionStorage.getItem("token");
 
     const [usuarios, setUsuarios] = useState([]);
 
     const [mensagemDigitada, setMensagemDigitada] = useState('');
     const [mensagens, setMensagens] = useState([]);
-    const [perfilCache, setPerfilCache] = useState({});
 
     const [showImage, setShowImage] = useState(false);
     const [imagemClicada, setImagemClicada] = useState(false);
@@ -28,18 +28,42 @@ const ChatRoom = (props) => {
     const [previewImage, setPreviewImage] = useState(null);
 
     const chatContainer = useRef(null);
+    const chatBg = useRef(null);
 
     const [showRolar, setShowRolar] = useState(false);
+
+    useEffect(() => {
+        setIdSala(props.salaConfig.id);
+        setRoom(props.salaConfig.identificador);
+    }, [props.salaConfig]);
 
 
     useEffect(() => {
         carregarUsuarios();
+        buscarWallpaper();
 
         chatContainer.current.addEventListener("scroll", verificarRolar);
 
         socket.emit('joinRoom', room);
 
     }, [room]);
+
+    const buscarWallpaper = () => {
+        axiosInstance.get('/usuario/wallpaper',)
+            .then((response) => {
+                let wallpaperSrc = response.data.wallpaper;
+                let luminosidade = response.data.luminosidade;
+                if (wallpaperSrc) {
+                    wallpaperSrc = `http://${ipUse}:8080/usuario/wallpaper/${encodeURI(wallpaperSrc)}`;
+                    chatBg.current.src = wallpaperSrc;
+                } else {
+                    chatBg.current.src = WallpaperImage;
+                }
+                chatBg.current.style.filter = `brightness(${luminosidade}%)`;
+            }).catch((error) => {
+                console.log(error);
+            });
+    }
 
     const carregarUsuarios = () => {
         axiosInstance.get("/chat/usuario/" + idSala,
@@ -127,21 +151,28 @@ const ChatRoom = (props) => {
 
     useEffect(() => {
         setTimeout(() => {
-            if (chatContainer.current.scrollTop + chatContainer.current.clientHeight >= chatContainer.current.scrollHeight * 0.96) {
+
+            if (verificarScroll()) {
                 chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
             }
 
-        }, 100);
+        }, 200);
     }, [mensagens]);
 
     const rolarParaBaixo = () => {
         chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
     }
 
-    const verificarRolar = () => {
+    const verificarScroll = () => {
         const { scrollTop, clientHeight, scrollHeight } = chatContainer.current;
+        if (scrollTop + clientHeight >= scrollHeight - 150) {
+            return true;
+        }
+        return false;
+    }
+    const verificarRolar = () => {
 
-        if (scrollTop + clientHeight >= scrollHeight * 0.96) {
+        if (verificarScroll()) {
             setShowRolar(true);
         } else {
             setShowRolar(false);
@@ -157,7 +188,7 @@ const ChatRoom = (props) => {
 
         const mensagem = {
             idSala,
-            room,
+            room: encodeURI(room),
             mensagemDigitada,
             tokenUsuario
         }
@@ -187,6 +218,7 @@ const ChatRoom = (props) => {
             (blob) => {
                 // O redimensionamento e compressão foram concluídos, o blob contém a nova imagem
                 formData.append('chatImage', blob);
+                console.log(room);
                 formData.append("room", room);
                 formData.append("dtMensagem", dtMensagem);
 
@@ -268,6 +300,7 @@ const ChatRoom = (props) => {
         <div className={styles.chatRoom}>
             <Usuarios usuarios={usuarios} socket={socket} carregarUsuarios={carregarUsuarios} idSala={idSala} room={room} />
 
+            <img ref={chatBg} className={styles.chatBg} alt="" />
             <div className={styles.mensagens} ref={chatContainer}>
                 {mensagens.map((msg, index) => (
                     <div className={styles.mensagemContent} key={index}>
@@ -290,7 +323,7 @@ const ChatRoom = (props) => {
                     </div>
                 ))}
                 <button style={showRolar ? { display: "none" } : null} className={styles.rolar} onClick={rolarParaBaixo}>
-                    {">"}
+                    <img src={arrow} alt="" />
                 </button>
             </div>
 

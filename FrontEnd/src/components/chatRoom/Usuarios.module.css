@@ -9,6 +9,8 @@
     width: 100%;
     background-color: #29292e;
     padding: 1rem 4rem;
+    height: 4rem;
+    z-index: 2
 }
 
 .usuarios::-webkit-scrollbar {
