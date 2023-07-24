@@ -1,6 +1,11 @@
 # Environment
 .env
 
+#Uploads
+public/perfil
+public/uploads
+public/wallpaper
+
 # Logs
 logs
 *.log

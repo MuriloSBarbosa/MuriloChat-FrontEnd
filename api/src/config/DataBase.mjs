@@ -1,33 +1,24 @@
-import mysql from "mysql2";
+import { Sequelize } from "sequelize";
 import { configDotenv } from 'dotenv';
 configDotenv();
 
-const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    port: process.env.DB_PORT,
-    database: process.env.DB_SCHEMA,
+const nomeBanco = process.env.DB_SCHEMA;
+const usuarioBanco = process.env.DB_USER;
+const senhaBanco = process.env.DB_PASS;
+const hostBanco = process.env.DB_HOST;
+const portaBanco = process.env.DB_PORT;
+
+const dataBase = new Sequelize(nomeBanco, usuarioBanco, senhaBanco, {
+    host: hostBanco,
+    port: portaBanco,
+    dialect: 'mysql',
+    logging: false,
 });
 
-connection.connect((err) => {
-    if (err) {
-        console.log("Erro ao conectar no banco de dados");
-        return;
-    }
-    console.log("Conectado com sucesso!");
+dataBase.authenticate().then(() => {
+    console.log("Conexão com o banco de dados realizada com sucesso!");
+}).catch((erro) => {
+    console.log("Erro ao conectar com o banco de dados: " + erro);
 });
 
-
-export default function executar(query) {
-    return new Promise((resolve, reject) => {
-        connection.query(query, (err, result) => {
-            if (err) {
-                console.log("Houve um erro: " + err);
-                reject(err);
-                return;
-            }
-            return resolve(result);
-        });
-    });
-}
+export default dataBase;

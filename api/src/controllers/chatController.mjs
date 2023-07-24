@@ -1,4 +1,4 @@
-import * as model from "../models/chatModel.mjs"
+import * as model from "../services/chatModel.mjs"
 import { servidorIo } from "../../app.mjs";
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -92,15 +92,22 @@ export function listarMensagens(req, res) {
 
     model.listarMensagens(fkSala)
         .then((mensagens) => {
-            mensagens.map((mensagem) => {
+            const mensagemFormatada = mensagens.map((mensagem) => {
                 if (mensagem.fkUsuario == id) {
                     mensagem.isRemetente = true;
                 }
-                mensagem.isAddUser = mensagem.isAddUser == 1 ? true : false;
                 mensagem.idColor = mensagem.fkUsuario;
                 delete mensagem.fkUsuario;
+
+                const { 'Usuario.nome': nome, 'Usuario.perfilSrc': perfilSrc, ...outrosCampos } = mensagem;
+                delete mensagem['Usuario.nome'];
+                delete mensagem['Usuario.perfilSrc'];
+
+                return { nome, perfilSrc, ...outrosCampos };
+
             });
-            res.status(200).send(mensagens);
+            res.status(200).send(mensagemFormatada);
+
         }).catch((erro) => {
             res.status(500).send("Erro ao listar Mensagens: " + erro);
         });

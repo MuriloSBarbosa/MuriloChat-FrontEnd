@@ -1,9 +1,8 @@
 import express from 'express';
 import { Server } from 'socket.io';
-import socketConfig from './src/utils/chatWebSocket.mjs';
+import socketConfig from './src/controllers/chatWebSocket.mjs';
 import cors from 'cors';
-import { setarOnline, desconectar } from './src/utils/chatWebSocket.mjs';
-import { autenticarTokenUsuario } from './src/config/jwtConfig.mjs';
+import { setarOnline, desconectar } from './src/controllers/chatWebSocket.mjs';
 import { configDotenv } from 'dotenv';
 configDotenv();
 

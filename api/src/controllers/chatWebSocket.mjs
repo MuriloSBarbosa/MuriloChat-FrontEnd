@@ -1,5 +1,5 @@
 import { servidorIo } from "../../app.mjs"
-import * as modelChat from "../models/chatModel.mjs";
+import * as modelChat from "../services/chatModel.mjs";
 import { decodificarToken } from "../config/jwtConfig.mjs";
 import moment from "moment-timezone";
 

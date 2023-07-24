@@ -1,5 +1,5 @@
-import * as model from "../models/usuarioModel.mjs"
-import { gerarTokenUsuario, decodificarToken } from "../config/jwtConfig.mjs";
+import * as model from "../services/usuarioModel.mjs"
+import { gerarTokenUsuario } from "../config/jwtConfig.mjs";
 import path from "path";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -232,7 +232,7 @@ export function removerImagem(req, res) {
 
 export function buscarWallpaper(req, res) {
     const { wallpaperSrc } = req.params;
-    
+
     const caminho = path.join(modulePath, '..', '..', 'public', 'wallpaper', decodeURI(wallpaperSrc));
 
     return res.sendFile(caminho, { headers: { 'Content-Type': 'image/jpeg' } });
