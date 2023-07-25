@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const ipUse = "localhost";
+export const ipUse = import.meta.env.VITE_IP_ADDRESS;
 
 const axiosInstance = axios.create({
     baseURL: `http://${ipUse}:8080`,

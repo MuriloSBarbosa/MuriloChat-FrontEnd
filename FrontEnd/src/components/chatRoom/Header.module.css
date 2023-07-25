@@ -1,0 +1,84 @@
+.header {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 10%;
+    width: 90%;
+    background-color: #29292e;
+    z-index: 2;
+}
+
+.header h1 {
+    font-weight: 500;
+    font-size: 2.5rem;
+    color: var(--colorDefault);
+}
+
+
+.menuOptions {
+    position: absolute;
+    right: 3%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: none;
+    border-radius: 50%;
+    margin-left: 0.5rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.menuOptions img:hover {
+    filter: brightness(0.8);
+}
+
+.menuOptions img {
+    height: 1.5rem;
+}
+
+.options {
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: #222;
+    width: 10rem;
+    height: 0rem;
+    border-radius: 0.5rem;
+    top: 0;
+    right: 100%;
+    z-index: 3;
+    transition: 0.3s;
+}
+
+.options button {
+    width: 100%;
+    height: 0;
+    display: none;
+    color: #fff;
+    font-size: 0.9rem;
+    transition: 0.3s;
+    border: none;
+    background-color: transparent;
+}
+
+.options button:hover {
+    background-color: #353535;
+}
+
+.fadeIn {
+    height: 12vh;
+}
+
+.fadeIn button {
+    display: block;
+    height: 2rem;
+}
+
+.sairSala {
+    color: rgb(231, 63, 93) !important;
+}

@@ -1,19 +1,26 @@
 import React, { useEffect, useState } from "react";
+import axiosInstance from "../../config/ipConfig";
 import styles from "./Usuarios.module.css";
-import AdicionarUsuario from "./AdicionarUsuario";
+import { ipUse } from "../../config/ipConfig";
+import defaultAvatar from "../../assets/default-avatar.jpg";
+import { useNavigate } from "react-router-dom";
+import coroa from "../../assets/coroa.png";
 
 function Usuarios(props) {
-    const { usuarios, socket, carregarUsuarios, idSala, room } = props;
+    const { usuarios, socket, carregarUsuarios, idSala, setUsuarios } = props;
     const [idsUsuariosOnline, setIdsUsuariosOnline] = useState({});
-    const [showAddUser, setShowAddUser] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         socket.on("onlineUsers", usuariosOnline)
         socket.on("addUser", carregarUsuarios)
-        return () =>
-            socket.off('onlineUsers');
 
+        return () => {
+            socket.off('onlineUsers');
+        }
     }, [socket]);
+
+
 
     const usuariosOnline = (idUsuariosOnline) => {
 
@@ -41,23 +48,77 @@ function Usuarios(props) {
         });
     };
 
+
+    const abrirOpcoesUser = (e) => {
+        if (!props.isAdmin) return;
+
+        const user = e.currentTarget;
+        const userOptions = user.querySelector(`.${styles.userOptions}`);
+
+        if (userOptions.classList.contains(styles.fadeInUser)) {
+            userOptions.classList.remove(styles.fadeInUser);
+            return;
+        }
+
+        const AllUserOptions = document.querySelectorAll(`.${styles.userOptions}`);
+        AllUserOptions.forEach((userOptions) => {
+            if (userOptions != e.currentTarget.querySelector(`.${styles.userOptions}`)) {
+                userOptions.classList.remove(styles.fadeInUser);
+            }
+        });
+
+        setTimeout(() => {
+            userOptions.classList.add(styles.fadeInUser);
+        }, 100);
+    }
+
+    const removerDaSala = (user) => {
+        axiosInstance.delete(`/chat/usuario`, {
+            data: {
+                idSala: props.idSala,
+                idUsuario: user.id,
+                nomeUsuario: user.nome,
+                room: props.room
+            }
+        })
+            .then(() => {
+                props.carregarUsuarios();
+                alert("Você removeu o usuário da Sala com sucesso!");
+            })
+            .catch((error) => {
+                alert("Erro ao sair da Sala!");
+                console.log(error);
+            });
+    }
+
+
     return (
         <>
             <div className={styles.usuarios}>
                 <div className={styles.listaUser}>
                     {usuarios.map((user, index) => (
-                        <div className={styles.user} key={index}>
-                            <div className={styles.nomeUser}>{user.nome}</div>
-                            <div className={styles.statusUser} style={{ backgroundColor: idsUsuariosOnline[user.id] ? "#00ff00" : "#e73f5d" }}></div>
+                        <div className={styles.userItem} key={index} onClick={(e) => abrirOpcoesUser(e)}>
+                            <div className={styles.user}>
+                                <div className={styles.userPerfil} style={{ backgroundColor: idsUsuariosOnline[user.id] ? "#00ff00" : "#e73f5d" }}>
+                                    <img src={user.perfilSrc ? `http://${ipUse}:8080/usuario/imagem/${encodeURI(user.perfilSrc)}` : defaultAvatar} alt="" />
+                                </div>
+                                <span style={user["Chats.isAdmin"] ? { color: "#FFEA00" } : null}>
+                                    {user["Chats.isAdmin"] && <img src={coroa} alt="" />}
+                                    {user.nome}
+                                </span>
+                            </div>
+                            {
+                                props.isAdmin &&
+                                <div className={styles.userOptions}>
+                                    <button className={styles.admin} >Promover a Admin</button>
+                                    <button className={styles.removerDaSala} onClick={() => removerDaSala(user)} >Remover da Sala</button>
+                                </div>
+                            }
                         </div>
                     ))}
-                    <button className={styles.iconAddUser} onClick={() => setShowAddUser(true)}>+</button>
                 </div>
-            </div>
 
-            <AdicionarUsuario idSala={idSala} showAddUser={showAddUser} setShowAddUser={setShowAddUser}
-                carregarUsuarios={carregarUsuarios} room={room} />
-
+            </div >
         </>
 
 

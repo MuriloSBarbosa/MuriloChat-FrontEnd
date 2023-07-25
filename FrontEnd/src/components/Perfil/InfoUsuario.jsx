@@ -6,6 +6,7 @@ import botaoEditar from "../../assets/botao-editar.png";
 import axiosInstance from "../../config/ipConfig"
 import Modal from "../Modal/Modal";
 import { useNavigate } from "react-router-dom";
+import { ipUse } from "../../config/ipConfig";
 
 const InfoUsuario = () => {
     const navigate = useNavigate();
@@ -43,7 +44,7 @@ const InfoUsuario = () => {
             .then((response) => {
                 let perfilSrc = response.data.perfilSrc;
                 if (perfilSrc) {
-                    perfilSrc = `http://localhost:8080/usuario/imagem/${encodeURI(perfilSrc)}`;
+                    perfilSrc = `http://${ipUse}:8080/usuario/imagem/${encodeURI(perfilSrc)}`;
                 } else {
                     perfilSrc = "src/assets/default-avatar.jpg"
                 }

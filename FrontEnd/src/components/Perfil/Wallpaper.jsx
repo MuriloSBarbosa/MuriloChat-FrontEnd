@@ -4,6 +4,7 @@ import styles from "./Wallpaper.module.css";
 import wallpaperDefault from "../../assets/wallpaper-default.jpg";
 import axiosInstance from "../../config/ipConfig.jsx";
 import debounce from "lodash.debounce";
+import { ipUse } from "../../config/ipConfig.jsx";
 
 const Wallpaper = () => {
 
@@ -16,7 +17,7 @@ const Wallpaper = () => {
             .then((response) => {
                 let wallpaperSrc = response.data.wallpaperSrc;
                 if (wallpaperSrc) {
-                    wallpaperSrc = `http://localhost:8080/usuario/wallpaper/${encodeURI(wallpaperSrc)}`;
+                    wallpaperSrc = `http://${ipUse}:8080/usuario/wallpaper/${encodeURI(wallpaperSrc)}`;
                     setWallpaper(wallpaperSrc);
                 }
                 setLuminosidade(response.data.wallpaperLuminosidade);

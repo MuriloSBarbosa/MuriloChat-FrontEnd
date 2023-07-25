@@ -1,74 +1,129 @@
 .usuarios {
     display: flex;
-    position: relative;
+    position: absolute;
+    right: 0;
+    top: 0;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    overflow-x: scroll;
-    overflow-y: hidden;
-    width: 100%;
     background-color: #29292e;
-    padding: 1rem 4rem;
-    height: 4rem;
-    z-index: 2
-}
-
-.usuarios::-webkit-scrollbar {
-    height: 0.4rem
-}
-
-.usuarios::-webkit-scrollbar-track {
-    background-color: #582cdd;
-    border-radius: 0.5rem;
-}
-
-.usuarios::-webkit-scrollbar-thumb {
-    background-color: #6f4bd8;
-    border-radius: 0.5rem;
+    width: 10%;
+    padding: 2rem 0;
+    height: 100vh;
+    z-index: 2;
+    border-left: 1px solid var(--colorDefault);
 }
 
 .usuarios .listaUser {
     display: flex;
-    justify-content: space-around;
+    width: 100%;
     align-items: center;
+    flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    gap: 2rem;
+}
+
+.listaUser::-webkit-scrollbar {
+    width: 0.3rem;
+}
+
+.listaUser::-webkit-scrollbar-track {
+    background: #353535;
+}
+
+.listaUser::-webkit-scrollbar-thumb {
+    background: #222;
+}
+
+.userItem {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
     width: 100%;
 }
 
-.iconAddUser {
-    position: absolute;
-    top: 0.8rem;
-    right: 3rem;
-    height: 30px;
-    width: 30px;
-    font-size: 20px;
-    text-align: center;
-    background-color: #6f4bd8;
-    color: #fff;
-    border-radius: 100%;
-    border: none;
-    transition: 0.3s;
-}
-
-.iconAddUser:hover {
-    filter: brightness(0.8);
+.userItem:hover {
+    background-color: #3e3e3e;
 }
 
 .user {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-.nomeUser {
     font-size: 1rem;
     color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    word-break: break-all;
 }
 
-.statusUser {
-    height: 0.5rem;
-    width: 0.5rem;
-    border-radius: 50%;
-    background-color: #fff;
-    margin-left: 0.5rem;
+.user span {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    max-width: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.user span img {
+    height: 1rem;
+}
+
+.userPerfil {
+    height: 3.3rem;
+    width: 3.3rem;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.userPerfil img {
+    height: 3rem;
+    border-radius: 100%;
+}
+
+.userOptions {
+    display: flex;
+    height: 0rem;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    cursor: pointer;
+    background-color: #222;
+    transition: 0.3s;
+}
+
+.userOptions button {
+    display: none;
+    width: 100%;
+    height: 0;
+    color: #fff;
+    font-size: 0.9rem;
+    transition: 0.3s;
+    border: none;
+    padding: 0.5rem 1rem;
+    background-color: transparent;
+}
+
+.userOptions button:hover {
+    background-color: #353535;
+}
+
+.fadeInUser {
+    height: 10rem;
+}
+
+.fadeInUser button {
+    display: block;
+    height: max-content;
 }

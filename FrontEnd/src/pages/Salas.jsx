@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../config/ipConfig";
 import styles from "./Salas.module.css";
-import ChatRoom from "../components/chatRoom/ChatRoom";
+import ChatContent from "../components/chatRoom/ChatContent";
 import io from 'socket.io-client';
 import { ipUse } from '../config/ipConfig';
 import configPng from '../assets/config.png';
@@ -13,6 +13,7 @@ function Salas() {
     const [salas, setSalas] = useState([]);
     const [salasFiltro, setSalasFiltro] = useState([]);
     const [token, setToken] = useState(sessionStorage.getItem("token"));
+    const [usuarioId, setUsuarioId] = useState("");
     const [salaConfig, setSalaConfig] = useState(null);
     const [socket, setSocket] = useState(null);
     const [showAddSala, setShowAddSala] = useState(false);
@@ -33,6 +34,13 @@ function Salas() {
         });
 
         setSocket(socket);
+
+        axiosInstance.get('/usuario/config/')
+            .then((response) => {
+                setUsuarioId(response.data.id);
+            }).catch((error) => {
+                console.log(error);
+            });
 
         return () => {
             socket.disconnect();
@@ -77,6 +85,26 @@ function Salas() {
         setSalasFiltro(salas.filter((sala) => sala.nome.toLowerCase().includes(nome.toLowerCase())));
     }
 
+    useEffect(() => {
+        if (socket == null) return;
+
+        socket.on("atualizarSalas", (dados) => {
+
+            listarSalas();
+
+            console.log(usuarioId == dados.idUsuario);
+            console.log(dados.idSala);
+
+            if (usuarioId != dados.idUsuario) return;
+            console.log("passou");
+
+            if (salaConfig.id == dados.idSala) {
+                navigate(0);
+            }
+
+        });
+    }), [salas, socket]
+
 
     return (
         <>
@@ -108,7 +136,7 @@ function Salas() {
                 </div>
                 <div className={styles.linhaVertical}></div>
                 <div className={styles.chat}>
-                    {salaConfig ? <ChatRoom salaConfig={salaConfig} /> :
+                    {salaConfig ? <ChatContent salaConfig={salaConfig} listarSalas={listarSalas} /> :
                         <div className={styles.bemvindo}>
                             <h1>Bem-vindo(a) ao <span className={styles.logo}>Murilo<span>Chat!</span></span></h1>
                             <p>Selecione uma sala para começar a conversar</p>

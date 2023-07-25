@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axiosInstance from "../../config/ipConfig";
-import styles from "./ChatRoom.module.css";
+import styles from "./ChatContent.module.css";
+import Header from './Header';
 import moment from "moment-timezone"
 import anexos from "../../assets/anexos.png";
 import { formatarDataChat } from '../../utils/geral.mjs';
@@ -10,11 +11,13 @@ import Resizer from 'react-image-file-resizer';
 import arrow from "../../assets/arrow.png";
 import WallpaperImage from "../../assets/wallpaper-default.jpg";
 
-const ChatRoom = (props) => {
+const ChatContent = (props) => {
     const [idSala, setIdSala] = useState(props.salaConfig.id);
     const [room, setRoom] = useState(props.salaConfig.identificador);
     const [socket, setSocket] = useState(props.salaConfig.socket);
     const tokenUsuario = sessionStorage.getItem("token");
+
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const [usuarios, setUsuarios] = useState([]);
 
@@ -30,11 +33,14 @@ const ChatRoom = (props) => {
     const chatContainer = useRef(null);
     const chatBg = useRef(null);
 
+    const [isRemovidoSala, setIsRemovidoSala] = useState(false);
+
     const [showRolar, setShowRolar] = useState(false);
 
     useEffect(() => {
         setIdSala(props.salaConfig.id);
         setRoom(props.salaConfig.identificador);
+
     }, [props.salaConfig]);
 
 
@@ -69,7 +75,8 @@ const ChatRoom = (props) => {
         axiosInstance.get("/chat/usuario/" + idSala,
         ).then((res) => {
 
-            const usuarios = res.data;
+            const usuarios = res.data.usuarios;
+            setIsAdmin(res.data.isAdmin);
 
             let colorUsed = []
 
@@ -112,7 +119,9 @@ const ChatRoom = (props) => {
 
     useEffect(() => {
         socket.on('novaMensagem', novasMensagens);
+
         carregarMensagens();
+
         return () => {
             socket.off('novaMensagem');
         };
@@ -165,7 +174,7 @@ const ChatRoom = (props) => {
 
     const verificarScroll = () => {
         const { scrollTop, clientHeight, scrollHeight } = chatContainer.current;
-        if (scrollTop + clientHeight >= scrollHeight - 150) {
+        if (scrollTop + clientHeight >= scrollHeight - 200) {
             return true;
         }
         return false;
@@ -298,7 +307,8 @@ const ChatRoom = (props) => {
 
     return (
         <div className={styles.chatRoom}>
-            <Usuarios usuarios={usuarios} socket={socket} carregarUsuarios={carregarUsuarios} idSala={idSala} room={room} />
+            <Header idSala={idSala} carregarUsuarios={carregarUsuarios} room={room} />
+            <Usuarios usuarios={usuarios} setUsuarios={setUsuarios} socket={socket} carregarUsuarios={carregarUsuarios} idSala={idSala} room={room} isAdmin={isAdmin} />
 
             <img ref={chatBg} className={styles.chatBg} alt="" />
             <div className={styles.mensagens} ref={chatContainer}>
@@ -362,4 +372,4 @@ const ChatRoom = (props) => {
     );
 };
 
-export default ChatRoom;
+export default ChatContent;
