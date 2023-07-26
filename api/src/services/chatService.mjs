@@ -41,13 +41,25 @@ export async function sairDaSala(idSala, idUser) {
 }
 
 export async function removerUsuarioSala(idSala, idUser) {
-        Chat.destroy({
-            where: {
-                fkSala: idSala,
-                fkUsuario: idUser
-            }
-        });
+    Chat.destroy({
+        where: {
+            fkSala: idSala,
+            fkUsuario: idUser
+        }
+    });
 
+}
+
+export function atualizarUsuarioSala(idSala, idUser, isAdmin) {
+    return Chat.update({
+        isAdmin: isAdmin,
+
+    }, {
+        where: {
+            fkSala: idSala,
+            fkUsuario: idUser
+        }
+    })
 }
 
 export function verificarUsuarioNaSala(idSala, idUser) {
@@ -128,7 +140,7 @@ export function verUsuariosDaSala(idSala) {
                 where: {
                     fkSala: idSala
                 }
-            },  
+            },
         ],
         order: [
             ['nome', 'ASC']

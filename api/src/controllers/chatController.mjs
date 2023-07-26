@@ -109,7 +109,7 @@ export async function removerUsuario(req, res) {
 
         servidorIo.to(Number(room)).emit('addUser');
         servidorIo.to(Number(room)).emit('novaMensagem', mensagem);
-        servidorIo.emit('atualizarSalas', {idSala, idUsuario});
+        servidorIo.emit('atualizarSalas', { idSala, idUsuario });
 
         await service.inserirMensagem(idResponsavel, idSala, mensagem.texto, dtMensagem, true);
 
@@ -117,6 +117,44 @@ export async function removerUsuario(req, res) {
     }
     catch (erro) {
         res.status(500).send("Erro ao sair da sala: " + erro);
+    };
+}
+
+export async function atualizarUsuario(req, res) {
+    const { idSala, idUsuario, nomeUsuario, isAdmin, room } = req.body;
+    const { id: idResponsavel, nome } = req.usuario;
+
+    if (idSala == undefined || idUsuario == undefined || isAdmin == undefined) {
+        return res.status(400).send("Dados inválidos");
+    }
+
+    try {
+
+        await service.atualizarUsuarioSala(idSala, idUsuario, isAdmin);
+
+        const tokenUsuario = req.headers.authorization.split(" ")[1];
+        const dtMensagem = moment().tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ss");
+
+        const texto = isAdmin ? `${nome} promoveu ${nomeUsuario} como Admin` : `${nome} rebaixou ${nomeUsuario} de Administrador`;
+
+        const mensagem = {
+            idSala,
+            room,
+            texto,
+            tokenUsuario,
+            isAddUser: true
+        };
+
+        servidorIo.to(room).emit('novaMensagem', mensagem);
+        servidorIo.to(room).emit('addUser');
+
+        await service.inserirMensagem(idResponsavel, idSala, mensagem.texto, dtMensagem, true);
+
+        res.status(200).send("Usuário atualizado com sucesso!");
+    }
+
+    catch (erro) {
+        res.status(500).send("Erro ao atualizar usuário: " + erro);
     };
 }
 
@@ -168,12 +206,17 @@ export function verUsuariosDaSala(req, res) {
 
             const isAdmin = admin ? true : false;
 
+            usuarios.forEach((usuario) => {
+                if (usuario.id == idUsuario) {
+                    usuario.isRemetente = true;
+                }
+            });
+
             res.status(200).send({ usuarios, isAdmin });
         }).catch((erro) => {
             res.status(500).send("Erro ao listar usuários da Sala: " + erro);
         });
 }
-
 
 export function inserirMensagemImagem(req, res) {
     const { fkSala } = req.params;
@@ -214,4 +257,3 @@ export function buscarImagem(req, res) {
 
     return res.sendFile(caminho, { headers: { 'Content-Type': 'image/jpeg' } });
 }
-

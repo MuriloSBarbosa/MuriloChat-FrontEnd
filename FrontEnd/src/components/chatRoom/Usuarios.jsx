@@ -5,22 +5,28 @@ import { ipUse } from "../../config/ipConfig";
 import defaultAvatar from "../../assets/default-avatar.jpg";
 import { useNavigate } from "react-router-dom";
 import coroa from "../../assets/coroa.png";
+import Modal from "../Modal/Modal";
 
 function Usuarios(props) {
-    const { usuarios, socket, carregarUsuarios, idSala, setUsuarios } = props;
+    const { usuarios, socket, carregarUsuarios, idSala, setUsuarios, room } = props;
     const [idsUsuariosOnline, setIdsUsuariosOnline] = useState({});
     const navigate = useNavigate();
 
+    const [modal, setModal] = useState({
+        title: '',
+        text: ''
+    });
+    const [time, setTime] = useState(1500);
+    const [showModal, setShowModal] = useState(false);
+
     useEffect(() => {
-        socket.on("onlineUsers", usuariosOnline)
-        socket.on("addUser", carregarUsuarios)
+        socket.on("onlineUsers", usuariosOnline);
+        socket.on("addUser", () => carregarUsuarios());
 
         return () => {
             socket.off('onlineUsers');
         }
     }, [socket]);
-
-
 
     const usuariosOnline = (idUsuariosOnline) => {
 
@@ -47,7 +53,6 @@ function Usuarios(props) {
             return idsOnline;
         });
     };
-
 
     const abrirOpcoesUser = (e) => {
         if (!props.isAdmin) return;
@@ -82,11 +87,35 @@ function Usuarios(props) {
             }
         })
             .then(() => {
-                props.carregarUsuarios();
-                alert("Você removeu o usuário da Sala com sucesso!");
+                console.log(error);
             })
             .catch((error) => {
-                alert("Erro ao sair da Sala!");
+                setModal({
+                    title: 'Erro',
+                    text: 'Erro ao atualizar usuário'
+                });
+                setShowModal(true);
+                console.log(error);
+            });
+    }
+
+    const atualizarUsuario = (user, isAdmin) => {
+        axiosInstance.patch("/chat/usuario", {
+            idSala: idSala,
+            idUsuario: user.id,
+            nomeUsuario: user.nome,
+            isAdmin,
+            room: room
+        })
+            .then(() => {
+                carregarUsuarios();
+            })
+            .catch((error) => {
+                setModal({
+                    title: 'Erro',
+                    text: 'Erro ao atualizar usuário'
+                });
+                setShowModal(true);
                 console.log(error);
             });
     }
@@ -108,17 +137,24 @@ function Usuarios(props) {
                                 </span>
                             </div>
                             {
-                                props.isAdmin &&
+                                props.isAdmin && !user.isRemetente &&
                                 <div className={styles.userOptions}>
-                                    <button className={styles.admin} >Promover a Admin</button>
+                                    {user["Chats.isAdmin"] ?
+                                        <button className={styles.admin} onClick={() => atualizarUsuario(user, false)}>Remover Administrador</button>
+                                        :
+                                        <button className={styles.admin} onClick={() => atualizarUsuario(user, true)}>Promover a Admin</button>
+                                    }
                                     <button className={styles.removerDaSala} onClick={() => removerDaSala(user)} >Remover da Sala</button>
                                 </div>
                             }
                         </div>
                     ))}
                 </div>
-
             </div >
+
+            <Modal showModal={showModal} setShowModal={setShowModal} modal={modal} time={time} />
+
+
         </>
 
 

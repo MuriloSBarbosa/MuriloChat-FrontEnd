@@ -4,7 +4,7 @@ import axiosInstance from "../../config/ipConfig";
 import styles from "./Header.module.css";
 import tresPontos from "../../assets/tres-pontos.png";
 import AdicionarUsuario from "./AdicionarUsuario";
-
+import Modal from "../Modal/Modal";
 
 function Header(props) {
     const { idSala, carregarUsuarios, room } = props;
@@ -15,6 +15,13 @@ function Header(props) {
     const options = useRef(null);
 
     const navigate = useNavigate();
+
+    const [modal, setModal] = useState({
+        title: '',
+        text: ''
+    });
+    const [time, setTime] = useState(1500);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         window.addEventListener("click", (e) => fecharMenuOptions(e))
@@ -30,11 +37,20 @@ function Header(props) {
             }
         })
             .then(() => {
-                alert("Você saiu da Sala com sucesso!")
-                navigate(0);
+                setModal({
+                    text: 'Saindo da sala...'
+                });
+                setShowModal(true);
+                setTimeout(() => {
+                    navigate(0);
+                }, time);
             })
             .catch((error) => {
-                alert("Erro ao sair da Sala!");
+                setModal({
+                    title: 'Erro',
+                    text: 'Erro ao atualizar usuário'
+                });
+                setShowModal(true);
                 console.log(error);
             });
     }
@@ -70,6 +86,7 @@ function Header(props) {
             </div>
             <AdicionarUsuario idSala={idSala} showAddUser={showAddUser} setShowAddUser={setShowAddUser}
                 carregarUsuarios={carregarUsuarios} room={room} />
+            <Modal showModal={showModal} setShowModal={setShowModal} modal={modal} time={time} />
         </>
     )
 }

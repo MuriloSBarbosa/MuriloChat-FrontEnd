@@ -25,8 +25,12 @@ chatRouter.post("/usuario", autenticarTokenUsuario, (req, res) => {
     controller.inserirUser(req, res);
 });
 
-chatRouter.delete("/usuario/", autenticarTokenUsuario, (req, res) => {
+chatRouter.delete("/usuario", autenticarTokenUsuario, (req, res) => {
     controller.removerUsuario(req, res);
+});
+
+chatRouter.patch("/usuario", autenticarTokenUsuario, (req, res) => {
+    controller.atualizarUsuario(req, res);
 });
 
 chatRouter.get("/mensagem/:fkSala", autenticarTokenUsuario, (req, res) => {
