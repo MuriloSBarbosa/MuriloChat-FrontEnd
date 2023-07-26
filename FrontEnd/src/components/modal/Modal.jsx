@@ -5,9 +5,12 @@ function Modal(props) {
 
     useEffect(() => {
         if (props.showModal) {
-            setTimeout(() => {
-                props.setShowModal(false);
-            }, Number(props.time));
+            if (props.time) {
+                setTimeout(() => {
+                    props.setShowModal(false);
+                }, Number(props.time));
+            }
+
         }
     }, [props.showModal])
 

@@ -53,7 +53,7 @@ function AdicionarUsuario(props) {
                     setShowMessage(false);
                     props.carregarUsuarios();
                     props.setShowAddUser(false);
-                }, 2000)
+                }, 1000)
             })
             .catch((err) => {
                 if (err.response.status === 409) {

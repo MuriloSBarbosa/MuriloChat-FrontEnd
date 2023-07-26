@@ -7,7 +7,7 @@ import AdicionarUsuario from "./AdicionarUsuario";
 import Modal from "../Modal/Modal";
 
 function Header(props) {
-    const { idSala, carregarUsuarios, room } = props;
+    const { idSala, carregarUsuarios, room, socket } = props;
 
     const [showAddUser, setShowAddUser] = useState(false);
     const [showMenuOptions, setShowMenuOptions] = useState(false);
@@ -20,20 +20,26 @@ function Header(props) {
         title: '',
         text: ''
     });
-    const [time, setTime] = useState(1500);
+    const [time, setTime] = useState(1000);
     const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
-        window.addEventListener("click", (e) => fecharMenuOptions(e))
+        window.addEventListener("click", (e) => fecharMenuOptions(e));
+
+        socket.on("addUser", () => carregarUsuarios());
+
         return () => {
+            socket.off('onlineUsers');
             window.removeEventListener("click", fecharMenuOptions);
         }
-    })
+
+    }, [])
 
     const sairDaSala = () => {
         axiosInstance.delete(`/chat/sala/sair`, {
             data: {
-                idSala: props.idSala
+                idSala: props.idSala,
+                room: props.room
             }
         })
             .then(() => {
@@ -42,7 +48,7 @@ function Header(props) {
                 });
                 setShowModal(true);
                 setTimeout(() => {
-                    navigate(0);
+                    props.setSalaConfig(null);
                 }, time);
             })
             .catch((error) => {
@@ -76,6 +82,9 @@ function Header(props) {
     return (
         <>
             <div className={styles.header}>
+                    <div className={styles.title}>
+                        <h1>{props.nomeSala}</h1>
+                    </div>
                 <div className={styles.menuOptions} onClick={() => setShowMenuOptions(!showMenuOptions)}>
                     <img src={tresPontos} alt="" id="menuOptionsClick" />
                     <div className={styles.options} style={showMenuOptions ? { display: "flex" } : { display: "none" }} ref={options}>

@@ -161,8 +161,10 @@
 }
 
 .bemvindo h1 {
-    color: #FFFF;
-    font-size: 2.5rem;
+    color: #a8a8b3;
+    font-weight: 100;
+    text-align: center;
+    font-size: 1.8rem;
 }
 
 .bemvindo p {

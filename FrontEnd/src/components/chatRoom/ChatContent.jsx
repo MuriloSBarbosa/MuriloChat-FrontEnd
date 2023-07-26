@@ -33,7 +33,6 @@ const ChatContent = (props) => {
     const chatContainer = useRef(null);
     const chatBg = useRef(null);
 
-    const [isRemovidoSala, setIsRemovidoSala] = useState(false);
 
     const [showRolar, setShowRolar] = useState(false);
 
@@ -51,6 +50,11 @@ const ChatContent = (props) => {
         chatContainer.current.addEventListener("scroll", verificarRolar);
 
         socket.emit('joinRoom', room);
+
+        return () => {
+            props.setShowModal(false);
+            props.setIsRemovido(false);
+        }
 
     }, [room]);
 
@@ -128,6 +132,7 @@ const ChatContent = (props) => {
     }, [usuarios]);
 
     const novasMensagens = (novaMensagem) => {
+        if (props.isRemovido) return;
         if (novaMensagem.token == tokenUsuario) {
             novaMensagem.isRemetente = true;
         }
@@ -306,9 +311,25 @@ const ChatContent = (props) => {
     }
 
     return (
-        <div className={styles.chatRoom}>
-            <Header idSala={idSala} carregarUsuarios={carregarUsuarios} room={room} />
-            <Usuarios usuarios={usuarios} setUsuarios={setUsuarios} socket={socket} carregarUsuarios={carregarUsuarios} idSala={idSala} room={room} isAdmin={isAdmin} />
+        <div className={styles.chatRoom} style={props.isRemovido ? { filter: "grayscale(1)" } : null}>
+
+            <Header
+                idSala={idSala}
+                nomeSala={props.salaConfig.nome}
+                carregarUsuarios={carregarUsuarios}
+                room={room}
+                socket={socket}
+                setSalaConfig={props.setSalaConfig}
+            />
+
+            <Usuarios usuarios={usuarios}
+                setUsuarios={setUsuarios}
+                socket={socket}
+                carregarUsuarios={carregarUsuarios}
+                idSala={idSala}
+                room={room}
+                isAdmin={isAdmin}
+            />
 
             <img ref={chatBg} className={styles.chatBg} alt="" />
             <div className={styles.mensagens} ref={chatContainer}>
@@ -356,16 +377,20 @@ const ChatContent = (props) => {
                 </div>
             }
 
-            <div className={styles.sendBox}>
+            <div className={styles.sendBox} >
                 <div className={styles.anexos}>
                     <label htmlFor="image">
                         <img src={anexos} alt="clip" />
                     </label>
                     <input type="file" id='image' accept="image/*" ref={imagemSelecionada} onChange={inserirImagem} />
                 </div>
-                <input type="text" value={mensagemDigitada} onChange={(e) => setMensagemDigitada(e.target.value)} placeholder="Digite sua mensagem"
-                    onKeyDown={(e) => { enviarMensagem(e) }} />
-                <button onClick={(e) => { enviarMensagem(e) }}>Enviar</button>
+                <input type="text" value={mensagemDigitada}
+                    onChange={(e) => setMensagemDigitada(e.target.value)}
+                    placeholder="Digite sua mensagem"
+                    onKeyDown={(e) => { enviarMensagem(e) }}
+                    disabled={props.isRemovido}
+                />
+                <button disabled={props.isRemovido} onClick={(e) => { enviarMensagem(e) }}>Enviar</button>
             </div>
 
         </div>

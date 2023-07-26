@@ -29,8 +29,8 @@ export async function criarSala(req, res) {
 
         const dtAdd = moment().tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ss");
 
-        servidorIo.to(Number(identificador)).emit('addUser');
-        servidorIo.to(Number(identificador)).emit('novaMensagem', mensagem);
+        servidorIo.to(identificador).emit('addUser');
+        servidorIo.to(identificador).emit('novaMensagem', mensagem);
 
         await service.inserirMensagem(idUsuario, sala.id, mensagem.texto, dtAdd, true);
 
@@ -41,16 +41,35 @@ export async function criarSala(req, res) {
 }
 
 export async function sairDaSala(req, res) {
-    const { idSala } = req.body;
-    const { id } = req.usuario;
+    const { idSala, room } = req.body;
+    const { id, nome } = req.usuario;
+    const { tokenUsuario } = req.headers.authorization.split(" ")[1];
 
-    service.sairDaSala(idSala, id)
-        .then(() => {
-            res.status(200).send("Saiu da sala com sucesso!");
-        })
-        .catch((erro) => {
-            res.status(500).send("Erro ao sair da sala: " + erro);
-        });
+
+    try {
+
+        const mensagem = {
+            idSala,
+            room,
+            texto: `${nome} saiu do chat`,
+            tokenUsuario,
+            isAddUser: true
+        };
+
+        const dtMsg = moment().tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ss");
+
+        servidorIo.to(room).emit('novaMensagem', mensagem);
+        servidorIo.emit('atualizarSalas', idSala);
+        servidorIo.to(room).emit('addUser');
+
+        await service.inserirMensagem(id, idSala, mensagem.texto, dtMsg, true);
+        await service.sairDaSala(idSala, id);
+
+        res.status(200).send("Saiu da sala com sucesso!");
+    }
+    catch (erro) {
+        res.status(500).send("Erro ao sair da sala: " + erro);
+    };
 }
 
 
@@ -76,8 +95,8 @@ export async function inserirUser(req, res) {
             isAddUser: true
         };
 
-        servidorIo.to(Number(room)).emit('addUser');
-        servidorIo.to(Number(room)).emit('novaMensagem', mensagem);
+        servidorIo.to(room).emit('addUser');
+        servidorIo.to(room).emit('novaMensagem', mensagem);
         servidorIo.emit('atualizarSalas', idSala);
 
         await service.inserirMensagem(idUser, idSala, mensagem.texto, dtAdd, true);
@@ -107,8 +126,8 @@ export async function removerUsuario(req, res) {
             isAddUser: true
         };
 
-        servidorIo.to(Number(room)).emit('addUser');
-        servidorIo.to(Number(room)).emit('novaMensagem', mensagem);
+        servidorIo.to(room).emit('addUser');
+        servidorIo.to(room).emit('novaMensagem', mensagem);
         servidorIo.emit('atualizarSalas', { idSala, idUsuario });
 
         await service.inserirMensagem(idResponsavel, idSala, mensagem.texto, dtMensagem, true);
@@ -135,7 +154,7 @@ export async function atualizarUsuario(req, res) {
         const tokenUsuario = req.headers.authorization.split(" ")[1];
         const dtMensagem = moment().tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ss");
 
-        const texto = isAdmin ? `${nome} promoveu ${nomeUsuario} como Admin` : `${nome} rebaixou ${nomeUsuario} de Administrador`;
+        const texto = isAdmin ? `${nome} promoveu ${nomeUsuario} como Administrador` : `${nome} removeu ${nomeUsuario} como Administrador`;
 
         const mensagem = {
             idSala,

@@ -8,6 +8,8 @@ import { ipUse } from '../config/ipConfig';
 import configPng from '../assets/config.png';
 import Deslogar from "../components/Deslogar";
 import AdicionarSala from "../components/Salas/AdicionarSala";
+import MuriloChatImg from '../assets/logoCompleta.svg';
+import Modal from "../components/Modal/Modal";
 
 function Salas() {
     const [salas, setSalas] = useState([]);
@@ -16,10 +18,18 @@ function Salas() {
     const [usuarioId, setUsuarioId] = useState("");
     const [salaConfig, setSalaConfig] = useState(null);
     const [socket, setSocket] = useState(null);
+    const [lastId, setLastId] = useState(null);
     const [showAddSala, setShowAddSala] = useState(false);
+    const [salaAdd, setSalaAdd] = useState(false);
+    const [isRemovido, setIsRemovido] = useState(false);
 
     const navigate = useNavigate();
 
+    const [modal, setModal] = useState({
+        title: '',
+        text: ''
+    });
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         if (!token) {
@@ -64,16 +74,17 @@ function Salas() {
             nome: nome,
             socket: socket
         });
+        setLastId(id);
 
-        salas.map((sala) => {
-            sala.selecionada = false;
-        });
+        limparSelecionada();
 
+        salasFiltro[index].selecionada = true;
+    }
+
+    const limparSelecionada = () => {
         salasFiltro.map((sala) => {
             sala.selecionada = false;
         });
-
-        salasFiltro[index].selecionada = true;
 
     }
 
@@ -92,18 +103,32 @@ function Salas() {
 
             listarSalas();
 
-            console.log(usuarioId == dados.idUsuario);
-            console.log(dados.idSala);
-
+            console.log(usuarioId, dados.idUsuario);
             if (usuarioId != dados.idUsuario) return;
-            console.log("passou");
 
-            if (salaConfig.id == dados.idSala) {
-                navigate(0);
+            setIsRemovido(true);
+
+            console.log(lastId);
+            if (lastId == dados.idSala) {
+                setModal({
+                    text: 'Você foi removido da Sala... :('
+                });
+                setShowModal(true);
             }
-
         });
     }), [salas, socket]
+
+    useEffect(() => {
+        if (!salaAdd) return;
+
+        salaAdd.socket = socket;
+        limparSelecionada();
+
+        setSalasFiltro([...salasFiltro, salaAdd]);
+        setSalaConfig(salaAdd);
+        setLastId(salaAdd.id);
+
+    }, [salaAdd])
 
 
     return (
@@ -122,7 +147,17 @@ function Salas() {
                             <p>+</p>
                         </button>
                     </div>
-                    {showAddSala && <AdicionarSala setShowAddSala={setShowAddSala} socket={socket} listarSalas={listarSalas} setSalaConfig={setSalaConfig} />}
+                    {showAddSala &&
+                        <AdicionarSala
+                            setShowAddSala={setShowAddSala}
+                            socket={socket}
+                            listarSalas={listarSalas}
+                            salas={salasFiltro}
+                            irParaSala={irParaSala}
+                            salaAdd={salaAdd}
+                            setSalaAdd={setSalaAdd}
+                        />
+                    }
 
                     <div className={styles.pesquisar}>
                         <input type="text" placeholder="Pesquisar sala" onChange={(e) => pesquisarSala(e.target.value)} />
@@ -136,14 +171,27 @@ function Salas() {
                 </div>
                 <div className={styles.linhaVertical}></div>
                 <div className={styles.chat}>
-                    {salaConfig ? <ChatContent salaConfig={salaConfig} listarSalas={listarSalas} /> :
+                    {salaConfig
+                        ?
+                        <ChatContent
+                            key={salaConfig.id}
+                            salaConfig={salaConfig}
+                            setSalaConfig={setSalaConfig}
+                            listarSalas={listarSalas}
+                            isRemovido={isRemovido}
+                            setIsRemovido={setIsRemovido}
+                            showModal={showModal}
+                            setShowModal={setShowModal}
+                        />
+                        :
                         <div className={styles.bemvindo}>
-                            <h1>Bem-vindo(a) ao <span className={styles.logo}>Murilo<span>Chat!</span></span></h1>
-                            <p>Selecione uma sala para começar a conversar</p>
+                            <h1>Bem-vindo(a) ao <img src={MuriloChatImg} alt="" /></h1>
+                            <p>Selecione ou crie uma sala para começar a conversar</p>
                         </div>
                     }
                 </div>
             </div >
+            <Modal showModal={showModal} setShowModal={setShowModal} modal={modal} />
         </>
     )
 }

@@ -3,6 +3,8 @@ import Chat from "../models/Chat.mjs";
 import Mensagem from "../models/Mensagem.mjs";
 import Usuario from "../models/Usuario.mjs";
 import '../models/associations.mjs';
+import { Op } from 'sequelize';
+
 
 export function cadastrarSala(nome, identificador) {
     return Sala.create({
@@ -23,7 +25,9 @@ export async function sairDaSala(idSala, idUser) {
         const chat = await Chat.findOne({
             where: {
                 fkSala: idSala,
-                fkUsuario: idUser
+                fkUsuario: {
+                    [Op.ne]: null
+                },
             }
         });
 

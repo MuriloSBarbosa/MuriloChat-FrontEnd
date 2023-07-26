@@ -18,19 +18,20 @@ function AdicionarSala(props) {
                 identificador: uuid,
             })
             .then((res) => {
-                props.listarSalas();
                 setIsSalaCriada(true);
 
-                props.setSalaConfig({
+                const sala = {
                     id: res.data.idSala,
                     identificador: uuid,
-                    socket: props.socket,
-                    nome: nome
-                })
+                    nome: nome,
+                    selecionada: true
+                }
 
+                props.setSalaAdd(sala);
                 setTimeout(() => {
                     props.setShowAddSala(false);
-                }, 2000);
+                }, 1000);
+
             })
             .catch((err) => {
                 console.log(err);

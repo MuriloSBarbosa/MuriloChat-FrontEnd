@@ -26,11 +26,11 @@
 }
 
 .mensagens::-webkit-scrollbar-track {
-    background: #565656;
+    background: #343434;
 }
 
 .mensagens::-webkit-scrollbar-thumb {
-    background: #888;
+    background: #565656;
 }
 
 .chatBg {
@@ -113,14 +113,15 @@
     background-color: var(--colorDefault);
     color: #fff;
     padding: 0.5rem;
-    max-width: 60%;
+    max-width: 40%;
     border-radius: 0rem 0.5rem 0.5rem 0.5rem;
     display: flex;
     flex-direction: column;
 }
 
 .textMsg img {
-    max-height: 30vh;
+    height: 40vh;
+    object-fit: cover;
 }
 
 .remetente {
@@ -188,7 +189,7 @@
     width: 80%;
     padding: 0 1rem;
     border-radius: 0.5rem;
-    border: 1px solid var(--colorDefault);
+    border: 1px solid #565656;
     background-color: #29292e;
     filter: brightness(1.4);
     color: #fff;
@@ -231,7 +232,7 @@
     position: absolute;
     z-index: 3;
     top: 0;
-    left: -27vw;
+    left: -29%;
     padding: 1rem;
     width: 100vw;
     height: 100vh;

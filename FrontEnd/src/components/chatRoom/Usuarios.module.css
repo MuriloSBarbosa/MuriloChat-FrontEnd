@@ -11,7 +11,8 @@
     padding: 2rem 0;
     height: 100vh;
     z-index: 2;
-    border-left: 1px solid var(--colorDefault);
+    border-left: 1px solid #565656;
+
 }
 
 .usuarios .listaUser {

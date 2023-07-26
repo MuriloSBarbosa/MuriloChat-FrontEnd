@@ -87,7 +87,7 @@ function Usuarios(props) {
             }
         })
             .then(() => {
-                console.log(error);
+                carregarUsuarios();
             })
             .catch((error) => {
                 setModal({
@@ -132,7 +132,7 @@ function Usuarios(props) {
                                     <img src={user.perfilSrc ? `http://${ipUse}:8080/usuario/imagem/${encodeURI(user.perfilSrc)}` : defaultAvatar} alt="" />
                                 </div>
                                 <span style={user["Chats.isAdmin"] ? { color: "#FFEA00" } : null}>
-                                    {user["Chats.isAdmin"] && <img src={coroa} alt="" />}
+                                    {user["Chats.isAdmin"] ? <img src={coroa} alt="" /> : null}
                                     {user.nome}
                                 </span>
                             </div>
