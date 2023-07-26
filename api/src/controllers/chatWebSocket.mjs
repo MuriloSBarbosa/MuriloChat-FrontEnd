@@ -1,5 +1,5 @@
 import { servidorIo } from "../../app.mjs"
-import * as modelChat from "../services/chatModel.mjs";
+import * as chatService from "../services/chatService.mjs";
 import { decodificarToken } from "../config/jwtConfig.mjs";
 import moment from "moment-timezone";
 
@@ -53,7 +53,7 @@ async function enviarMensagem(mensagem) {
         servidorIo.to(room).emit('novaMensagem', novaMensagem);
 
 
-        await modelChat.inserirMensagem(idUsuario, idSala, mensagemDigitada, dtAgora);
+        await chatService.inserirMensagem(idUsuario, idSala, mensagemDigitada, dtAgora);
 
     }
     catch (error) {

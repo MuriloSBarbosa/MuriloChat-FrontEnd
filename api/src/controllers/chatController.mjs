@@ -1,4 +1,4 @@
-import * as model from "../services/chatModel.mjs"
+import * as service from "../services/chatService.mjs"
 import { servidorIo } from "../../app.mjs";
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -16,11 +16,11 @@ export async function criarSala(req, res) {
     identificador = decodeURI(identificador);
 
     try {
-        const sala = await model.cadastrarSala(nome, identificador);
-        await model.inserirUser(sala.insertId, idUsuario);
+        const sala = await service.cadastrarSala(nome, identificador);
+        await service.inserirUser(sala.id, idUsuario, true);
 
         const mensagem = {
-            idSala: sala.insertId,
+            idSala: sala.id,
             room: identificador,
             texto: `${nomeUser} criou o chat`,
             tokenUsuario,
@@ -32,12 +32,25 @@ export async function criarSala(req, res) {
         servidorIo.to(Number(identificador)).emit('addUser');
         servidorIo.to(Number(identificador)).emit('novaMensagem', mensagem);
 
-        await model.inserirMensagem(idUsuario, sala.insertId, mensagem.texto, dtAdd, true);
+        await service.inserirMensagem(idUsuario, sala.id, mensagem.texto, dtAdd, true);
 
-        res.status(201).json({ idSala: sala.insertId, identificador });
+        res.status(201).json({ idSala: sala.id, identificador });
     } catch (erro) {
         res.status(500).send("Erro ao cadastrar Chat: " + erro);
     }
+}
+
+export async function sairDaSala(req, res) {
+    const { idSala } = req.body;
+    const { id } = req.usuario;
+
+    service.sairDaSala(idSala, id)
+        .then(() => {
+            res.status(200).send("Saiu da sala com sucesso!");
+        })
+        .catch((erro) => {
+            res.status(500).send("Erro ao sair da sala: " + erro);
+        });
 }
 
 
@@ -47,13 +60,13 @@ export async function inserirUser(req, res) {
         const { tokenUsuario } = req.headers.authorization.split(" ")[1];
         const { nome } = req.usuario;
 
-        const usuario = await model.verificarUsuarioNaSala(idSala, idUser);
+        const usuario = await service.verificarUsuarioNaSala(idSala, idUser);
 
         if (usuario.length > 0) {
             return res.status(409).send("Usuário já está na sala");
         }
 
-        await model.inserirUser(idSala, idUser);
+        await service.inserirUser(idSala, idUser);
 
         const mensagem = {
             idSala,
@@ -65,8 +78,9 @@ export async function inserirUser(req, res) {
 
         servidorIo.to(Number(room)).emit('addUser');
         servidorIo.to(Number(room)).emit('novaMensagem', mensagem);
+        servidorIo.emit('atualizarSalas', idSala);
 
-        await model.inserirMensagem(idUser, idSala, mensagem.texto, dtAdd, true);
+        await service.inserirMensagem(idUser, idSala, mensagem.texto, dtAdd, true);
 
         return res.status(201).send("Chat cadastrado com sucesso!");
     } catch (erro) {
@@ -74,11 +88,42 @@ export async function inserirUser(req, res) {
     }
 }
 
+export async function removerUsuario(req, res) {
+    const { idSala, idUsuario, room, nomeUsuario } = req.body;
+    const { id: idResponsavel, nome } = req.usuario;
+
+
+    try {
+        await service.removerUsuarioSala(idSala, idUsuario);
+
+        const tokenUsuario = req.headers.authorization.split(" ")[1];
+        const dtMensagem = moment().tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ss");
+
+        const mensagem = {
+            idSala,
+            room,
+            texto: `${nome} removeu ${nomeUsuario} do chat`,
+            tokenUsuario,
+            isAddUser: true
+        };
+
+        servidorIo.to(Number(room)).emit('addUser');
+        servidorIo.to(Number(room)).emit('novaMensagem', mensagem);
+        servidorIo.emit('atualizarSalas', {idSala, idUsuario});
+
+        await service.inserirMensagem(idResponsavel, idSala, mensagem.texto, dtMensagem, true);
+
+        res.status(200).send("Saiu da sala com sucesso!");
+    }
+    catch (erro) {
+        res.status(500).send("Erro ao sair da sala: " + erro);
+    };
+}
 
 export function listarChats(req, res) {
     let { id } = req.usuario;
 
-    model.listarChats(id)
+    service.listarChats(id)
         .then((chats) => {
             res.status(200).send(chats);
         }).catch((erro) => {
@@ -90,7 +135,7 @@ export function listarMensagens(req, res) {
     let { fkSala } = req.params;
     let { id } = req.usuario;
 
-    model.listarMensagens(fkSala)
+    service.listarMensagens(fkSala)
         .then((mensagens) => {
             const mensagemFormatada = mensagens.map((mensagem) => {
                 if (mensagem.fkUsuario == id) {
@@ -115,10 +160,15 @@ export function listarMensagens(req, res) {
 
 export function verUsuariosDaSala(req, res) {
     let { idSala } = req.params;
+    const { id: idUsuario } = req.usuario;
 
-    model.verUsuariosDaSala(idSala)
+    service.verUsuariosDaSala(idSala)
         .then((usuarios) => {
-            res.status(200).send(usuarios);
+            const admin = usuarios.find((usuario) => usuario.id == idUsuario && usuario["Chats.isAdmin"] == true);
+
+            const isAdmin = admin ? true : false;
+
+            res.status(200).send({ usuarios, isAdmin });
         }).catch((erro) => {
             res.status(500).send("Erro ao listar usuários da Sala: " + erro);
         });
@@ -147,7 +197,7 @@ export function inserirMensagemImagem(req, res) {
 
     servidorIo.to(decodeURI(room)).emit('novaMensagem', mensagem);
 
-    model.inserirMensagemImagem(id, fkSala, srcImage, dtMensagem)
+    service.inserirMensagemImagem(id, fkSala, srcImage, dtMensagem)
         .then(() => {
             res.status(201).send("Mensagem cadastrada com sucesso!");
         }).catch((erro) => {

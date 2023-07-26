@@ -50,6 +50,7 @@ userRouter.get("/wallpaper", autenticarTokenUsuario, (req, res) => {
     const luminosidade = req.usuario.wallpaperLuminosidade;
     res.send({ wallpaper, luminosidade });
 })
+
 userRouter.get("/wallpaper/:wallpaperSrc", (req, res) => {
     controller.buscarWallpaper(req, res);
 })

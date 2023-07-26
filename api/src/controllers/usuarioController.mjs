@@ -1,4 +1,4 @@
-import * as model from "../services/usuarioModel.mjs"
+import * as service from "../services/usuarioService.mjs"
 import { gerarTokenUsuario } from "../config/jwtConfig.mjs";
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -12,7 +12,7 @@ export function cadastrarUsuario(req, res) {
     let { nome, senha } = req.body;
     let { filename: perfilSrc } = req.file;
 
-    model.cadastrarUsuario(nome, senha, perfilSrc)
+    service.cadastrarUsuario(nome, senha, perfilSrc)
         .then(() => {
             res.status(201).send("Usuário cadastrado com sucesso!");
         }).catch((erro) => {
@@ -23,7 +23,7 @@ export function cadastrarUsuario(req, res) {
 export function verificarUsuario(req, res) {
     let { login, senha } = req.body;
 
-    model.verificarUsuario(login, senha)
+    service.verificarUsuario(login, senha)
         .then((usuario) => {
             if (usuario == 0) {
                 res.status(204).send("Usuário não encontrado!");
@@ -48,7 +48,7 @@ export function verificarNome(req, res) {
         return;
     }
 
-    model.verificarNome(nome)
+    service.verificarNome(nome)
         .then((usuario) => {
             [usuario] = usuario;
             if (!usuario) {
@@ -78,9 +78,9 @@ export function alterarNome(req, res) {
         return;
     }
 
-    model.alterarNome(id, nome)
+    service.alterarNome(id, nome)
         .then(() => {
-            model.atualizarToken(id)
+            service.atualizarToken(id)
                 .then((usuario) => {
                     if (usuario == 0) {
                         res.status(204).send("Usuário não encontrado!");
@@ -108,7 +108,7 @@ export function verificarSenha(req, res) {
         return;
     }
 
-    model.verificarSenha(id, senha)
+    service.verificarSenha(id, senha)
         .then((usuario) => {
             if (usuario.length == 0) {
                 res.status(204).send(false);
@@ -129,9 +129,9 @@ export function alterarSenha(req, res) {
         return;
     }
 
-    model.alterarSenha(id, senha)
+    service.alterarSenha(id, senha)
         .then(() => {
-            model.atualizarToken(id)
+            service.atualizarToken(id)
                 .then((usuario) => {
                     if (usuario == 0) {
                         res.status(204).send("Usuário não encontrado!");
@@ -159,7 +159,7 @@ export function alterarImagem(req, res) {
         return;
     }
 
-    model.alterarImagem(id, newPerfilSrc)
+    service.alterarImagem(id, newPerfilSrc)
         .then(() => {
             if (perfilSrc) {
                 // Remover imagem antiga
@@ -173,7 +173,7 @@ export function alterarImagem(req, res) {
                 })
             }
 
-            model.atualizarToken(id)
+            service.atualizarToken(id)
                 .then((usuario) => {
                     if (usuario == 0) {
                         res.status(204).send("Usuário não encontrado!");
@@ -196,7 +196,7 @@ export function alterarImagem(req, res) {
 export function removerImagem(req, res) {
     const { id, perfilSrc } = req.usuario;
 
-    model.alterarImagem(id, null)
+    service.alterarImagem(id, null)
         .then(() => {
             if (perfilSrc) {
                 // Remover imagem antiga
@@ -210,7 +210,7 @@ export function removerImagem(req, res) {
                 })
             }
 
-            model.atualizarToken(id)
+            service.atualizarToken(id)
                 .then((usuario) => {
                     if (usuario == 0) {
                         res.status(204).send("Usuário não encontrado!");
@@ -248,7 +248,7 @@ export function alterarWallpaper(req, res) {
         return;
     }
 
-    model.alterarWallpaper(id, newWallpaperSrc)
+    service.alterarWallpaper(id, newWallpaperSrc)
         .then(() => {
             if (wallpaperSrc) {
                 // Remover imagem antiga
@@ -262,7 +262,7 @@ export function alterarWallpaper(req, res) {
                 })
             }
 
-            model.atualizarToken(id)
+            service.atualizarToken(id)
                 .then((usuario) => {
                     if (usuario == 0) {
                         res.status(204).send("Usuário não encontrado!");
@@ -285,7 +285,7 @@ export function alterarWallpaper(req, res) {
 export function removerWallpaper(req, res) {
     const { id, wallpaperSrc } = req.usuario;
 
-    model.removerWallpaper(id)
+    service.removerWallpaper(id)
         .then(() => {
             if (wallpaperSrc) {
                 // Remover imagem antiga
@@ -299,7 +299,7 @@ export function removerWallpaper(req, res) {
                 })
             }
 
-            model.atualizarToken(id)
+            service.atualizarToken(id)
                 .then((usuario) => {
                     if (usuario == 0) {
                         res.status(204).send("Usuário não encontrado!");
@@ -328,9 +328,9 @@ export function alterarLuminosidade(req, res) {
         return;
     }
 
-    model.alterarLuminosidade(id, luminosidade)
+    service.alterarLuminosidade(id, luminosidade)
         .then(() => {
-            model.atualizarToken(id)
+            service.atualizarToken(id)
                 .then((usuario) => {
                     if (usuario == 0) {
                         res.status(204).send("Usuário não encontrado!");

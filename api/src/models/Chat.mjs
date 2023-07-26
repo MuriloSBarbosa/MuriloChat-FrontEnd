@@ -9,6 +9,11 @@ const Chat = dataBase.define('Chat', {
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
+    },
+    isAdmin: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
     }
 },
     {

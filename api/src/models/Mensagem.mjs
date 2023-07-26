@@ -12,7 +12,7 @@ const Mensagem = dataBase.define('Mensagem', {
     },
     texto: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
     },
     dtMensagem: {
         type: Sequelize.DATE,

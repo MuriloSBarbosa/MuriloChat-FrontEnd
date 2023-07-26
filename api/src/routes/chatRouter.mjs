@@ -9,6 +9,10 @@ chatRouter.post("/sala", autenticarTokenUsuario, (req, res) => {
     controller.criarSala(req, res);
 });
 
+chatRouter.delete("/sala/sair", autenticarTokenUsuario, (req, res) => {
+    controller.sairDaSala(req, res);
+});
+
 chatRouter.get("/listar", autenticarTokenUsuario, (req, res) => {
     controller.listarChats(req, res);
 });
@@ -19,6 +23,10 @@ chatRouter.get("/usuario/:idSala", autenticarTokenUsuario, (req, res) => {
 
 chatRouter.post("/usuario", autenticarTokenUsuario, (req, res) => {
     controller.inserirUser(req, res);
+});
+
+chatRouter.delete("/usuario/", autenticarTokenUsuario, (req, res) => {
+    controller.removerUsuario(req, res);
 });
 
 chatRouter.get("/mensagem/:fkSala", autenticarTokenUsuario, (req, res) => {

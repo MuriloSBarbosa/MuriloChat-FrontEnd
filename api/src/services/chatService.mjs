@@ -11,6 +11,45 @@ export function cadastrarSala(nome, identificador) {
     });
 }
 
+export async function sairDaSala(idSala, idUser) {
+    try {
+        await Chat.destroy({
+            where: {
+                fkSala: idSala,
+                fkUsuario: idUser
+            }
+        });
+
+        const chat = await Chat.findOne({
+            where: {
+                fkSala: idSala,
+                fkUsuario: idUser
+            }
+        });
+
+        if (!chat) {
+            await Sala.destroy({
+                where: {
+                    id: idSala
+                }
+            });
+        }
+    } catch (error) {
+        console.error("Erro ao sair da sala: ", error);
+        throw error;
+    }
+}
+
+export async function removerUsuarioSala(idSala, idUser) {
+        Chat.destroy({
+            where: {
+                fkSala: idSala,
+                fkUsuario: idUser
+            }
+        });
+
+}
+
 export function verificarUsuarioNaSala(idSala, idUser) {
     return Chat.findAll({
         where: {
@@ -20,10 +59,11 @@ export function verificarUsuarioNaSala(idSala, idUser) {
     })
 }
 
-export function inserirUser(fkSala, fkUsuario) {
+export function inserirUser(fkSala, fkUsuario, isAdmin) {
     return Chat.create({
         fkSala: fkSala,
-        fkUsuario: fkUsuario
+        fkUsuario: fkUsuario,
+        isAdmin: isAdmin
     });
 }
 
@@ -80,16 +120,20 @@ export function listarMensagens(fkSala) {
 
 export function verUsuariosDaSala(idSala) {
     return Usuario.findAll({
-        attributes: ['id', 'nome'],
+        attributes: ['id', 'nome', 'perfilSrc'],
         include: [
             {
                 model: Chat,
-                attributes: ['fkSala'],
+                attributes: ['isAdmin'],
                 where: {
                     fkSala: idSala
                 }
-            }
-        ]
+            },  
+        ],
+        order: [
+            ['nome', 'ASC']
+        ],
+        raw: true
     })
 }
 
