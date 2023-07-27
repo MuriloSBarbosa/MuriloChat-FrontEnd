@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import axiosInstance from "../../config/ipConfig";
 import styles from "./Usuarios.module.css";
 import { ipUse } from "../../config/ipConfig";
@@ -10,13 +10,11 @@ import Modal from "../Modal/Modal";
 function Usuarios(props) {
     const { usuarios, socket, carregarUsuarios, idSala, setUsuarios, room } = props;
     const [idsUsuariosOnline, setIdsUsuariosOnline] = useState({});
-    const navigate = useNavigate();
 
     const [modal, setModal] = useState({
         title: '',
         text: ''
     });
-    const [time, setTime] = useState(1500);
     const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
@@ -25,18 +23,30 @@ function Usuarios(props) {
 
         return () => {
             socket.off('onlineUsers');
+            socket.off('addUser');
         }
-    }, [socket]);
+    }, [usuarios]);
+
+    const sortedUsers = useMemo(() => {
+        // UseMemo serve para memorizar o valor de uma variavel, e só atualizar quando o valor de uma variavel mudar
+        // Nesse caso, só atualiza quando o valor de usuarios ou idsUsuariosOnline mudar
+        // Assim, não precisa ficar ordenando toda vez que o componente atualizar, que é um processo lento
+
+        return [...usuarios].sort((a, b) => {
+            if (idsUsuariosOnline[a.id] && !idsUsuariosOnline[b.id]) return -1;
+            if (!idsUsuariosOnline[a.id] && idsUsuariosOnline[b.id]) return 1;
+            return 0;
+        });
+    }, [usuarios, idsUsuariosOnline]);
 
     const usuariosOnline = (idUsuariosOnline) => {
 
-        // Convert array to Set for faster lookup
+        // new Set serve para remover os valores duplicados e poder usar o has que é mais rapido que o includes.
         const idSockerOnlineSet = new Set(idUsuariosOnline);
 
         setIdsUsuariosOnline((idOnline) => {
             let idsOnline = { ...idOnline };
 
-            // Set online users
             idSockerOnlineSet.forEach((userId) => {
                 // no json, colocar [] é a mesma coisa que colocar ., mas pode ser usado quando o nome da propriedade tem espaço ou é um numero
                 idsOnline[userId] = true;
@@ -125,7 +135,7 @@ function Usuarios(props) {
         <>
             <div className={styles.usuarios}>
                 <div className={styles.listaUser}>
-                    {usuarios.map((user, index) => (
+                    {sortedUsers.map((user, index) => (
                         <div className={styles.userItem} key={index} onClick={(e) => abrirOpcoesUser(e)}>
                             <div className={styles.user}>
                                 <div className={styles.userPerfil} style={{ backgroundColor: idsUsuariosOnline[user.id] ? "#00ff00" : "#e73f5d" }}>
@@ -152,12 +162,9 @@ function Usuarios(props) {
                 </div>
             </div >
 
-            <Modal showModal={showModal} setShowModal={setShowModal} modal={modal} time={time} />
-
+            <Modal showModal={showModal} setShowModal={setShowModal} modal={modal} />
 
         </>
-
-
     )
 }
 
