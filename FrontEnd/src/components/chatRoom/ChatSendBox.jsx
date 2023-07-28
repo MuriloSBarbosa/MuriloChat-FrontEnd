@@ -6,17 +6,23 @@ import docs from "../../assets/docs.png";
 import moment from "moment-timezone"
 import Resizer from 'react-image-file-resizer';
 import axiosInstance from "../../config/ipConfig";
+import file from "../../assets/file.png";
 
 
 const ChatSendBox = (props) => {
     const { idSala, room, tokenUsuario, socket } = props;
+
     const [showAnexos, setShowAnexos] = useState(false);
-    const [mensagemDigitada, setMensagemDigitada] = useState('');
-    const imagemSelecionada = useRef(null);
-    const [previewImage, setPreviewImage] = useState(null);
     const anexosImg = useRef(null);
     const anexosContent = useRef(null);
+    const fileRef = useRef(null)
 
+    const [mensagemDigitada, setMensagemDigitada] = useState('');
+
+    const imagemSelecionada = useRef(null);
+    const [previewImage, setPreviewImage] = useState(null);
+
+    const [docFile, setDocFile] = useState(null);
 
     useEffect(() => {
         window.addEventListener("click", (e) => fecharAnexos(e));
@@ -86,8 +92,6 @@ const ChatSendBox = (props) => {
         });
     };
 
-
-
     const inserirImagem = () => {
 
         const [image] = imagemSelecionada.current.files;
@@ -113,9 +117,20 @@ const ChatSendBox = (props) => {
     }
 
     const fecharAnexos = (e) => {
+        if (!anexosContent.current) return;
         if (!anexosContent.current.contains(e.target) && e.target != anexosImg.current) {
             setShowAnexos(false);
         }
+    }
+
+    const enviarDocumento = () => {
+
+
+    }
+
+    const handleCancel = () => {
+        fileRef.current.value = ""
+        setDocFile(null);
     }
 
     return (
@@ -130,6 +145,32 @@ const ChatSendBox = (props) => {
                 </div>
             }
 
+            {docFile &&
+                <div className={`${styles.preview} ${styles.previewDoc}`}>
+                    <div className={styles.content}>
+                        <img src={file} alt="preview" />
+                        <div className={styles.infoFile}>
+                            <div className={styles.info}>
+                                <span>Nome: </span>
+                                <span>{docFile.name}</span>
+                            </div>
+                            <div className={styles.info}>
+                                <span>Tamanho: </span>
+                                <span>{docFile.size} bytes</span>
+                            </div>
+                            <div className={styles.info}>
+                                <span>Tipo: </span>
+                                <span>{docFile.type}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={styles.buttons}>
+                        <button onClick={handleCancel} className={styles.cancelarImg}>Cancelar</button>
+                        <button onClick={enviarDocumento}>Enviar Documento</button>
+                    </div>
+                </div>
+            }
+
             <div className={styles.sendBox} >
                 <div className={styles.anexos}>
                     <img src={anexos} alt="" onClick={() => setShowAnexos(!showAnexos)} ref={anexosImg} />
@@ -137,14 +178,14 @@ const ChatSendBox = (props) => {
                         <div className={styles.image}>
                             <label className={styles.anexosLabel} htmlFor="image">
                                 <img src={imagem} alt="clip" />
-                                <input type="file" id='image' accept="image/*" ref={imagemSelecionada} onChange={inserirImagem} />
+                                <input type="file" id='image' accept="image/*" ref={imagemSelecionada} onChange={inserirImagem} multiple={false} />
                                 <p>Imagens</p>
                             </label>
                         </div>
                         <div className={styles.doc}>
                             <label className={styles.anexosLabel} htmlFor="doc">
                                 <img src={docs} alt="clip" />
-                                <input type="file" disabled={true} onChange={inserirImagem} />
+                                <input ref={fileRef} type="file" id="doc" onChange={(e) => setDocFile(e.target.files[0])} multiple={false} />
                                 <p>Documentos</p>
                             </label>
                         </div>

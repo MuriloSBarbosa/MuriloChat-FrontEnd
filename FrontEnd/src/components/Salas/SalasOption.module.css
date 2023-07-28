@@ -10,7 +10,7 @@
     position: fixed;
     transform: translateX(1rem);
     transform: translatey(1rem);
-    z-index: 3;
+    z-index: 4;
     display: flex;
     border-radius: 1rem;
     flex-direction: column;
@@ -26,7 +26,7 @@
 
 .content button {
     color: #e4e4e4;
-    padding: 0.2rem 1rem ;
+    padding: 0.2rem 1rem;
     width: 100%;
     height: 0;
     background-color: transparent;

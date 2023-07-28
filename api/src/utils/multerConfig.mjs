@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
         } else if (file.fieldname == "wallpaperImage") {
             cb(null, "./public/wallpaper");
             return;
-        } else if (file.fieldname == "document") {
+        } else if (file.fieldname == "documents") {
             cb(null, "./public/document");
             return;
         }
@@ -23,7 +23,13 @@ const storage = multer.diskStorage({
 });
 
 export const filtro = (req, file, cb) => {
+
     const formatoAceito = ["image/png", "image/jpg", "image/jpeg"]
+
+    if (file.fildname != "perfilImage" || "wallpaperImage") {
+        return cb(null, true);
+    }
+
 
     formatoAceito.find(
         formato => formato == file.mimetype

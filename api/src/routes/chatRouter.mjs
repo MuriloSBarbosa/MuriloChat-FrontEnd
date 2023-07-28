@@ -45,6 +45,10 @@ chatRouter.post("/mensagem/imagem/:fkSala", upload.single("chatImage"), autentic
     controller.inserirMensagemImagem(req, res);
 })
 
+chatRouter.post("/mensagem/documento/:fkSala", upload.single("documents"), autenticarTokenUsuario, (req, res) => {
+    controller.inserirMensagemDoc(req, res);
+})
+
 chatRouter.get("/imagem/:nomeImagem", (req, res) => {
     controller.buscarImagem(req, res);
 })

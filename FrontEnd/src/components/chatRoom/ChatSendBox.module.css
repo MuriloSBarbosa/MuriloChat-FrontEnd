@@ -1,4 +1,3 @@
-
 .sendBox {
     display: flex;
     flex-direction: row;
@@ -137,24 +136,69 @@
 .preview button {
     height: 2.5rem;
     border-radius: 0.5rem;
-    background-color: var(--colorDefault);
+    background-color: transparent;
     color: #fff;
     font-weight: 500;
     font-size: 1rem;
     cursor: pointer;
     border: none;
     transition: 0.2s;
+    border: 1px solid var(--colorDefault);
+    color: var(--colorDefault);
 }
 
 .cancelarImg {
-    background-color: #e73f5d !important;
+    border: 1px solid #e73f5d !important;
+    color: #e73f5d !important;
 }
 
 .preview button:hover,
 .preview button:focus {
-    filter: brightness(0.8);
+    background-color: var(--colorDefault);
+    color: #c7c7c7;
 }
 
-.anexosLabel{
-    margin: 0;
+.cancelarImg:hover,
+.cancelarImg:focus {
+    background-color: #e73f5d !important;
+    color: #c7c7c7 !important;
+}
+
+.previewDoc {
+    height: 30vh;
+}
+
+.previewDoc .content {
+    display: flex;
+    gap: 2rem;
+}
+
+.previewDoc img {
+    height: 10vh;
+    object-fit: cover;
+}
+
+.infoFile {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.info {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.info span:nth-child(1) {
+    color: #fff;
+}
+
+.info span:nth-child(2) {
+    color: #9e9e9e;
+    margin-left: 0.4rem;
 }

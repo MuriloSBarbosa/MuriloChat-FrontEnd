@@ -276,3 +276,34 @@ export function buscarImagem(req, res) {
 
     return res.sendFile(caminho, { headers: { 'Content-Type': 'image/jpeg' } });
 }
+
+export function inserirMensagemDoc(req, res) {
+    const { fkSala } = req.params;
+    const { id, nome } = req.usuario;
+    const token = req.headers.authorization.split(" ")[1];
+    const { filename } = req.file;
+    const { room, dtMensagem } = req.body;
+
+    if (!filename || !room || !dtMensagem) {
+        return res.status(400).send("Dados inválidos");
+    }
+    const srcImage = encodeURI(filename);
+
+    const mensagem = {
+        id,
+        nome,
+        srcImage,
+        token,
+        dtMensagem
+    }
+
+    // servidorIo.to(decodeURI(room)).emit('novaMensagem', mensagem);
+
+    // service.inserirMensagemImagem(id, fkSala, srcImage, dtMensagem)
+    //     .then(() => {
+    //         res.status(201).send("Mensagem cadastrada com sucesso!");
+    //     }).catch((erro) => {
+    //         res.status(500).send("Erro ao cadastrar Mensagem: " + erro);
+    //     });
+
+}
