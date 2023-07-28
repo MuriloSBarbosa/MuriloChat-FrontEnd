@@ -2,42 +2,33 @@ import React, { useEffect, useState, useRef } from 'react';
 import axiosInstance from "../../config/ipConfig";
 import styles from "./ChatContent.module.css";
 import Header from './Header';
-import moment from "moment-timezone"
-import anexos from "../../assets/anexos.png";
-import imagem from "../../assets/imagem.png";
-import docs from "../../assets/docs.png";
+import ChatMessage from './ChatMessage';
+import ChatSendBox from './ChatSendBox';
 import { formatarDataChat } from '../../utils/geral.mjs';
 import { ipUse } from '../../config/ipConfig';
 import Usuarios from './Usuarios';
-import Resizer from 'react-image-file-resizer';
 import arrow from "../../assets/arrow.png";
 import WallpaperImage from "../../assets/wallpaper-default.jpg";
 
 const ChatContent = (props) => {
     const [idSala, setIdSala] = useState(props.salaConfig.id);
     const [room, setRoom] = useState(props.salaConfig.identificador);
-    const [socket, setSocket] = useState(props.salaConfig.socket);
     const tokenUsuario = sessionStorage.getItem("token");
+    const socket = props.salaConfig.socket;
 
     const [isAdmin, setIsAdmin] = useState(false);
 
     const [usuarios, setUsuarios] = useState([]);
 
-    const [mensagemDigitada, setMensagemDigitada] = useState('');
     const [mensagens, setMensagens] = useState([]);
 
     const [showImage, setShowImage] = useState(false);
     const [imagemClicada, setImagemClicada] = useState(false);
 
-    const imagemSelecionada = useRef(null);
-    const [previewImage, setPreviewImage] = useState(null);
 
     const chatContainer = useRef(null);
     const chatBg = useRef(null);
 
-    const anexosImg = useRef(null);
-    const anexosContent = useRef(null);
-    const [showAnexos, setShowAnexos] = useState(false);
 
     const [showRolar, setShowRolar] = useState(false);
 
@@ -52,26 +43,26 @@ const ChatContent = (props) => {
         carregarUsuarios();
         buscarWallpaper();
 
-        chatContainer.current.addEventListener("scroll", verificarRolar);
+        const currentChatContainer = chatContainer.current;
+
+
+        currentChatContainer.addEventListener("scroll", verificarRolar);
+        currentChatContainer.addEventListener("scrollend", srollBehavior)
 
         socket.emit('joinRoom', room);
-
-        window.addEventListener("click", (e) => fecharAnexos(e));
-
-
 
         return () => {
             props.setShowModal(false);
             props.setIsRemovido(false);
-            window.removeEventListener("click", fecharAnexos);
+            currentChatContainer.removeEventListener("scrollend", srollBehavior);
         }
 
     }, [room]);
 
-    const fecharAnexos = (e) => {
-        if (!anexosContent.current.contains(e.target) && e.target != anexosImg.current) {
-            setShowAnexos(false);
-        }
+
+    const srollBehavior = () => {
+        chatContainer.current.style.opacity = 1;
+        chatContainer.current.style.scrollBehavior = "smooth";
     }
 
     const buscarWallpaper = () => {
@@ -130,12 +121,14 @@ const ChatContent = (props) => {
 
             setTimeout(() => {
                 chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
-            }, 100);
+            }, 200);
+
             setMensagens(res.data);
         }).catch((err) => {
             console.log(err);
         })
     }
+
 
     useEffect(() => {
         socket.on('novaMensagem', novasMensagens);
@@ -181,7 +174,6 @@ const ChatContent = (props) => {
 
     useEffect(() => {
         setTimeout(() => {
-
             if (verificarScroll()) {
                 chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
             }
@@ -195,7 +187,7 @@ const ChatContent = (props) => {
 
     const verificarScroll = () => {
         const { scrollTop, clientHeight, scrollHeight } = chatContainer.current;
-        if (scrollTop + clientHeight >= scrollHeight - 200) {
+        if (scrollTop + clientHeight >= scrollHeight - 400) {
             return true;
         }
         return false;
@@ -209,63 +201,6 @@ const ChatContent = (props) => {
         }
     };
 
-    const enviarMensagem = (e) => {
-        if (e.key !== 'Enter' && e.type != "click") return;
-
-        if (mensagemDigitada == "") return;
-
-        mensagemDigitada.trim();
-
-        const mensagem = {
-            idSala,
-            room: encodeURI(room),
-            mensagemDigitada,
-            tokenUsuario
-        }
-
-        socket.emit('enviarMensagem', mensagem);
-
-        setMensagemDigitada('');
-    };
-
-    const enviarImagem = () => {
-        const file = imagemSelecionada.current.files[0];
-
-        if (!file) return;
-
-        imagemSelecionada.current.value = "";
-
-        const formData = new FormData();
-        const dtMensagem = moment().tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ss");
-
-        Resizer.imageFileResizer(
-            file,
-            800, // Largura máxima desejada
-            800, // Altura máxima desejada
-            'JPEG', // Formato da imagem de saída (pode ser 'JPEG', 'PNG', 'WEBP', etc.)
-            70, // Qualidade da imagem (0-100)
-            0, // Rotação da imagem (em graus, 0 = sem rotação)
-            (blob) => {
-                // O redimensionamento e compressão foram concluídos, o blob contém a nova imagem
-                formData.append('chatImage', blob);
-                console.log(room);
-                formData.append("room", room);
-                formData.append("dtMensagem", dtMensagem);
-
-                axiosInstance.post(`/chat/mensagem/imagem/${idSala}`, formData, {
-                    headers: {
-                        "Content-Type": "multipart/form-data"
-                    }
-                }).then((res) => {
-                    cancelarImagem();
-                }).catch((err) => {
-                    console.log(err);
-                });
-            },
-            'blob' // Tipo de saída, 'blob' retorna um objeto Blob
-        );
-    };
-
     const ramdonColor = () => {
         const colors = ["#ff5e00", "#1FD11F", "#0000ff", "#ff00d4", "#FF2D61", "#00a2ff", "#c30000"];
         const indexSorteado = Math.floor(Math.random() * colors.length);
@@ -273,53 +208,6 @@ const ChatContent = (props) => {
 
         return corSorteada;
     }
-
-    const inserirImagem = () => {
-        const [image] = imagemSelecionada.current.files;
-
-        if (!image) return;
-
-        try {
-            Resizer.imageFileResizer(
-                image,
-                800, // Largura máxima desejada
-                800, // Altura máxima desejada
-                'JPEG', // Formato da imagem de saída (pode ser 'JPEG', 'PNG', 'WEBP', etc.)
-                70, // Qualidade da imagem (0-100)
-                0, // Rotação da imagem (em graus, 0 = sem rotação)
-                (resizedImage) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        setPreviewImage(reader.result);
-                    };
-                    reader.readAsDataURL(resizedImage);
-                },
-                'blob' // Tipo de saída, 'blob' retorna um objeto Blob
-            );
-        } catch (err) {
-            alert("Erro ao carregar imagem");
-        }
-    };
-
-    const cancelarImagem = () => {
-        setPreviewImage(null);
-        imagemSelecionada.current.value = "";
-    }
-
-    const verificarExibicaoNome = (index, msg) => {
-        if (index === 0 || msg.isRemetente) return null;
-
-        if (!mensagens[index - 1].isAddUser) {
-            if (msg.nome === mensagens[index - 1].nome) return null;
-        }
-
-        return (
-            <div className={styles.userContent}>
-                <img src={msg.perfilSrc} alt="Imagem de perfil" />
-                {msg.nome}
-            </div>
-        );
-    };
 
     const verImagem = (imagem) => {
         setImagemClicada(`http://${ipUse}:8080/chat/imagem/${imagem}`);
@@ -348,26 +236,16 @@ const ChatContent = (props) => {
             />
 
             <img ref={chatBg} className={styles.chatBg} alt="" />
-            <div className={styles.mensagens} ref={chatContainer}>
+
+            <div className={styles.mensagens} ref={chatContainer} style={{ opacity: 0 }}>
                 {mensagens.map((msg, index) => (
-                    <div className={styles.mensagemContent} key={index}>
-                        {msg.isAddUser ? <div className={`${styles.mensagem} ${styles.isAddUser}`}><p>{msg.texto}</p></div> :
-                            <div className={msg.isRemetente ? `${styles.mensagem} ${styles.remetente}` : styles.mensagem} >
-                                <div className={styles.nomeUsuarioMsg} style={{ color: msg.color }}>
-                                    {verificarExibicaoNome(index, msg)}
-                                </div>
-                                <div className={styles.textMsg}>
-                                    {msg.texto && msg.texto}
-                                    {msg.srcImage &&
-                                        <button onClick={() => verImagem(msg.srcImage)}>
-                                            <img src={`http://${ipUse}:8080/chat/imagem/${msg.srcImage}`} alt="imagem" />
-                                        </button>
-                                    }
-                                    <span className={styles.dtMensagem}>{msg.dtMensagem}</span>
-                                </div>
-                            </div>
-                        }
-                    </div>
+                    <ChatMessage
+                        msg={msg}
+                        key={index}
+                        index={index}
+                        verImagem={verImagem}
+                        mensagens={mensagens}
+                    />
                 ))}
                 <button style={showRolar ? { display: "none" } : null} className={styles.rolar} onClick={rolarParaBaixo}>
                     <img src={arrow} alt="" />
@@ -375,7 +253,7 @@ const ChatContent = (props) => {
             </div>
 
             {showImage &&
-                <div className={styles.verImagem}>
+                <div className={styles.verImagem} >
                     <img src={imagemClicada} alt="" />
                     <button onClick={() => { setImagemClicada(null); setShowImage(false) }}>
                         X
@@ -383,46 +261,18 @@ const ChatContent = (props) => {
                 </div>
             }
 
-            {previewImage &&
-                <div className={styles.preview}>
-                    {previewImage ? <img src={previewImage} alt="preview" /> : null}
-                    <div className={styles.buttons}>
-                        <button onClick={cancelarImagem} className={styles.cancelarImg}>Cancelar</button>
-                        <button onClick={enviarImagem}>Enviar Imagem</button>
-                    </div>
-                </div>
-            }
+            <ChatSendBox
+                props={props}
+                idSala={idSala}
+                room={room}
+                tokenUsuario={tokenUsuario}
+                socket={socket}
+            />
 
-            <div className={styles.sendBox} >
-                <div className={styles.anexos}>
-                    <img src={anexos} alt="" onClick={() => setShowAnexos(!showAnexos)} ref={anexosImg} />
-                    <div className={`${styles.anexosContent} ${showAnexos ? styles.showAnexosContent : null}`} ref={anexosContent}>
-                        <div className={styles.image}>
-                            <label className={styles.anexosLabel} htmlFor="image">
-                                <img src={imagem} alt="clip" />
-                                <input type="file" id='image' accept="image/*" ref={imagemSelecionada} onChange={inserirImagem} />
-                                <p>Imagens</p>
-                            </label>
-                        </div>
-                        <div className={styles.doc}>
-                            <label className={styles.anexosLabel} htmlFor="image">
-                                <img src={docs} alt="clip" />
-                                <input type="file" id='image' accept="image/*" ref={imagemSelecionada} onChange={inserirImagem} />
-                                <p>Documentos</p>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <input type="text" value={mensagemDigitada}
-                    onChange={(e) => setMensagemDigitada(e.target.value)}
-                    placeholder="Digite sua mensagem"
-                    onKeyDown={(e) => { enviarMensagem(e) }}
-                    disabled={props.isRemovido}
-                />
-                <button disabled={props.isRemovido} onClick={(e) => { enviarMensagem(e) }}>Enviar</button>
-            </div>
+
 
         </div>
+
     );
 };
 

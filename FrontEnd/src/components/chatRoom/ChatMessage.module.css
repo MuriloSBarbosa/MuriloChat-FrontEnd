@@ -1,0 +1,96 @@
+
+.mensagemContent {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    z-index: 2;
+    /* quando texto passar, quebrar linha */
+    word-break: break-all;
+}
+
+.mensagem {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.isAddUser {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.isAddUser p {
+    color: #343434;
+    background-color: #949494;
+    padding: 0 0.5rem;
+    border-radius: 5px;
+}
+
+.nomeUsuarioMsg {
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--colorDefault);
+}
+
+.userContent {
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+}
+
+
+.userContent img {
+    position: absolute;
+    height: 2rem;
+    width: 2rem;
+    left: -2.5rem;
+    border-radius: 100%;
+    margin-right: 0.5rem;
+}
+
+.dtMensagem {
+    font-size: 0.8rem;
+    color: #a8a8b3;
+    margin-top: 0.5rem;
+}
+
+.textMsg {
+    font-size: 1.2rem;
+    background-color: var(--colorDefault);
+    color: #fff;
+    padding: 0.5rem;
+    max-width: 40%;
+    border-radius: 0rem 0.5rem 0.5rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.textMsg img {
+    height: 40vh;
+    object-fit: cover;
+}
+
+.remetente {
+    align-items: flex-end;
+    padding: 0;
+}
+
+.remetente .textMsg {
+    background-color: #29292e;
+    align-self: flex-end;
+    border-radius: 0.5rem;
+}
+
+.remetente .dtMensagem {
+    color: #a8a8b3;
+}
