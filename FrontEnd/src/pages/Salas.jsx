@@ -5,11 +5,11 @@ import styles from "./Salas.module.css";
 import ChatContent from "../components/chatRoom/ChatContent";
 import io from 'socket.io-client';
 import { ipUse } from '../config/ipConfig';
-import configPng from '../assets/config.png';
-import Deslogar from "../components/Deslogar";
+import SalasOption from "../components/Salas/SalasOption";
 import AdicionarSala from "../components/Salas/AdicionarSala";
 import MuriloChatImg from '../assets/logoCompleta.svg';
 import Modal from "../components/Modal/Modal";
+import tresPontos from '../assets/tres-pontos.png';
 
 function Salas() {
     const [salas, setSalas] = useState([]);
@@ -103,12 +103,10 @@ function Salas() {
 
             listarSalas();
 
-            console.log(usuarioId, dados.idUsuario);
             if (usuarioId != dados.idUsuario) return;
 
             setIsRemovido(true);
 
-            console.log(lastId);
             if (lastId == dados.idSala) {
                 setModal({
                     text: 'Você foi removido da Sala... :('
@@ -135,18 +133,13 @@ function Salas() {
         <>
             <div className={styles.salas}>
                 <div className={styles.contentListaSalas}>
-                    <button className={styles.config} onClick={() => navigate("/perfil")}>
-                        <img src={configPng} alt="Configurações" />
-                    </button>
 
-                    <Deslogar styles={styles} />
+                    <SalasOption
+                        style={styles.salaOptions}
+                        showAddSala={showAddSala}
+                        setShowAddSala={setShowAddSala}
+                    />
 
-                    <div className={styles.title}>
-                        <h1>Lista de Salas</h1>
-                        <button className={styles.adicionarSala} onClick={() => setShowAddSala(true)}>
-                            <p>+</p>
-                        </button>
-                    </div>
                     {showAddSala &&
                         <AdicionarSala
                             setShowAddSala={setShowAddSala}
@@ -158,6 +151,10 @@ function Salas() {
                             setSalaAdd={setSalaAdd}
                         />
                     }
+
+                    <div className={styles.title}>
+                        <h1>Lista de Salas</h1>
+                    </div>
 
                     <div className={styles.pesquisar}>
                         <input type="text" placeholder="Pesquisar sala" onChange={(e) => pesquisarSala(e.target.value)} />

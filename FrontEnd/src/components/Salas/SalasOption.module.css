@@ -1,0 +1,55 @@
+.tresPontos {
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    top: 0;
+    right: 0;
+}
+
+.content {
+    position: fixed;
+    transform: translateX(1rem);
+    transform: translatey(1rem);
+    z-index: 3;
+    display: flex;
+    border-radius: 1rem;
+    flex-direction: column;
+    background-color: #222;
+    box-shadow: 0 0 0.5rem #00000030;
+    height: 0;
+    overflow-y: hidden;
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.3s;
+}
+
+
+.content button {
+    color: #e4e4e4;
+    padding: 0.2rem 1rem ;
+    width: 100%;
+    height: 0;
+    background-color: transparent;
+    border: none;
+    transition: 0.3s;
+}
+
+.showOption {
+    opacity: 1;
+    visibility: visible;
+    height: 7.6rem;
+}
+
+.showOption button {
+    height: 2.5rem;
+}
+
+
+.content button:hover {
+    background-color: #353535;
+
+}
+
+.deslogar {
+    color: rgb(231, 63, 93) !important
+}

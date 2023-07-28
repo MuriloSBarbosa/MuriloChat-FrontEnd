@@ -25,44 +25,19 @@
     position: relative;
 }
 
-.config {
-    width: 2.5rem;
-    right: 1rem;
-    top: 1rem;
-}
-
-.logout {
-    width: 2.5rem;
-    left: 1rem;
-    top: 1rem;
-}
-
-.contentListaSalas .title {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-}
 
 .contentListaSalas .title h1 {
-    color: #FFFF;
+    color: #e4e4e4;
     font-size: 2rem;
     text-align: center;
 }
 
-.contentListaSalas .title .adicionarSala {
-    position: static;
-    cursor: pointer;
-    color: #fff;
-    border: 2px solid #fff;
-    height: 1.7rem;
-    width: 1.7rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.salaOptions {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
 }
+
 
 .pesquisar {
     display: flex;
@@ -75,15 +50,10 @@
 .pesquisar input {
     width: 85%;
     padding: 0.3rem 1rem;
-    border: 1px solid #fff;
-    background-color: #29292e;
-    filter: brightness(1.4);
-    color: #fff;
-}
-
-.adicionarSala p {
-    font-size: 1.7rem;
-    font-weight: 200;
+    border-radius: 4px;
+    border: 1px solid #424242;
+    background-color: #353535;
+    color: #e4e4e4;
 }
 
 .listaSalas {
@@ -94,7 +64,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    gap: 0.3rem;
 }
 
 .listaSalas::-webkit-scrollbar {
@@ -115,26 +84,24 @@
     align-items: center;
     justify-content: space-between;
     width: 90%;
-    border-radius: 0.5rem;
-    border: 1px solid #fff;
+    border-bottom: 1px solid #424242;
+    border-top: 1px solid #424242;
     padding: 0.6rem 1rem;
-    margin-bottom: 1rem;
-    background: #222;
-    color: #FFFF;
+    color: #e4e4e4;
     cursor: pointer;
     transition: 0.2s;
 }
 
 .itemSala:hover {
-    background: #29292e;
+    background: rgba(44, 44, 44, 0.296)
 }
 
 .selecionada {
-    background: var(--colorDefault);
+    background: #353535;
 }
 
 .selecionada:hover {
-    background: var(--colorDefault);
+    background: #353535;
 }
 
 .linhaVertical {
@@ -179,16 +146,4 @@
 
 .bemvindo .logo span {
     color: #FFFF;
-}
-
-.contentListaSalas button {
-    position: absolute;
-    cursor: pointer;
-    background-color: transparent;
-    border: none;
-    transition: 0.2s;
-}
-
-.contentListaSalas button:hover {
-    filter: brightness(0.8);
 }
