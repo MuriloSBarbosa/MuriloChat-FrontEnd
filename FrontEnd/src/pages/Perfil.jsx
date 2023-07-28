@@ -27,7 +27,6 @@ const Perfil = () => {
                 <div className={styles.menuList}>
                     <div className={`${styles.menuItem} ${selecionado === 0 && styles.selecionado}`} onClick={() => { setConteudo(<InfoUsuario />); setSelecionado(0) }}>Informações do Usuário</div>
                     <div className={`${styles.menuItem} ${selecionado === 1 && styles.selecionado}`} onClick={() => { setConteudo(<Wallpaper />); setSelecionado(1) }}>Papel de Parede</div>
-                    <div className={`${styles.menuItem} ${selecionado === 2 && styles.selecionado}`} onClick={() => { setConteudo(<InfoUsuario />); setSelecionado(2) }}>Tema</div>
                 </div>
 
             </div>
