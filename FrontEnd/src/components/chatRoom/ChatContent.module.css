@@ -217,15 +217,65 @@
     background-color: #6f4bd8;
 }
 
+.anexos {
+    position: relative;
+}
 
-.anexos input {
+.anexos img {
+    width: 2rem;
+    cursor: pointer;
+}
+
+.anexosContent {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    height: 0;
+    bottom: 70%;
+    transition: 0.5s;
+    opacity: 0;
+}
+
+.anexosContent div {
+    padding: 0.3rem;
+}
+
+.anexosContent input {
     display: none;
 }
 
-.anexos label img {
-    height: 2rem;
-    width: 2rem;
+.anexosContent div {
+    display: none;
+}
+
+.anexosContent label {
+    display: flex;
+    align-items: center;
     cursor: pointer;
+    color: #b7b7b7;
+    padding: 1rem;
+    width: 100%;
+    transition: 0.2s;
+}
+
+.anexosContent label:hover {
+    background-color: #414141;
+}
+
+.anexosContent img {
+    margin-right: 1rem;
+}
+
+.showAnexosContent {
+    opacity: 1;
+    height: max-content;
+    bottom: 150%;
+}
+
+.showAnexosContent div {
+    display: flex;
+    width: 11rem;
+    background-color: #29292e;
 }
 
 .verImagem {
@@ -310,4 +360,8 @@
 .preview button:hover,
 .preview button:focus {
     filter: brightness(0.8);
+}
+
+.anexosLabel{
+    margin: 0;
 }

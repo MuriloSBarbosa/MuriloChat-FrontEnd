@@ -4,6 +4,8 @@ import styles from "./ChatContent.module.css";
 import Header from './Header';
 import moment from "moment-timezone"
 import anexos from "../../assets/anexos.png";
+import imagem from "../../assets/imagem.png";
+import docs from "../../assets/docs.png";
 import { formatarDataChat } from '../../utils/geral.mjs';
 import { ipUse } from '../../config/ipConfig';
 import Usuarios from './Usuarios';
@@ -33,6 +35,9 @@ const ChatContent = (props) => {
     const chatContainer = useRef(null);
     const chatBg = useRef(null);
 
+    const anexosImg = useRef(null);
+    const anexosContent = useRef(null);
+    const [showAnexos, setShowAnexos] = useState(false);
 
     const [showRolar, setShowRolar] = useState(false);
 
@@ -51,12 +56,23 @@ const ChatContent = (props) => {
 
         socket.emit('joinRoom', room);
 
+        window.addEventListener("click", (e) => fecharAnexos(e));
+
+
+
         return () => {
             props.setShowModal(false);
             props.setIsRemovido(false);
+            window.removeEventListener("click", fecharAnexos);
         }
 
     }, [room]);
+
+    const fecharAnexos = (e) => {
+        if (!anexosContent.current.contains(e.target) && e.target != anexosImg.current) {
+            setShowAnexos(false);
+        }
+    }
 
     const buscarWallpaper = () => {
         axiosInstance.get('/usuario/wallpaper',)
@@ -379,10 +395,23 @@ const ChatContent = (props) => {
 
             <div className={styles.sendBox} >
                 <div className={styles.anexos}>
-                    <label htmlFor="image">
-                        <img src={anexos} alt="clip" />
-                    </label>
-                    <input type="file" id='image' accept="image/*" ref={imagemSelecionada} onChange={inserirImagem} />
+                    <img src={anexos} alt="" onClick={() => setShowAnexos(!showAnexos)} ref={anexosImg} />
+                    <div className={`${styles.anexosContent} ${showAnexos ? styles.showAnexosContent : null}`} ref={anexosContent}>
+                        <div className={styles.image}>
+                            <label className={styles.anexosLabel} htmlFor="image">
+                                <img src={imagem} alt="clip" />
+                                <input type="file" id='image' accept="image/*" ref={imagemSelecionada} onChange={inserirImagem} />
+                                <p>Imagens</p>
+                            </label>
+                        </div>
+                        <div className={styles.doc}>
+                            <label className={styles.anexosLabel} htmlFor="image">
+                                <img src={docs} alt="clip" />
+                                <input type="file" id='image' accept="image/*" ref={imagemSelecionada} onChange={inserirImagem} />
+                                <p>Documentos</p>
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <input type="text" value={mensagemDigitada}
                     onChange={(e) => setMensagemDigitada(e.target.value)}

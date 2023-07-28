@@ -11,6 +11,9 @@ const storage = multer.diskStorage({
         } else if (file.fieldname == "wallpaperImage") {
             cb(null, "./public/wallpaper");
             return;
+        } else if (file.fieldname == "document") {
+            cb(null, "./public/document");
+            return;
         }
         cb(null, "./public/uploads");
 
