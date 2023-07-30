@@ -2,10 +2,7 @@
 .env
 
 #Uploads
-public/perfil
 public/uploads
-public/wallpaper
-public/documents
 
 # Logs
 logs

@@ -7,16 +7,16 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         console.log(file.fieldname);
         if (file.fieldname == "perfilImage") {
-            cb(null, "./public/perfil");
+            cb(null, "./public/uploads/perfil");
             return;
         } else if (file.fieldname == "wallpaperImage") {
-            cb(null, "./public/wallpaper");
+            cb(null, "./public/uploads/wallpaper");
             return;
         } else if (file.fieldname == "chatDoc") {
-            cb(null, "./public/documents");
+            cb(null, "./public/uploads/documents");
             return;
         }
-        cb(null, "./public/uploads");
+        cb(null, "./public/uploads/images");
 
     }, filename: (req, file, cb) => {
         cb(null, `${moment().format("YYYY-MM-DD-HH[h]-mm[m]-ss[s]-SSS[ml]")}-${file.originalname}`);

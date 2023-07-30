@@ -64,7 +64,7 @@ export function verificarNome(req, res) {
 export function buscarImagem(req, res) {
     const nomeImagem = req.params.nomeImagem;
 
-    const caminho = path.join(modulePath, '..', '..', 'public', 'perfil', decodeURI(nomeImagem));
+    const caminho = path.join(modulePath, '..', '..', 'public', 'uploads', 'perfil', decodeURI(nomeImagem));
 
     return res.sendFile(caminho, { headers: { 'Content-Type': 'image/jpeg' } });
 }
@@ -163,7 +163,7 @@ export function alterarImagem(req, res) {
         .then(() => {
             if (perfilSrc) {
                 // Remover imagem antiga
-                const caminho = path.join(modulePath, '..', '..', 'public', 'perfil', perfilSrc);
+                const caminho = path.join(modulePath, '..', '..', 'public', 'uploads', 'perfil', perfilSrc);
 
                 fs.unlink(caminho, (err) => {
                     if (err) {
@@ -200,7 +200,7 @@ export function removerImagem(req, res) {
         .then(() => {
             if (perfilSrc) {
                 // Remover imagem antiga
-                const caminho = path.join(modulePath, '..', '..', 'public', 'perfil', perfilSrc);
+                const caminho = path.join(modulePath, '..', '..', 'public', 'uploads', 'perfil', perfilSrc);
 
                 fs.unlink(caminho, (err) => {
                     if (err) {
@@ -233,7 +233,7 @@ export function removerImagem(req, res) {
 export function buscarWallpaper(req, res) {
     const { wallpaperSrc } = req.params;
 
-    const caminho = path.join(modulePath, '..', '..', 'public', 'wallpaper', decodeURI(wallpaperSrc));
+    const caminho = path.join(modulePath, '..', '..', 'public', 'uploads', 'wallpaper', decodeURI(wallpaperSrc));
 
     return res.sendFile(caminho, { headers: { 'Content-Type': 'image/jpeg' } });
 
@@ -252,7 +252,7 @@ export function alterarWallpaper(req, res) {
         .then(() => {
             if (wallpaperSrc) {
                 // Remover imagem antiga
-                const caminho = path.join(modulePath, '..', '..', 'public', 'wallpaper', wallpaperSrc);
+                const caminho = path.join(modulePath, '..', '..', 'public', 'uploads', 'wallpaper', wallpaperSrc);
 
                 fs.unlink(caminho, (err) => {
                     if (err) {
@@ -289,7 +289,7 @@ export function removerWallpaper(req, res) {
         .then(() => {
             if (wallpaperSrc) {
                 // Remover imagem antiga
-                const caminho = path.join(modulePath, '..', '..', 'public', 'wallpaper', wallpaperSrc);
+                const caminho = path.join(modulePath, '..', '..', 'public', 'uploads', 'wallpaper', wallpaperSrc);
 
                 fs.unlink(caminho, (err) => {
                     if (err) {

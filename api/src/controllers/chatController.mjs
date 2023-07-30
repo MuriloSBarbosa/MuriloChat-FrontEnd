@@ -272,7 +272,7 @@ export function buscarImagem(req, res) {
 
     const nomeImagem = req.params.nomeImagem;
 
-    const caminho = path.join(modulePath, '..', '..', 'public', 'uploads', decodeURI(nomeImagem));
+    const caminho = path.join(modulePath, '..', '..', 'public', 'uploads', 'images', decodeURI(nomeImagem));
 
     return res.sendFile(caminho, { headers: { 'Content-Type': 'image/jpeg' } });
 }
@@ -318,7 +318,7 @@ export function buscarDocumento(req, res) {
 
     const nomeDoc = req.params.nomeDocumento;
 
-    const caminho = path.join(modulePath, '..', '..', 'public', 'documents', decodeURI(nomeDoc));
+    const caminho = path.join(modulePath, '..', '..', 'public', 'uploads', 'documents', decodeURI(nomeDoc));
 
     // Para todos os tipos de arquivo, use: application/octet-stream
     // Para mais informações, acesse: https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
