@@ -39,7 +39,7 @@
 
 .sendBox button:hover,
 .sendBox button:focus {
-    background-color: #6f4bd8;
+    filter: brightness(0.8);
 }
 
 .anexos {

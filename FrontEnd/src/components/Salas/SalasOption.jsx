@@ -26,14 +26,14 @@ const SalasOption = (props) => {
         <div className={`${props.style} ${styles.salaOptions}`}>
             <img src={tresPontos} alt="" onClick={() => setSalaOptions(!salaOptions)} className={styles.tresPontos} />
             <div className={`${styles.content} ${salaOptions ? styles.showOption : null} `}>
-                <button className={styles.deslogar} onClick={deslogar}>
-                    Deslogar
-                </button>
                 <button onClick={() => props.setShowAddSala(true)}>
                     Adicionar Sala
                 </button>
                 <button onClick={() => navigate("/perfil")}>
                     Configurações
+                </button>
+                <button className={styles.deslogar} onClick={deslogar}>
+                    Deslogar
                 </button>
             </div>
 
