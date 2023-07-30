@@ -1,6 +1,9 @@
 import React from "react";
 import styles from "./ChatMessage.module.css";
 import { ipUse } from "../../config/ipConfig";
+import downloadImg from "../../assets/download.png";
+import fileImg from "../../assets/file.png";
+import { formatarBytes } from "../../utils/geral.mjs";
 
 const ChatMessage = ({ msg, index, verImagem, mensagens }) => {
 
@@ -34,9 +37,28 @@ const ChatMessage = ({ msg, index, verImagem, mensagens }) => {
                         {msg.texto}
                         {msg.srcImage &&
                             <button onClick={() => verImagem(msg.srcImage)}>
-                                <img src={`http://${ipUse}:8080/chat/imagem/${msg.srcImage}`} alt="imagem" />
+                                <img className={styles.msgImg} src={`http://${ipUse}:8080/chat/imagem/${msg.srcImage}`} alt="imagem" />
                             </button>
                         }
+
+                        {msg.srcDoc &&
+                            <div className={styles.documento} >
+                                <div className={styles.docContent} >
+                                    <img className={styles.docImage} src={fileImg} alt="fileImg" />
+                                    <div className={styles.docInfo} >
+                                        <p>{msg.nomeDoc}</p>
+                                        <div >
+                                            <p>{msg.typeDoc}</p>
+                                            <p>{formatarBytes(msg.sizeDoc)}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a className={styles.docDownload} href={`http://${ipUse}:8080/chat/documento/${encodeURI(msg.srcDoc)}`} >
+                                    <img src={downloadImg} alt="download" />
+                                </a>
+                            </div>
+                        }
+
                         <span className={styles.dtMensagem}>{msg.dtMensagem}</span>
                     </div>
                 </div>

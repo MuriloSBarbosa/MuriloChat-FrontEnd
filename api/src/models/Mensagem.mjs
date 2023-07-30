@@ -22,6 +22,22 @@ const Mensagem = dataBase.define('Mensagem', {
         type: Sequelize.STRING,
         allowNull: true
     },
+    srcDoc: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    nomeDoc: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    typeDoc: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    sizeDoc: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
     isAddUser: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

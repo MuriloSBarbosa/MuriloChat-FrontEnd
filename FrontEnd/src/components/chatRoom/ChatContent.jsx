@@ -116,6 +116,7 @@ const ChatContent = (props) => {
         axiosInstance.get("/chat/mensagem/" + idSala,
         ).then((res) => {
             res.data.forEach((msg) => {
+                console.log(msg.srcDoc);
                 msg = formatarMensagens(msg);
             });
 

@@ -7,6 +7,7 @@ import moment from "moment-timezone"
 import Resizer from 'react-image-file-resizer';
 import axiosInstance from "../../config/ipConfig";
 import file from "../../assets/file.png";
+import { formatarBytes } from "../../utils/geral.mjs";
 
 
 const ChatSendBox = (props) => {
@@ -76,7 +77,6 @@ const ChatSendBox = (props) => {
             const dtMensagem = moment().tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ss");
 
             formData.append('chatImage', blob);
-            console.log(room);
             formData.append("room", room);
             formData.append("dtMensagem", dtMensagem);
 
@@ -125,7 +125,33 @@ const ChatSendBox = (props) => {
 
     const enviarDocumento = () => {
 
+        const doc = fileRef.current.files[0];
 
+        if (!doc) return;
+
+        const formData = new FormData();
+
+        const dtMensagem = moment().tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ss");
+
+        formData.append('chatDoc', doc);
+        formData.append("room", room);
+        formData.append("dtMensagem", dtMensagem);
+        formData.append("nomeDoc", doc.name);
+        formData.append("typeDoc", doc.type);
+        formData.append("sizeDoc", doc.size);
+
+
+        axiosInstance.post(`/chat/mensagem/documento/${idSala}`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        }).then((res) => {
+            handleCancel();
+        }
+        ).catch((err) => {
+            console.log(err);
+        }
+        );
     }
 
     const handleCancel = () => {
@@ -156,7 +182,7 @@ const ChatSendBox = (props) => {
                             </div>
                             <div className={styles.info}>
                                 <span>Tamanho: </span>
-                                <span>{docFile.size} bytes</span>
+                                <span>{formatarBytes(docFile.size)}</span>
                             </div>
                             <div className={styles.info}>
                                 <span>Tipo: </span>

@@ -282,28 +282,47 @@ export function inserirMensagemDoc(req, res) {
     const { id, nome } = req.usuario;
     const token = req.headers.authorization.split(" ")[1];
     const { filename } = req.file;
-    const { room, dtMensagem } = req.body;
+    const { room, dtMensagem, nomeDoc, typeDoc, sizeDoc } = req.body;
 
     if (!filename || !room || !dtMensagem) {
         return res.status(400).send("Dados inválidos");
     }
-    const srcImage = encodeURI(filename);
+
+    const srcDoc = encodeURI(filename);
 
     const mensagem = {
         id,
         nome,
-        srcImage,
+        srcDoc,
+        nomeDoc,
+        typeDoc,
+        sizeDoc,
         token,
         dtMensagem
     }
 
-    // servidorIo.to(decodeURI(room)).emit('novaMensagem', mensagem);
+    try {
 
-    // service.inserirMensagemImagem(id, fkSala, srcImage, dtMensagem)
-    //     .then(() => {
-    //         res.status(201).send("Mensagem cadastrada com sucesso!");
-    //     }).catch((erro) => {
-    //         res.status(500).send("Erro ao cadastrar Mensagem: " + erro);
-    //     });
+        servidorIo.to(room).emit('novaMensagem', mensagem);
 
+        service.inserirMensagemDoc(id, fkSala, srcDoc, nomeDoc, typeDoc, sizeDoc, dtMensagem);
+
+        res.status(201).send("Documento salvo com sucesso!");
+    } catch (erro) {
+        res.status(500).send("Erro ao cadastrar Mensagem: " + erro);
+    }
+
+}
+
+export function buscarDocumento(req, res) {
+
+    const nomeDoc = req.params.nomeDocumento;
+
+    const caminho = path.join(modulePath, '..', '..', 'public', 'documents', decodeURI(nomeDoc));
+
+    // Para todos os tipos de arquivo, use: application/octet-stream
+    // Para mais informações, acesse: https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+
+    // definir o nome do arquivo do caminho
+    return res.sendFile(caminho, { headers: { 'Content-Type': 'application/octet-stream' } });
 }

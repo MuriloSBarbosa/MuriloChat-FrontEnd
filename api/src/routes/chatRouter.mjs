@@ -37,20 +37,20 @@ chatRouter.get("/mensagem/:fkSala", autenticarTokenUsuario, (req, res) => {
     controller.listarMensagens(req, res);
 });
 
-chatRouter.post("/mensagem", autenticarTokenUsuario, (req, res) => {
-    controller.inserirMensagem(req, res);
-});
-
 chatRouter.post("/mensagem/imagem/:fkSala", upload.single("chatImage"), autenticarTokenUsuario, (req, res) => {
     controller.inserirMensagemImagem(req, res);
 })
 
-chatRouter.post("/mensagem/documento/:fkSala", upload.single("documents"), autenticarTokenUsuario, (req, res) => {
+chatRouter.get("/imagem/:nomeImagem", (req, res) => {
+    controller.buscarImagem(req, res);
+})
+
+chatRouter.post("/mensagem/documento/:fkSala", upload.single("chatDoc"), autenticarTokenUsuario, (req, res) => {
     controller.inserirMensagemDoc(req, res);
 })
 
-chatRouter.get("/imagem/:nomeImagem", (req, res) => {
-    controller.buscarImagem(req, res);
+chatRouter.get("/documento/:nomeDocumento", (req, res) => {
+    controller.buscarDocumento(req, res);
 })
 
 export default chatRouter;

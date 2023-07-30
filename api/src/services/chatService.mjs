@@ -102,6 +102,18 @@ export function inserirMensagemImagem(idUsuario, idSala, srcImage, dtAgora) {
     });
 }
 
+export function inserirMensagemDoc(idUsuario, idSala, srcDoc, nomeDoc, typeDoc, sizeDoc, dtAgora) {
+    return Mensagem.create({
+        fkUsuario: idUsuario,
+        fkSala: idSala,
+        dtMensagem: dtAgora,
+        srcDoc: srcDoc,
+        nomeDoc: nomeDoc,
+        typeDoc: typeDoc,
+        sizeDoc: sizeDoc
+    });
+}
+
 export function listarChats(fkUsuario) {
     return Sala.findAll({
         include: [
@@ -117,7 +129,7 @@ export function listarChats(fkUsuario) {
 
 export function listarMensagens(fkSala) {
     return Mensagem.findAll({
-        attributes: ['texto', 'dtMensagem', 'fkUsuario', 'srcImage', 'isAddUser'],
+        attributes: ['texto', 'dtMensagem', 'fkUsuario', 'srcImage', 'srcDoc', 'nomeDoc', 'typeDoc', 'sizeDoc', 'isAddUser'],
         include: [
             {
                 model: Usuario,
