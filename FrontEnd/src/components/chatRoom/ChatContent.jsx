@@ -232,7 +232,6 @@ const ChatContent = (props) => {
 
     const verificarScroll = () => {
         const { scrollTop, clientHeight, scrollHeight } = chatContainer.current;
-        console.log(scrollTop, clientHeight, scrollHeight);
 
         // ScrollTop = Quantidade de pixels que o scroll está do topo
         // ClientHeight = Altura da tela, depende do tamanho da tela do usuário
