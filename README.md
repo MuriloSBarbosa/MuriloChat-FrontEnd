@@ -8,28 +8,18 @@
 
 O MuriloChat é um chat em tempo real desenvolvido para proporcionar interações entre usuários. Utilizando tecnologias modernas, como React, MySQL, Node.js, Sequelize e Socket.IO, o projeto visa aprimorar as habilidades técnicas do desenvolvedor.
 
-<div class="images" style="display: flex; justify-content: center; align-items: center; gap: 2rem">
-	<div class="content" style="display: flex; justify-content: space-between; align-items: center; flex-direction: column; height: 8rem">
-		<img src="./markdown/react.svg" width="60" alt="react"/>
-		<p>React</p>
-	</div>
-	<div class="content" style="display: flex; justify-content: space-between; align-items: center; flex-direction: column; height: 8rem">
-		<img src="./markdown/mysql.png" width="60" alt="MySql"/>
-		<p>MySQL</p>
-	</div>
-	<div class="content" style="display: flex; justify-content: space-between; align-items: center; flex-direction: column; height: 8rem">
-		<img src="./markdown/node.svg" width="60" alt="NodeJs"/>
-		<p>NodeJs</p>
-	</div>
-	<div class="content" style="display: flex; justify-content: space-between; align-items: center; flex-direction: column; height: 8rem">
-		<img src="./markdown/sequelize.svg" width="60" alt="Sequelize"/>
-		<p>Sequelize</p>
-	</div>
-	<div class="content" style="display: flex; justify-content: space-between; align-items: center; flex-direction: column; height: 8rem">
-		<img src="./markdown/socketio.svg" width="60" alt="SocketIo"/>
-		<p>SocketIo</p>
-	</div>
+<div align="center">
+    <img src="./markdown/react.svg" height="60" alt="react" title="React"/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<img src="./markdown/mysql.png" height="60" alt="MySql" title="MySQL"/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ 	<img src="./markdown/node.svg" height="60" alt="NodeJs" title="Node.js"/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="./markdown/sequelize.svg" height="60" alt="Sequelize" title="Sequelize"/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="./markdown/socketio.svg" height="60" alt="SocketIo" title="Socket.IO"/>
 </div>
+
 
 ## Funcionalidades
 
