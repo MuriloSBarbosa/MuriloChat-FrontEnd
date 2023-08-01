@@ -23,14 +23,21 @@ O MuriloChat é um chat em tempo real desenvolvido para proporcionar interaçõe
 
 ## Funcionalidades
 
-- **Criação de Salas.**
-- **Usuários Administradores nas salas.**
-- **Customização de Foto de Perfil**
-- **Personalização do Papel de Parede do chat.**
-- **Envio de Arquivos e Imagens.**
-- **Usuários Online em Tempo Real.**
-- **Paginação Infinita.**
-- **Suporte a Emojis**.
+>  :white_check_mark: **Criação de Salas.**
+
+>  :white_check_mark: **Usuários Administradores nas salas.**
+
+>  :white_check_mark: **Customização de Foto de Perfil.**
+
+>  :white_check_mark: **Personalização do Papel de Parede do chat.**
+
+>  :white_check_mark: **Envio de Arquivos e Imagens.**
+
+>  :white_check_mark: **Usuários Online em Tempo Real.**
+
+>  :white_check_mark: **Paginação Infinita.**
+
+>  :white_check_mark: **Suporte a Emojis.**
 
 ## Requisitos
 
@@ -45,7 +52,6 @@ O MuriloChat é um chat em tempo real desenvolvido para proporcionar interaçõe
 
 
 ## Autor
-
 - [@MuriloSBarbosa](https://github.com/MuriloSBarbosa)
 
 
