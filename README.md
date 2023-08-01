@@ -1,25 +1,3 @@
-<style>
-	.images {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: 2rem
-	}
-
-	.images img {
-		width: 60px
-	}
-
-	.content {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		flex-direction: column;
-		height: 8rem
-	}
-</style>
-
-
 <div align="center">
   <img src="./markdown/logoHorizontalBg.svg" alt="Logo" />
 </div>
@@ -30,25 +8,25 @@
 
 O MuriloChat é um chat em tempo real desenvolvido para proporcionar interações entre usuários. Utilizando tecnologias modernas, como React, MySQL, Node.js, Sequelize e Socket.IO, o projeto visa aprimorar as habilidades técnicas do desenvolvedor.
 
-<div class="images">
-	<div class="content">
-		<img src="./markdown/react.svg" alt="react"/>
+<div class="images" style="display: flex; justify-content: center; align-items: center; gap: 2rem">
+	<div class="content" style="display: flex; justify-content: space-between; align-items: center; flex-direction: column; height: 8rem">
+		<img src="./markdown/react.svg" width="60" alt="react"/>
 		<p>React</p>
 	</div>
-	<div class="content">
-		<img src="./markdown/mysql.png" alt="MySql"/>
+	<div class="content" style="display: flex; justify-content: space-between; align-items: center; flex-direction: column; height: 8rem">
+		<img src="./markdown/mysql.png" width="60" alt="MySql"/>
 		<p>MySQL</p>
 	</div>
-	<div class="content">
-		<img src="./markdown/node.svg" alt="NodeJs"/>
+	<div class="content" style="display: flex; justify-content: space-between; align-items: center; flex-direction: column; height: 8rem">
+		<img src="./markdown/node.svg" width="60" alt="NodeJs"/>
 		<p>NodeJs</p>
 	</div>
-	<div class="content">
-		<img src="./markdown/sequelize.svg" alt="Sequelize"/>
+	<div class="content" style="display: flex; justify-content: space-between; align-items: center; flex-direction: column; height: 8rem">
+		<img src="./markdown/sequelize.svg" width="60" alt="Sequelize"/>
 		<p>Sequelize</p>
 	</div>
-	<div class="content">
-		<img src="./markdown/socketio.svg" alt="SocketIo"/>
+	<div class="content" style="display: flex; justify-content: space-between; align-items: center; flex-direction: column; height: 8rem">
+		<img src="./markdown/socketio.svg" width="60" alt="SocketIo"/>
 		<p>SocketIo</p>
 	</div>
 </div>
