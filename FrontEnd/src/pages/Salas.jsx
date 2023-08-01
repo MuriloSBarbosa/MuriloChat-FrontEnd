@@ -9,7 +9,6 @@ import SalasOption from "../components/Salas/SalasOption";
 import AdicionarSala from "../components/Salas/AdicionarSala";
 import MuriloChatImg from '../assets/logoCompleta.svg';
 import Modal from "../components/Modal/Modal";
-import tresPontos from '../assets/tres-pontos.png';
 
 function Salas() {
     const [salas, setSalas] = useState([]);

@@ -192,7 +192,16 @@ export function listarMensagens(req, res) {
     let { fkSala } = req.params;
     let { id } = req.usuario;
 
-    service.listarMensagens(fkSala)
+    if (!fkSala) {
+        return res.status(400).send("Dados inválidos");
+    }
+
+    const limit = Number(req.query.limit) || 100;
+    const skip = Number(req.query.skip) || 0;
+
+    console.log(limit, skip);
+
+    service.listarMensagens(fkSala, limit, skip)
         .then((mensagens) => {
             const mensagemFormatada = mensagens.map((mensagem) => {
                 if (mensagem.fkUsuario == id) {

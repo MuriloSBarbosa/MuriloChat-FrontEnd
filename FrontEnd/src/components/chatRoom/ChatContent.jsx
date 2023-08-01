@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
+
+import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import axiosInstance from "../../config/ipConfig";
 import styles from "./ChatContent.module.css";
 import Header from './Header';
@@ -21,6 +22,9 @@ const ChatContent = (props) => {
     const [usuarios, setUsuarios] = useState([]);
 
     const [mensagens, setMensagens] = useState([]);
+
+    const [skip, setSkip] = useState(0);
+    const [oldScrollHeight, setOldScrollHeight] = useState(0);
 
     const [showImage, setShowImage] = useState(false);
     const [imagemClicada, setImagemClicada] = useState(false);
@@ -57,12 +61,11 @@ const ChatContent = (props) => {
             currentChatContainer.removeEventListener("scrollend", srollBehavior);
         }
 
-    }, [room]);
+    }, []);
 
 
     const srollBehavior = () => {
         chatContainer.current.style.opacity = 1;
-        chatContainer.current.style.scrollBehavior = "smooth";
     }
 
     const buscarWallpaper = () => {
@@ -113,25 +116,53 @@ const ChatContent = (props) => {
     }
 
     const carregarMensagens = () => {
-        axiosInstance.get("/chat/mensagem/" + idSala,
-        ).then((res) => {
-            res.data.forEach((msg) => {
-                msg = formatarMensagens(msg);
-            });
 
-            setTimeout(() => {
-                chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
-            }, 200);
+        console.log("carregando mensagens");
 
-            setMensagens(res.data);
-        }).catch((err) => {
-            console.log(err);
-        })
+        const currentScrollHeight = chatContainer.current.scrollHeight;
+        console.log(currentScrollHeight);
+
+        setOldScrollHeight(currentScrollHeight);
+
+        chatContainer.current.style.scrollBehavior = "auto";
+
+        axiosInstance.get(`/chat/mensagem/${idSala}?skip=${skip}&limit=100`)
+            .then((res) => {
+                const newMessages = res.data.map(msg => formatarMensagens(msg)).reverse();
+
+                setMensagens((anteriores) => [...newMessages, ...anteriores]);
+
+                setSkip(oldSkip => oldSkip + 100);
+
+            }).catch((err) => {
+                console.log(err);
+            })
     }
 
+    useEffect(() => {
+        if (skip == 0) return;
+
+        const currentChatContainer = chatContainer.current;
+
+        const handleScroll = () => {
+            if (currentChatContainer.scrollTop === 0) {
+                console.log("carregando mais mensagens");
+                carregarMensagens();
+            }
+        };
+
+        currentChatContainer.addEventListener("scroll", handleScroll);
+
+        return () => {
+            currentChatContainer.removeEventListener("scroll", handleScroll);
+        };
+    }, [skip]);
 
     useEffect(() => {
+        if (usuarios.length === 0) return;
+
         socket.on('novaMensagem', novasMensagens);
+        console.log(usuarios);
 
         carregarMensagens();
 
@@ -141,6 +172,8 @@ const ChatContent = (props) => {
     }, [usuarios]);
 
     const novasMensagens = (novaMensagem) => {
+        chatContainer.current.style.scrollBehavior = "smooth";
+
         if (props.isRemovido) return;
         if (novaMensagem.token == tokenUsuario) {
             novaMensagem.isRemetente = true;
@@ -172,13 +205,17 @@ const ChatContent = (props) => {
         return mensagem;
     }
 
-    useEffect(() => {
-        setTimeout(() => {
-            if (verificarScroll()) {
-                chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
-            }
+    useLayoutEffect(() => {
+        // useLayoutEffect, ao contrário do useEffect, é executado antes da tela ser renderizada
+        // Isso serve para que o scroll seja ajustado antes da tela ser renderizada
+        // Assim, o usuário não percebe a tela sendo renderizada
+        
 
-        }, 200);
+        if (verificarScroll() || chatContainer.current.scrollTop == 0) {
+            const newScrollHeight = chatContainer.current.scrollHeight;
+            chatContainer.current.scrollTop += (newScrollHeight - oldScrollHeight);
+        };
+
     }, [mensagens]);
 
     const rolarParaBaixo = () => {
@@ -192,6 +229,7 @@ const ChatContent = (props) => {
         }
         return false;
     }
+    
     const verificarRolar = () => {
 
         if (verificarScroll()) {

@@ -127,7 +127,7 @@ export function listarChats(fkUsuario) {
 
 }
 
-export function listarMensagens(fkSala) {
+export function listarMensagens(fkSala, limit, skip) {
     return Mensagem.findAll({
         attributes: ['texto', 'dtMensagem', 'fkUsuario', 'srcImage', 'srcDoc', 'nomeDoc', 'typeDoc', 'sizeDoc', 'isAddUser'],
         include: [
@@ -140,8 +140,10 @@ export function listarMensagens(fkSala) {
             fkSala: fkSala
         },
         order: [
-            ['id', 'ASC']
+            ['dtMensagem', 'DESC']
         ],
+        limit: limit,
+        offset: skip,
         raw: true
     })
 }

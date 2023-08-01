@@ -82,9 +82,9 @@ function Usuarios(props) {
             }
         });
 
-        setTimeout(() => {
+        requestAnimationFrame(() => {
             userOptions.classList.add(styles.fadeInUser);
-        }, 100);
+        });
     }
 
     const removerDaSala = (user) => {

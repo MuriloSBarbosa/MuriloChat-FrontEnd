@@ -63,9 +63,9 @@ function Header(props) {
 
     useEffect(() => {
         if (showMenuOptions) {
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 options.current.classList.add(styles.fadeIn);
-            }, 100);
+            });
         } else {
             options.current.classList.remove(styles.fadeIn);
         }
@@ -82,9 +82,9 @@ function Header(props) {
     return (
         <>
             <div className={styles.header}>
-                    <div className={styles.title}>
-                        <h1>{props.nomeSala}</h1>
-                    </div>
+                <div className={styles.title}>
+                    <h1>{props.nomeSala}</h1>
+                </div>
                 <div className={styles.menuOptions} onClick={() => setShowMenuOptions(!showMenuOptions)}>
                     <img src={tresPontos} alt="" id="menuOptionsClick" />
                     <div className={styles.options} style={showMenuOptions ? { display: "flex" } : { display: "none" }} ref={options}>
