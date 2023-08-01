@@ -199,8 +199,6 @@ export function listarMensagens(req, res) {
     const limit = Number(req.query.limit) || 100;
     const skip = Number(req.query.skip) || 0;
 
-    console.log(limit, skip);
-
     service.listarMensagens(fkSala, limit, skip)
         .then((mensagens) => {
             const mensagemFormatada = mensagens.map((mensagem) => {
