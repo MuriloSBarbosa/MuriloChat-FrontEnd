@@ -20,6 +20,7 @@ const ChatContent = (props) => {
     const [isAdmin, setIsAdmin] = useState(false);
 
     const [usuarios, setUsuarios] = useState([]);
+    const [isLoadingUsuarios, setIsLoadingUsuarios] = useState(true);
 
     const [mensagens, setMensagens] = useState([]);
 
@@ -109,6 +110,7 @@ const ChatContent = (props) => {
             });
 
             setUsuarios(usuarios);
+            setIsLoadingUsuarios(false);
 
         }).catch((err) => {
             console.log(err);
@@ -117,10 +119,7 @@ const ChatContent = (props) => {
 
     const carregarMensagens = () => {
 
-        console.log("carregando mensagens");
-
         const currentScrollHeight = chatContainer.current.scrollHeight;
-        console.log(currentScrollHeight);
 
         setOldScrollHeight(currentScrollHeight);
 
@@ -146,7 +145,6 @@ const ChatContent = (props) => {
 
         const handleScroll = () => {
             if (currentChatContainer.scrollTop === 0) {
-                console.log("carregando mais mensagens");
                 carregarMensagens();
             }
         };
@@ -159,12 +157,18 @@ const ChatContent = (props) => {
     }, [skip]);
 
     useEffect(() => {
-        if (usuarios.length === 0) return;
-
-        socket.on('novaMensagem', novasMensagens);
-        console.log(usuarios);
+        if (isLoadingUsuarios) return;
 
         carregarMensagens();
+
+    }, [isLoadingUsuarios]);
+
+    useEffect(() => {
+        if (isLoadingUsuarios) return;
+
+        socket.on('novaMensagem', novasMensagens);
+
+        setMensagens((anteriores) => formatarMensagens(anteriores));
 
         return () => {
             socket.off('novaMensagem');
@@ -209,7 +213,6 @@ const ChatContent = (props) => {
         // useLayoutEffect, ao contrário do useEffect, é executado antes da tela ser renderizada
         // Isso serve para que o scroll seja ajustado antes da tela ser renderizada
         // Assim, o usuário não percebe a tela sendo renderizada
-        
 
         if (verificarScroll() || chatContainer.current.scrollTop == 0) {
             const newScrollHeight = chatContainer.current.scrollHeight;
@@ -229,7 +232,7 @@ const ChatContent = (props) => {
         }
         return false;
     }
-    
+
     const verificarRolar = () => {
 
         if (verificarScroll()) {
