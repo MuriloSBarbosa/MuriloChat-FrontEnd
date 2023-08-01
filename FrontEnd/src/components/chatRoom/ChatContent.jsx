@@ -23,6 +23,7 @@ const ChatContent = (props) => {
     const [isLoadingUsuarios, setIsLoadingUsuarios] = useState(true);
 
     const [mensagens, setMensagens] = useState([]);
+    const [isLoadingMessages, setIsLoadingMessages] = useState(true);
 
     const [skip, setSkip] = useState(0);
     const [oldScrollHeight, setOldScrollHeight] = useState(0);
@@ -52,22 +53,24 @@ const ChatContent = (props) => {
 
 
         currentChatContainer.addEventListener("scroll", verificarRolar);
-        currentChatContainer.addEventListener("scrollend", srollBehavior)
 
         socket.emit('joinRoom', room);
 
         return () => {
             props.setShowModal(false);
             props.setIsRemovido(false);
-            currentChatContainer.removeEventListener("scrollend", srollBehavior);
         }
 
     }, []);
 
 
-    const srollBehavior = () => {
+
+    useEffect(() => {
+        if (isLoadingMessages) return;
+
         chatContainer.current.style.opacity = 1;
-    }
+        chatContainer.current.style.scrollBehavior = "smooth";
+    }, [isLoadingMessages]);
 
     const buscarWallpaper = () => {
         axiosInstance.get('/usuario/wallpaper',)
@@ -130,6 +133,8 @@ const ChatContent = (props) => {
                 const newMessages = res.data.map(msg => formatarMensagens(msg)).reverse();
 
                 setMensagens((anteriores) => [...newMessages, ...anteriores]);
+
+                setIsLoadingMessages(false);
 
                 setSkip(oldSkip => oldSkip + 100);
 
@@ -227,6 +232,14 @@ const ChatContent = (props) => {
 
     const verificarScroll = () => {
         const { scrollTop, clientHeight, scrollHeight } = chatContainer.current;
+        console.log(scrollTop, clientHeight, scrollHeight);
+
+        // ScrollTop = Quantidade de pixels que o scroll está do topo
+        // ClientHeight = Altura da tela, depende do tamanho da tela do usuário
+        // ScrollHeight = Altura total do scroll
+
+        // Se a soma do scrollTop com o clientHeight for maior ou igual ao scrollHeight - 400, 
+        // significa que o usuário está a 400px do fim da tela
         if (scrollTop + clientHeight >= scrollHeight - 400) {
             return true;
         }
@@ -234,11 +247,10 @@ const ChatContent = (props) => {
     }
 
     const verificarRolar = () => {
-
         if (verificarScroll()) {
-            setShowRolar(true);
-        } else {
             setShowRolar(false);
+        } else {
+            setShowRolar(true);
         }
     };
 
@@ -288,7 +300,7 @@ const ChatContent = (props) => {
                         mensagens={mensagens}
                     />
                 ))}
-                <button style={showRolar ? { display: "none" } : null} className={styles.rolar} onClick={rolarParaBaixo}>
+                <button style={showRolar ? null : { display: "none" }} className={styles.rolar} onClick={rolarParaBaixo}>
                     <img src={arrow} alt="" />
                 </button>
             </div>

@@ -6,6 +6,8 @@ export function deslogar() {
 }
 
 export const formatarDataChat = (data) => {
+    if(data == null) return null;
+    
     let dtMensagem = moment(data).tz("America/Sao_Paulo").format("DD/MM/YYYY");
     if (moment().tz("America/Sao_Paulo").format("DD/MM/YYYY") == dtMensagem) {
         dtMensagem = "Hoje, às " + moment(data).tz("America/Sao_Paulo").format("HH:mm");
