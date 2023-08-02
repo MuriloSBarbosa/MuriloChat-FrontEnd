@@ -18,10 +18,12 @@ const Chat = dataBase.define('Chat', {
 },
     {
         freezeTableName: true,
-        timestamps: false
     });
+
 
 Chat.belongsTo(Usuario, { foreignKey: 'fkUsuario' });
 Chat.belongsTo(Sala, { foreignKey: 'fkSala' });
+
+Chat.sync();
 
 export default Chat;

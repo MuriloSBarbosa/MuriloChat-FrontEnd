@@ -31,8 +31,8 @@ const Usuario = dataBase.define('Usuario', {
     }
 }, {
     freezeTableName: true,
-    timestamps: false
 });
 
+Usuario.sync();
 
 export default Usuario;

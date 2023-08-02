@@ -46,11 +46,13 @@ const Mensagem = dataBase.define('Mensagem', {
 },
     {
         freezeTableName: true,
-        timestamps: false
     }
 );
 
+
 Mensagem.belongsTo(Usuario, { foreignKey: 'fkUsuario' });
 Mensagem.belongsTo(Sala, { foreignKey: 'fkSala' });
+
+Mensagem.sync();
 
 export default Mensagem;

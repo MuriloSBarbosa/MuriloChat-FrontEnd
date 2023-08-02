@@ -20,7 +20,8 @@ const Sala = sequelize.define('Sala', {
 
     {
         freezeTableName: true,
-        timestamps: false
     });
+
+Sala.sync();
 
 export default Sala;
