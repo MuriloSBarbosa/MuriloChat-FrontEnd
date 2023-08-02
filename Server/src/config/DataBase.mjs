@@ -7,11 +7,12 @@ const usuarioBanco = process.env.DB_USER;
 const senhaBanco = process.env.DB_PASS;
 const hostBanco = process.env.DB_HOST;
 const portaBanco = process.env.DB_PORT;
+const dialectBanco = process.env.DB_DIALECT;
 
 const dataBase = new Sequelize(nomeBanco, usuarioBanco, senhaBanco, {
     host: hostBanco,
     port: portaBanco,
-    dialect: 'mysql',
+    dialect: dialectBanco,
     logging: false,
 });
 
