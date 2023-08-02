@@ -58,19 +58,44 @@
     width: 15vw;
     object-fit: cover;
 }
-
-.fotoPerfil .buttons,
+.perfilButtons .buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+}
+.perfilButtons,
 .box .buttons {
     display: flex;
+    align-items: center;
+    flex-direction: column;
     justify-content: center;
     gap: 1rem;
     margin-top: 1rem;
 }
 
-.fotoPerfil .buttons button,
+.perfilButtons button,
 .box .buttons button {
     padding: 0.3rem 1rem;
     border-radius: 5px;
+}
+
+
+.uploadImage input {
+    display: none;
+}
+
+.uploadImage label {
+    cursor: pointer;
+    padding: 0.1rem 1rem;
+    border-radius: 5px;
+    background-color: var(--colorDefault);
+    transition: 0.2s;
+}
+
+
+.uploadImage:hover {
+    filter: brightness(0.8);
 }
 
 .defaultEdit {
@@ -211,7 +236,7 @@
     border: none;
 }
 
-.modal .box .buttons{
+.modal .box .buttons {
     width: 100%;
     display: flex;
     justify-content: space-around;

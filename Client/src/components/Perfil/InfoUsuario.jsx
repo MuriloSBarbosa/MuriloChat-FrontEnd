@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./InfoUsuario.module.css";
-import Avatar from "react-avatar-edit";
-import { dataURLtoFile } from "../../utils/geral.mjs";
+import AvatarEditor from "react-avatar-editor";
+import { resizeImage } from "../../utils/geral.mjs";
 import botaoEditar from "../../assets/botao-editar.png";
 import axiosInstance from "../../config/ipConfig"
 import Modal from "../Modal/Modal";
@@ -12,9 +12,13 @@ const InfoUsuario = () => {
     const navigate = useNavigate();
     const [token, setToken] = useState(sessionStorage.getItem("token"));
 
-    const [src, setSrc] = useState("");
-    const [preview, setPreview] = useState(null);
     const [imagemPerfil, setImagemPerfil] = useState(null);
+    const [fileUrl, setFileUrl] = useState(null);
+    const [file, setFile] = useState(null);
+    const [editZoom, setEditZoom] = useState(50);
+    const [editRotate, setEditRotate] = useState(0);
+    const editorRef = useRef(null);
+
 
     const [isEditImage, setIsEditImage] = useState(false);
     const [isEditName, setIsEditName] = useState(false);
@@ -50,6 +54,7 @@ const InfoUsuario = () => {
                 }
 
                 setImagemPerfil(perfilSrc);
+                setFileUrl(perfilSrc);
                 setNome(response.data.nome);
                 setNomeEdit(response.data.nome);
             }).catch((error) => {
@@ -59,12 +64,55 @@ const InfoUsuario = () => {
     }, [])
 
     function atualizarImagem() {
-        if (!preview) {
-            axiosInstance.patch('/usuario/imagem/remover')
-                .then((res) => {
+        // if (!preview) {
+        //     axiosInstance.patch('/usuario/imagem/remover')
+        //         .then((res) => {
+        //             sessionStorage.setItem('token', res.data);
+        //             setModal({
+        //                 title: 'Foto de perfil removida com sucesso!',
+        //             });
+        //             setTimeout(() => {
+        //                 window.location.reload();
+        //             }, time);
+        //             setShowModal(true);
+        //         }).catch((error) => {
+        //             setModal({
+        //                 title: 'Erro',
+        //                 text: 'Erro ao remover foto de perfil'
+        //             });
+        //             setShowModal(true);
+        //             console.log(error);
+        //         });
+        // };
+
+        // converter base64 para file
+
+
+
+        // Para pegar o arquivo do editorRef como blob, é necessário usar o canvas.toBlob()
+
+        editorRef.current.getImageScaledToCanvas()
+            .toBlob((blob) => {
+
+                const perfilImage = new File([blob], file.name, {
+                    type: "image/png",
+                    lastModified: Date.now(),
+                });
+
+
+                const formData = new FormData();
+                formData.append('perfilImage', perfilImage);
+                formData.append('token', token);
+
+
+                axiosInstance.patch('/usuario/imagem', formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
+                }).then((res) => {
                     sessionStorage.setItem('token', res.data);
                     setModal({
-                        title: 'Foto de perfil removida com sucesso!',
+                        title: 'Foto de perfil alterada com sucesso!',
                     });
                     setTimeout(() => {
                         window.location.reload();
@@ -73,43 +121,12 @@ const InfoUsuario = () => {
                 }).catch((error) => {
                     setModal({
                         title: 'Erro',
-                        text: 'Erro ao remover foto de perfil'
+                        text: 'Erro ao trocar foto de perfil'
                     });
                     setShowModal(true);
                     console.log(error);
                 });
-        };
-
-        // converter base64 para file
-        const file = dataURLtoFile(preview, 'perfilImage.png');
-
-        const formData = new FormData();
-
-        formData.append('perfilImage', file);
-        formData.append('token', token);
-
-
-        axiosInstance.patch('/usuario/imagem', formData, {
-            headers: {
-                "Content-Type": "multipart/form-data"
-            }
-        }).then((res) => {
-            sessionStorage.setItem('token', res.data);
-            setModal({
-                title: 'Foto de perfil alterada com sucesso!',
             });
-            setTimeout(() => {
-                window.location.reload();
-            }, time);
-            setShowModal(true);
-        }).catch((error) => {
-            setModal({
-                title: 'Erro',
-                text: 'Erro ao trocar foto de perfil'
-            });
-            setShowModal(true);
-            console.log(error);
-        });
     }
 
     const verificarNome = (newNome) => {
@@ -236,6 +253,21 @@ const InfoUsuario = () => {
         });
     }
 
+
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            resizeImage(file, (imagem) => {
+                setFileUrl(URL.createObjectURL(imagem));
+            });
+            setFile(file);
+        } else {
+            setFileUrl(null);
+            setFile(null)
+        }
+    }
+
     return (
         <>
             <div className={styles.infoUsuario}>
@@ -245,23 +277,39 @@ const InfoUsuario = () => {
                         <h2>Foto de Perfil</h2>
                         {isEditImage ?
                             <>
-                                <Avatar
-                                    label="Selecione uma imagem"
-                                    labelStyle={{ color: "#9d9d9d", fontSize: "1.2rem", cursor: "pointer", padding: "35% 15%" }}
-                                    width={300}
-                                    height={250}
-                                    src={src}
-                                    onClose={() => { setPreview(null) }}
-                                    onCrop={(preview) => setPreview(preview)}
-                                />
-                                <div className={styles.buttons}>
-                                    <button className={styles.cancelar} onClick={() => setIsEditImage(false)}>Cancelar</button>
-                                    <button className={styles.salvar} onClick={atualizarImagem}>Salvar</button>
+                                <div>
+                                    <AvatarEditor
+                                        image={fileUrl}
+                                        width={200}
+                                        height={200}
+                                        border={50}
+                                        color={[129, 129, 129, 0.502]} // RGBA
+                                        scale={editZoom / 50}
+                                        borderRadius={125}
+                                        rotate={editRotate}
+                                        ref={editorRef}
+                                    />
+                                </div>
+
+                                <div className={styles.perfilButtons}>
+                                    <div className={styles.uploadImage}>
+                                        <label htmlFor="perfilImage">Altere a foto de Perfil</label>
+                                        <input type="file" id="perfilImage" onChange={handleFileChange} multiple={false} />
+                                    </div>
+                                    <input type="range" onChange={(e) => { setEditZoom(e.target.value) }} value={editZoom} min={30} max={120} />
+                                    {editZoom}
+                                    <input type="range" onChange={(e) => { setEditRotate(e.target.value) }} value={editRotate / 10} />
+                                    <div className={styles.buttons}>
+                                        <button className={styles.cancelar} onClick={() => setIsEditImage(false)}>Cancelar</button>
+                                        <button className={styles.salvar} onClick={atualizarImagem}>Salvar</button>
+                                    </div>
                                 </div>
                             </>
 
                             :
                             <div className={styles.defaultEdit}>
+
+
                                 <img src={imagemPerfil} alt="" />
                                 <button className={styles.editImage} onClick={() => setIsEditImage(true)}>
                                     <img src={botaoEditar} alt="" />

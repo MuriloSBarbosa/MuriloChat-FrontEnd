@@ -4,7 +4,7 @@ import anexos from "../../assets/anexos.png";
 import imagem from "../../assets/imagem.png";
 import docs from "../../assets/docs.png";
 import moment from "moment-timezone"
-import Resizer from 'react-image-file-resizer';
+import { resizeImage } from "../../utils/geral.mjs";
 import axiosInstance from "../../config/ipConfig";
 import file from "../../assets/file.png";
 import { formatarBytes } from "../../utils/geral.mjs";
@@ -51,18 +51,6 @@ const ChatSendBox = (props) => {
         setMensagemDigitada('');
     };
 
-    const ResizeImage = (file, callBack) => {
-        Resizer.imageFileResizer(
-            file,
-            800, // Largura máxima desejada
-            800, // Altura máxima desejada
-            'JPEG', // Formato da imagem de saída (pode ser 'JPEG', 'PNG', 'WEBP', etc.)
-            70, // Qualidade da imagem (0-100)
-            0, // Rotação da imagem (em graus, 0 = sem rotação)
-            callBack, // Função de retorno de chamada
-            'blob' // Tipo de saída, 'blob' retorna um objeto Blob
-        );
-    }
 
     const enviarImagem = () => {
         const file = imagemSelecionada.current.files[0];

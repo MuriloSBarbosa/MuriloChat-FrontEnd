@@ -1,4 +1,6 @@
 import moment from "moment-timezone";
+import Resizer from 'react-image-file-resizer';
+
 
 export function deslogar() {
     sessionStorage.removeItem("token");
@@ -40,3 +42,55 @@ export const formatarBytes = (bytes, decimal) => {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + tamanhos[i];
 }
+
+export const resizeImage = (file, callBack) => {
+    Resizer.imageFileResizer(
+        file,
+        800, // Largura máxima desejada
+        800, // Altura máxima desejada
+        'PNG', // Formato da imagem de saída (pode ser 'JPEG', 'PNG', 'WEBP', etc.)
+        70, // Qualidade da imagem (0-100)
+        0, // Rotação da imagem (em graus, 0 = sem rotação)
+        callBack, // Função de retorno de chamada
+        'blob' // Tipo de saída, 'blob' retorna um objeto Blob
+    );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+   // if (!preview) {
+        //     axiosInstance.patch('/usuario/imagem/remover')
+        //         .then((res) => {
+        //             sessionStorage.setItem('token', res.data);
+        //             setModal({
+        //                 title: 'Foto de perfil removida com sucesso!',
+        //             });
+        //             setTimeout(() => {
+        //                 window.location.reload();
+        //             }, time);
+        //             setShowModal(true);
+        //         }).catch((error) => {
+        //             setModal({
+        //                 title: 'Erro',
+        //                 text: 'Erro ao remover foto de perfil'
+        //             });
+        //             setShowModal(true);
+        //             console.log(error);
+        //         });
+        // };
+
+        // converter base64 para file
+
+
+
+        // Para pegar o arquivo do editorRef como blob, é necessário usar o canvas.toBlob()
