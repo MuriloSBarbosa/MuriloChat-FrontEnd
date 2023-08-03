@@ -5,18 +5,17 @@ import { resizeImage } from "../../utils/geral.mjs";
 import botaoEditar from "../../assets/botao-editar.png";
 import axiosInstance from "../../config/ipConfig"
 import Modal from "../Modal/Modal";
-import { useNavigate } from "react-router-dom";
 import { ipUse } from "../../config/ipConfig";
+import defaultAvatar from "../../assets/default-avatar.jpg";
 
 const InfoUsuario = () => {
-    const navigate = useNavigate();
     const [token, setToken] = useState(sessionStorage.getItem("token"));
 
     const [imagemPerfil, setImagemPerfil] = useState(null);
+    
     const [fileUrl, setFileUrl] = useState(null);
     const [file, setFile] = useState(null);
-    const [editZoom, setEditZoom] = useState(50);
-    const [editRotate, setEditRotate] = useState(0);
+    const [editZoom, setEditZoom] = useState(10);
     const editorRef = useRef(null);
 
 
@@ -48,13 +47,23 @@ const InfoUsuario = () => {
             .then((response) => {
                 let perfilSrc = response.data.perfilSrc;
                 if (perfilSrc) {
-                    perfilSrc = `http://${ipUse}:8080/usuario/imagem/${encodeURI(perfilSrc)}`;
+                    axiosInstance.get(`http://${ipUse}:8080/usuario/imagem/${encodeURI(perfilSrc)}`, { responseType: 'blob' })
+                        .then(response => {
+                            // transforma o blob em url
+                            const fileUrl = URL.createObjectURL(response.data);
+                            setFile(response.data);
+                            setImagemPerfil(fileUrl);
+                            setFileUrl(fileUrl);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
                 } else {
-                    perfilSrc = "src/assets/default-avatar.jpg"
+                    perfilSrc = defaultAvatar;
+                    setImagemPerfil(perfilSrc);
+                    setFileUrl(perfilSrc);
                 }
 
-                setImagemPerfil(perfilSrc);
-                setFileUrl(perfilSrc);
                 setNome(response.data.nome);
                 setNomeEdit(response.data.nome);
             }).catch((error) => {
@@ -63,32 +72,9 @@ const InfoUsuario = () => {
 
     }, [])
 
-    function atualizarImagem() {
-        // if (!preview) {
-        //     axiosInstance.patch('/usuario/imagem/remover')
-        //         .then((res) => {
-        //             sessionStorage.setItem('token', res.data);
-        //             setModal({
-        //                 title: 'Foto de perfil removida com sucesso!',
-        //             });
-        //             setTimeout(() => {
-        //                 window.location.reload();
-        //             }, time);
-        //             setShowModal(true);
-        //         }).catch((error) => {
-        //             setModal({
-        //                 title: 'Erro',
-        //                 text: 'Erro ao remover foto de perfil'
-        //             });
-        //             setShowModal(true);
-        //             console.log(error);
-        //         });
-        // };
-
-        // converter base64 para file
 
 
-
+    const atualizarImagem = () => {
         // Para pegar o arquivo do editorRef como blob, é necessário usar o canvas.toBlob()
 
         editorRef.current.getImageScaledToCanvas()
@@ -126,6 +112,27 @@ const InfoUsuario = () => {
                     setShowModal(true);
                     console.log(error);
                 });
+            });
+    }
+
+    const removerImagem = () => {
+        axiosInstance.patch('/usuario/imagem/remover')
+            .then((res) => {
+                sessionStorage.setItem('token', res.data);
+                setModal({
+                    title: 'Foto de perfil removida com sucesso!',
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, time);
+                setShowModal(true);
+            }).catch((error) => {
+                setModal({
+                    title: 'Erro',
+                    text: 'Erro ao remover foto de perfil'
+                });
+                setShowModal(true);
+                console.log(error);
             });
     }
 
@@ -260,12 +267,17 @@ const InfoUsuario = () => {
         if (file) {
             resizeImage(file, (imagem) => {
                 setFileUrl(URL.createObjectURL(imagem));
+                setFile(imagem);
+                setEditZoom(10);
             });
-            setFile(file);
-        } else {
-            setFileUrl(null);
-            setFile(null)
         }
+    }
+
+    const cancelarEditImage = () => {
+        setIsEditImage(false);
+        setFileUrl(imagemPerfil);
+        setFile(null);
+        setEditZoom(10);
     }
 
     return (
@@ -277,35 +289,35 @@ const InfoUsuario = () => {
                         <h2>Foto de Perfil</h2>
                         {isEditImage ?
                             <>
-                                <div>
+                                <div className={styles.editPerfil}>
                                     <AvatarEditor
                                         image={fileUrl}
                                         width={200}
                                         height={200}
                                         border={50}
-                                        color={[129, 129, 129, 0.502]} // RGBA
-                                        scale={editZoom / 50}
+                                        color={[129, 129, 129, 0.5]} // RGBA
+                                        scale={editZoom / 10}
                                         borderRadius={125}
-                                        rotate={editRotate}
                                         ref={editorRef}
                                     />
+                                    <input disabled={fileUrl == defaultAvatar} className={styles.editZoom} type="range" id="editZoom"
+                                        onChange={(e) => { if (e.target.value < 10) return; setEditZoom(e.target.value) }}
+                                        value={editZoom} min={8} max={50} />
                                 </div>
 
                                 <div className={styles.perfilButtons}>
                                     <div className={styles.uploadImage}>
-                                        <label htmlFor="perfilImage">Altere a foto de Perfil</label>
-                                        <input type="file" id="perfilImage" onChange={handleFileChange} multiple={false} />
+                                        <label htmlFor="perfilImage">Selecione uma imagem</label>
+                                        <input type="file" id="perfilImage" onChange={handleFileChange} multiple={false} accept="image/*" />
                                     </div>
-                                    <input type="range" onChange={(e) => { setEditZoom(e.target.value) }} value={editZoom} min={30} max={120} />
-                                    {editZoom}
-                                    <input type="range" onChange={(e) => { setEditRotate(e.target.value) }} value={editRotate / 10} />
+
                                     <div className={styles.buttons}>
-                                        <button className={styles.cancelar} onClick={() => setIsEditImage(false)}>Cancelar</button>
-                                        <button className={styles.salvar} onClick={atualizarImagem}>Salvar</button>
+                                        <button className={styles.cancelar} onClick={cancelarEditImage}>Cancelar</button>
+                                        <button className={styles.salvar} onClick={atualizarImagem} disabled={fileUrl == defaultAvatar}>Salvar</button>
                                     </div>
+                                    <button className={styles.remover} onClick={removerImagem} disabled={fileUrl == defaultAvatar}>Remover Imagem</button>
                                 </div>
                             </>
-
                             :
                             <div className={styles.defaultEdit}>
 

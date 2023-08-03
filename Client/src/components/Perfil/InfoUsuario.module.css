@@ -58,21 +58,27 @@
     width: 15vw;
     object-fit: cover;
 }
+
 .perfilButtons .buttons {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.6rem;
 }
+
 .perfilButtons,
 .box .buttons {
     display: flex;
     align-items: center;
-    flex-direction: column;
     justify-content: center;
     gap: 1rem;
     margin-top: 1rem;
 }
+
+.perfilButtons {
+    flex-direction: column;
+}
+
 
 .perfilButtons button,
 .box .buttons button {
@@ -87,14 +93,14 @@
 
 .uploadImage label {
     cursor: pointer;
-    padding: 0.1rem 1rem;
+    padding: 0.3rem 1rem;
     border-radius: 5px;
     background-color: var(--colorDefault);
-    transition: 0.2s;
+    transition: .2s;
 }
 
 
-.uploadImage:hover {
+.uploadImage:hover label {
     filter: brightness(0.8);
 }
 
@@ -118,6 +124,18 @@
     height: 2rem;
 }
 
+.editPerfil {
+    position: relative;
+}
+
+.editZoom {
+    position: absolute;
+    transform: rotate(90deg);
+    top: 47%;
+    right: -11rem;
+    width: 18rem;
+}
+
 .cancelar {
     background-color: #bababa;
 }
@@ -126,6 +144,9 @@
     background-color: #00e100;
 }
 
+.remover {
+    background-color: rgb(231, 63, 93);
+}
 
 .boxes {
     display: flex;
