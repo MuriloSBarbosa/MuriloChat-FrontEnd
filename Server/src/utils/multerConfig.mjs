@@ -5,7 +5,6 @@ import moment from "moment";
 // o nome do arquivo é composto pela data e hora atual, e o nome original do arquivo
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        console.log(file.fieldname);
         if (file.fieldname == "perfilImage") {
             cb(null, "./public/uploads/perfil");
             return;

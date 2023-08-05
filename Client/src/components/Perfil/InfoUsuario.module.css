@@ -99,7 +99,6 @@
     transition: .2s;
 }
 
-
 .uploadImage:hover label {
     filter: brightness(0.8);
 }
