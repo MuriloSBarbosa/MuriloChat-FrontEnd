@@ -6,7 +6,7 @@ import styles from "./Cadastro.module.css"
 import Modal from "../components/modal/Modal";
 import AvatarEditor from "react-avatar-editor";
 import defaultAvatar from "../assets/default-avatar.jpg"
-import { resizeImage } from "../utils/geral.mjs";
+import { dataURLtoFile, resizeImage } from "../utils/geral.mjs";
 import correctImage from "../assets/correct.png";
 import incorrectImage from "../assets/incorrect.png";
 import loadingGif from "../assets/loadingGif.svg";
@@ -46,16 +46,12 @@ function Cadastro() {
         editorRef.current.getImageScaledToCanvas()
             .toBlob((blob) => {
 
-                let perfilImage;
+                let perfilImage = null;
 
                 if (file) {
                     perfilImage = new File([blob], file.name, {
                         type: "image/png",
                         lastModified: Date.now(),
-                    });
-                } else {
-                    perfilImage = new File([], "vazio", {
-                        type: "image/png",
                     });
                 }
 
