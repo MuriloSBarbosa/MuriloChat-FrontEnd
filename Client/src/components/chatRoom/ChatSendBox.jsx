@@ -87,7 +87,7 @@ const ChatSendBox = (props) => {
         if (!image) return;
 
         try {
-            ResizeImage(image, (blob) => {
+            resizeImage(image, (blob) => {
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     setPreviewImage(reader.result);
