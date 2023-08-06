@@ -10,7 +10,7 @@ const modulePath = dirname(fileURLToPath(moduleURL));
 
 export function cadastrarUsuario(req, res) {
     let { nome, senha } = req.body;
-    let { filename: perfilSrc } = req.file;
+    let { filename: perfilSrc } = req?.file || {};
 
     service.cadastrarUsuario(nome, senha, perfilSrc)
         .then(() => {
