@@ -1,18 +1,23 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import styles from "./InfoUsuario.module.css";
+import debounce from "lodash.debounce";
 import AvatarEditor from "react-avatar-editor";
 import { resizeImage } from "../../utils/geral.mjs";
 import botaoEditar from "../../assets/botao-editar.png";
 import axiosInstance from "../../config/ipConfig"
-import Modal from "../Modal/Modal";
+import Modal from "../modal/Modal";
 import { ipUse } from "../../config/ipConfig";
 import defaultAvatar from "../../assets/default-avatar.jpg";
+import correctImage from "../../assets/correct.png";
+import incorrectImage from "../../assets/incorrect.png";
+import loadingGif from "../../assets/loadingGif.svg";
+
 
 const InfoUsuario = () => {
     const [token, setToken] = useState(sessionStorage.getItem("token"));
 
     const [imagemPerfil, setImagemPerfil] = useState(null);
-    
+
     const [fileUrl, setFileUrl] = useState(null);
     const [file, setFile] = useState(null);
     const [editZoom, setEditZoom] = useState(10);
@@ -25,13 +30,16 @@ const InfoUsuario = () => {
 
     const [nome, setNome] = useState('');
     const [nomeEdit, setNomeEdit] = useState('');
+
     const [canSaveNome, setCanSaveNome] = useState(false);
+    const imgVerificacaoRef = useRef(null);
+
     const [senhaAntiga, setSenhaAntiga] = useState('');
     const [senhaNova, setSenhaNova] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
 
     const inputName = useRef(null);
-    const [nomeIndiponivel, setNomeIndiponivel] = useState(false);
+    const [nomeIndiponivel, setNomeIndiponivel] = useState(true);
 
     const inputSenhaAntiga = useRef(null);
 
@@ -136,35 +144,47 @@ const InfoUsuario = () => {
             });
     }
 
-    const verificarNome = (newNome) => {
-        newNome = newNome.trim();
+    const verificarNome = useCallback(
+        debounce((newNome) => {
+            newNome = newNome.trim();
 
-        if (newNome === "") {
-            inputName.current.style.border = "2px solid #ff0000";
-            setNomeIndiponivel(true);
-            setCanSaveNome(false);
-            return;
-        }
+            if (newNome === "" || newNome === nome) {
+                imgVerificacaoRef.current.src = incorrectImage;
+                setCanSaveNome(false);
+                return;
+            }
 
-        if (newNome.toLowerCase() === nome.toLowerCase()) {
-            return setCanSaveNome(false);
-        };
+            if (newNome.toLowerCase() === nome.toLowerCase()) {
+                imgVerificacaoRef.current.src = incorrectImage;
+                return setCanSaveNome(false);
+            };
 
-        axiosInstance.get(`/usuario/verificar/${newNome}`)
-            .then((response) => {
-                if (response.data) {
-                    inputName.current.style.border = "2px solid #ff0000";
-                    setNomeIndiponivel(true);
-                    setCanSaveNome(false);
-                } else {
-                    inputName.current.style.border = "2px solid #00ff00";
-                    setNomeIndiponivel(false);
-                    setCanSaveNome(true);
-                }
-            }).catch((error) => {
-                console.log(error);
-            });
-    }
+            axiosInstance.get(`/usuario/verificar/${newNome}`)
+                .then((response) => {
+                    if (response.data) {
+                        imgVerificacaoRef.current.src = incorrectImage;
+                        setNomeIndiponivel(true);
+                        setCanSaveNome(false);
+                    } else {
+                        imgVerificacaoRef.current.src = correctImage;
+                        setNomeIndiponivel(false);
+                        setCanSaveNome(true);
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
+        }, 1000
+        ), []);
+
+    useEffect(() => {
+
+        if (!nomeEdit) return setNomeIndiponivel(false);
+        if (!isEditName) return;
+
+        if (imgVerificacaoRef.current.src.endsWith(loadingGif)) return;
+        imgVerificacaoRef.current.src = loadingGif;
+
+    }, [nomeEdit]);
 
     const atualizarNome = () => {
         axiosInstance.patch('/usuario/nome', {
@@ -260,8 +280,6 @@ const InfoUsuario = () => {
         });
     }
 
-
-
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -335,6 +353,12 @@ const InfoUsuario = () => {
                         <div className={styles.boxes}>
                             <div className={styles.box}>
                                 <h2>Nome ou Tag</h2>
+                                {
+                                    isEditName &&
+                                    <div className={styles.verificacao}>
+                                        {nome && <img ref={imgVerificacaoRef} src={incorrectImage} alt="verificacao" />}
+                                    </div>
+                                }
                                 <input disabled={!isEditName} ref={inputName} onChange={(e) => { setNomeEdit(e.target.value); verificarNome(e.target.value) }} value={isEditName ? nomeEdit : nome} />
                                 {nomeIndiponivel && <p>Esse nome está indisponível!</p>}
                                 <div className={styles.buttons}>

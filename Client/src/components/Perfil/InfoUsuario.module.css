@@ -165,6 +165,17 @@
     position: relative;
 }
 
+.box .verificacao {
+    position: absolute;
+    right: 10%;
+    top: 36%;
+}
+
+.verificacao img {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
 .box h2 {
     font-size: 1rem;
     font-weight: bold;
