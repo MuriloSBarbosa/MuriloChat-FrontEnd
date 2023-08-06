@@ -133,7 +133,7 @@ export function listarMensagens(fkSala, limit, skip) {
         include: [
             {
                 model: Usuario,
-                attributes: ['nome', 'perfilSrc']
+                attributes: ['id','nome', 'perfilSrc']
             }
         ],
         where: {

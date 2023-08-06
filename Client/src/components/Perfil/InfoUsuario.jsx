@@ -13,7 +13,7 @@ import incorrectImage from "../../assets/incorrect.png";
 import loadingGif from "../../assets/loadingGif.svg";
 
 
-const InfoUsuario = () => {
+const InfoUsuario = ({ usuario }) => {
     const [token, setToken] = useState(sessionStorage.getItem("token"));
 
     const [imagemPerfil, setImagemPerfil] = useState(null);
@@ -28,8 +28,8 @@ const InfoUsuario = () => {
     const [isEditName, setIsEditName] = useState(false);
     const [isEditSenha, setIsEditSenha] = useState(false);
 
-    const [nome, setNome] = useState('');
-    const [nomeEdit, setNomeEdit] = useState('');
+    const [nome, setNome] = useState(null);
+    const [nomeEdit, setNomeEdit] = useState(null);
 
     const [canSaveNome, setCanSaveNome] = useState(false);
     const imgVerificacaoRef = useRef(null);
@@ -51,36 +51,16 @@ const InfoUsuario = () => {
     const [time, setTime] = useState(3000);
 
     useEffect(() => {
-        axiosInstance.get('/usuario/config/')
-            .then((response) => {
-                let perfilSrc = response.data.perfilSrc;
-                if (perfilSrc) {
-                    axiosInstance.get(`http://${ipUse}:8080/usuario/imagem/${encodeURI(perfilSrc)}`, { responseType: 'blob' })
-                        .then(response => {
-                            // transforma o blob em url
-                            const fileUrl = URL.createObjectURL(response.data);
-                            setFile(response.data);
-                            setImagemPerfil(fileUrl);
-                            setFileUrl(fileUrl);
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                        });
-                } else {
-                    perfilSrc = defaultAvatar;
-                    setImagemPerfil(perfilSrc);
-                    setFileUrl(perfilSrc);
-                }
+        setNome(usuario.nome);
+        setNomeEdit(usuario.nome);
 
-                setNome(response.data.nome);
-                setNomeEdit(response.data.nome);
-            }).catch((error) => {
-                console.log(error);
-            });
+        const perfilSrc = usuario.perfilSrc ? URL.createObjectURL(usuario.perfilSrc) : defaultAvatar
 
-    }, [])
+        setFileUrl(perfilSrc);
+        setFile(usuario.perfilFile);
 
-
+        setImagemPerfil(perfilSrc);
+    }, []);
 
     const atualizarImagem = () => {
         // Para pegar o arquivo do editorRef como blob, é necessário usar o canvas.toBlob()

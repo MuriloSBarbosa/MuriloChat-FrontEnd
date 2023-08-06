@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import axiosInstance from "../../config/ipConfig";
 import styles from "./Usuarios.module.css";
-import { ipUse } from "../../config/ipConfig";
-import defaultAvatar from "../../assets/default-avatar.jpg";
-import { useNavigate } from "react-router-dom";
 import coroa from "../../assets/coroa.png";
 import Modal from "../Modal/Modal";
 
@@ -139,7 +136,7 @@ function Usuarios(props) {
                         <div className={styles.userItem} key={index} onClick={(e) => abrirOpcoesUser(e)}>
                             <div className={styles.user}>
                                 <div className={styles.userPerfil} style={{ backgroundColor: idsUsuariosOnline[user.id] ? "#00ff00" : "#e73f5d" }}>
-                                    <img src={user.perfilSrc ? `http://${ipUse}:8080/usuario/imagem/${encodeURI(user.perfilSrc)}` : defaultAvatar} alt="" />
+                                    <img src={user.perfilSrc} alt="" />
                                 </div>
                                 <span style={user["Chats.isAdmin"] ? { color: "#FFEA00" } : null}>
                                     {user["Chats.isAdmin"] ? <img src={coroa} alt="" /> : null}

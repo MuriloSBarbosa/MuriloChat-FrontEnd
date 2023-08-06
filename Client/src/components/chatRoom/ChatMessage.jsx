@@ -4,8 +4,12 @@ import { ipUse } from "../../config/ipConfig";
 import downloadImg from "../../assets/download.png";
 import fileImg from "../../assets/file.png";
 import { formatarBytes } from "../../utils/geral.mjs";
+import axiosInstance from "../../config/ipConfig";
 
-const ChatMessage = ({ msg, index, verImagem, mensagens }) => {
+const ChatMessage = ({ msg, index, verImagem, mensagens, usuarios }) => {
+
+    const imageRef = React.useRef(null);
+    const docRef = React.useRef(null);
 
     const verificarExibicaoNome = (index, msg) => {
         if (index === 0 || msg.isRemetente) return null;
@@ -14,13 +18,54 @@ const ChatMessage = ({ msg, index, verImagem, mensagens }) => {
             if (msg.nome === mensagens[index - 1].nome) return null;
         }
 
+        const usuario = usuarios.find((usuario) => usuario.id === msg["Usuario.id"]);
+
         return (
             <div className={styles.userContent}>
-                <img src={msg.perfilSrc} alt="Imagem de perfil" />
+                <img src={usuario.perfilSrc} />
                 {msg.nome}
             </div>
         );
     };
+
+    React.useEffect(() => {
+        if (msg.srcImage) {
+            carregarImage();
+        }
+        if (msg.srcDoc) {
+            carregarDoc();
+        }
+    }, []);
+
+    const carregarImage = () => {
+        axiosInstance.get(`/chat/imagem/${encodeURI(msg.srcImage)}`, {
+            responseType: 'blob'
+        })
+            .then((response) => {
+                const file = new Blob([response.data], { type: response.data.type });
+                const fileURL = URL.createObjectURL(file);
+                imageRef.current.src = fileURL;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
+    const carregarDoc = () => {
+        axiosInstance.get(`/chat/documento/${encodeURI(msg.srcDoc)}`, {
+            responseType: 'blob'
+        })
+            .then((response) => {
+                const file = new Blob([response.data], { type: msg.typeDoc, name: msg.nomeDoc });
+                const fileURL = URL.createObjectURL(file);
+                docRef.current.href = fileURL;
+                docRef.current.download = msg.nomeDoc;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
 
     return (
         <div className={styles.mensagemContent} key={index}>
@@ -37,7 +82,7 @@ const ChatMessage = ({ msg, index, verImagem, mensagens }) => {
                         {msg.texto}
                         {msg.srcImage &&
                             <button onClick={() => verImagem(msg.srcImage)}>
-                                <img className={styles.msgImg} src={`http://${ipUse}:8080/chat/imagem/${msg.srcImage}`} alt="imagem" />
+                                <img ref={imageRef} className={styles.msgImg} alt="imagem" />
                             </button>
                         }
 
@@ -53,7 +98,7 @@ const ChatMessage = ({ msg, index, verImagem, mensagens }) => {
                                         </div>
                                     </div>
                                 </div>
-                                <a className={styles.docDownload} href={`http://${ipUse}:8080/chat/documento/${encodeURI(msg.srcDoc)}`} >
+                                <a ref={docRef} download={true} className={styles.docDownload} >
                                     <img src={downloadImg} alt="download" />
                                 </a>
                             </div>

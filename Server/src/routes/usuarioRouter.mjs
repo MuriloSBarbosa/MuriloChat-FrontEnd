@@ -17,7 +17,7 @@ userRouter.get("/verificar/:nome", (req, res) => {
     controller.verificarNome(req, res);
 });
 
-userRouter.get("/imagem/:nomeImagem", (req, res) => {
+userRouter.get("/imagem/:nomeImagem", autenticarTokenUsuario, (req, res) => {
     controller.buscarImagem(req, res);
 })
 
@@ -46,12 +46,6 @@ userRouter.patch("/imagem/remover", autenticarTokenUsuario, (req, res) => {
 })
 
 userRouter.get("/wallpaper", autenticarTokenUsuario, (req, res) => {
-    const wallpaper = req.usuario.wallpaperSrc;
-    const luminosidade = req.usuario.wallpaperLuminosidade;
-    res.send({ wallpaper, luminosidade });
-})
-
-userRouter.get("/wallpaper/:wallpaperSrc", (req, res) => {
     controller.buscarWallpaper(req, res);
 })
 

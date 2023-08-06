@@ -61,7 +61,7 @@ const ChatSendBox = (props) => {
 
         const formData = new FormData();
 
-        ResizeImage(file, (blob) => {
+        resizeImage(file, (blob) => {
             const dtMensagem = moment().tz("America/Sao_Paulo").format("YYYY-MM-DD HH:mm:ss");
 
             formData.append('chatImage', blob);

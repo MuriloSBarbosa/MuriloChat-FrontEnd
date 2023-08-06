@@ -13,10 +13,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
+import { autenticarTokenUsuario } from './src/config/jwtConfig.mjs';
 import chatRouter from './src/routes/chatRouter.mjs';
 import userRouter from './src/routes/usuarioRouter.mjs';
 
-app.use('/chat', chatRouter);
+app.use('/chat', autenticarTokenUsuario, chatRouter);
 app.use('/usuario', userRouter);
 
 const port = 8080;

@@ -188,7 +188,6 @@ export function alterarImagem(req, res) {
                     res.status(500).send("Erro ao verificar Usuário: " + erro);
                 });
         }).catch((erro) => {
-            console.log(erro);
             res.status(500).send("Erro ao alterar imagem: " + erro);
         });
 }
@@ -225,16 +224,23 @@ export function removerImagem(req, res) {
                     res.status(500).send("Erro ao verificar Usuário: " + erro);
                 });
         }).catch((erro) => {
-            console.log(erro);
             res.status(500).send("Erro ao alterar imagem: " + erro);
         });
 }
 
 export function buscarWallpaper(req, res) {
-    const { wallpaperSrc } = req.params;
+    const { wallpaperSrc } = req.usuario;
+
+
+    if (!wallpaperSrc) {
+        res.status(204).send();
+        return;
+    }
 
     const caminho = path.join(modulePath, '..', '..', 'public', 'uploads', 'wallpaper', decodeURI(wallpaperSrc));
 
+
+    // adicionar luminosidade ao caminho
     return res.sendFile(caminho, { headers: { 'Content-Type': 'image/jpeg' } });
 
 }
@@ -277,7 +283,6 @@ export function alterarWallpaper(req, res) {
                     res.status(500).send("Erro ao verificar Usuário: " + erro);
                 });
         }).catch((erro) => {
-            console.log(erro);
             res.status(500).send("Erro ao alterar imagem: " + erro);
         });
 }
@@ -314,7 +319,6 @@ export function removerWallpaper(req, res) {
                     res.status(500).send("Erro ao verificar Usuário: " + erro);
                 });
         }).catch((erro) => {
-            console.log(erro);
             res.status(500).send("Erro ao alterar imagem: " + erro);
         });
 }
@@ -345,7 +349,6 @@ export function alterarLuminosidade(req, res) {
                     res.status(500).send("Erro ao verificar Usuário: " + erro);
                 });
         }).catch((erro) => {
-            console.log(erro);
             res.status(500).send("Erro ao alterar luminosidade: " + erro);
         });
 }

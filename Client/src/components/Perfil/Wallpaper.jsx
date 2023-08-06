@@ -6,30 +6,21 @@ import axiosInstance from "../../config/ipConfig.jsx";
 import debounce from "lodash.debounce";
 import { ipUse } from "../../config/ipConfig.jsx";
 
-const Wallpaper = () => {
+const Wallpaper = (props) => {
 
-    const [wallpaper, setWallpaper] = useState(wallpaperDefault);
+    const [wallpaper, setWallpaper] = useState();
     const [luminosidade, setLuminosidade] = useState(100);
     const isRigth = Array.from({ length: 7 }, (_, index) => index % 2 === 0);
 
-    useEffect(() => {
-        axiosInstance.get('/usuario/config/')
-            .then((response) => {
-                let wallpaperSrc = response.data.wallpaperSrc;
-                if (wallpaperSrc) {
-                    wallpaperSrc = `http://${ipUse}:8080/usuario/wallpaper/${encodeURI(wallpaperSrc)}`;
-                    setWallpaper(wallpaperSrc);
-                }
-                setLuminosidade(response.data.wallpaperLuminosidade);
-            }).catch((error) => {
-                console.log(error);
-            });
-    }, []);
 
+
+    useEffect(() => {
+        setWallpaper(props.usuario.wallpaperSrc ? URL.createObjectURL(props.usuario.wallpaperSrc) : wallpaperDefault);
+        setLuminosidade(props.usuario.wallpaperLuminosidade);
+    }, []);
 
     const atualizarLuminosidade = useCallback(
         debounce((value) => {
-            console.log("s");
             AxiosInstance.patch("/usuario/wallpaper/luminosidade", {
                 luminosidade: value,
             })

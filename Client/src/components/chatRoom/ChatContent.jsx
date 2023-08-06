@@ -10,6 +10,7 @@ import { ipUse } from '../../config/ipConfig';
 import Usuarios from './Usuarios';
 import arrow from "../../assets/arrow.png";
 import WallpaperImage from "../../assets/wallpaper-default.jpg";
+import defaultAvatar from "../../assets/default-avatar.jpg";
 
 const ChatContent = (props) => {
     const [idSala, setIdSala] = useState(props.salaConfig.id);
@@ -64,7 +65,6 @@ const ChatContent = (props) => {
     }, []);
 
 
-
     useEffect(() => {
         if (isLoadingMessages) return;
 
@@ -73,52 +73,86 @@ const ChatContent = (props) => {
     }, [isLoadingMessages]);
 
     const buscarWallpaper = () => {
-        axiosInstance.get('/usuario/wallpaper',)
+        axiosInstance.get('/usuario/wallpaper',
+            {
+                responseType: 'blob'
+            })
             .then((response) => {
-                let wallpaperSrc = response.data.wallpaper;
-                let luminosidade = response.data.luminosidade;
-                if (wallpaperSrc) {
-                    wallpaperSrc = `http://${ipUse}:8080/usuario/wallpaper/${encodeURI(wallpaperSrc)}`;
+                // let luminosidade = response.data.luminosidade;
+
+                if (response.status == 200) {
+                    const wallpaperSrc = URL.createObjectURL(response.data);
                     chatBg.current.src = wallpaperSrc;
                 } else {
                     chatBg.current.src = WallpaperImage;
                 }
-                chatBg.current.style.filter = `brightness(${luminosidade}%)`;
+
+                axiosInstance.get('/usuario/config')
+                    .then((res) => {
+                        const config = res.data;
+                        const luminosidade = config.wallpaperLuminosidade;
+                        chatBg.current.style.filter = `brightness(${luminosidade}%)`;
+                    }).catch((err) => {
+                        console.log(err);
+                    });
             }).catch((error) => {
                 console.log(error);
             });
     }
 
     const carregarUsuarios = () => {
-        axiosInstance.get("/chat/usuario/" + idSala,
-        ).then((res) => {
+        axiosInstance.get("/chat/usuario/" + idSala)
+            .then(async (res) => {
+                const usuarios = res.data.usuarios;
+                setIsAdmin(res.data.isAdmin);
 
-            const usuarios = res.data.usuarios;
-            setIsAdmin(res.data.isAdmin);
+                let colorUsed = []
 
-            let colorUsed = []
+                await usuarios.forEach(async (user) => {
+                    if (colorUsed.length == 7) {
+                        colorUsed = [];
+                    }
 
-            usuarios.forEach((user) => {
-                if (colorUsed.length == 7) {
-                    colorUsed = [];
-                }
+                    if (user.perfilSrc) {
+                        user.perfilSrc = await carregarPerfilSrc(user.perfilSrc);
+                    } else {
+                        user.perfilSrc = defaultAvatar;
+                    }
 
-                do {
-                    user.color = ramdonColor();
-                } while (colorUsed.includes(user.color));
+                    do {
+                        user.color = ramdonColor();
+                    } while (colorUsed.includes(user.color));
 
-                colorUsed.push(user.color);
+                    colorUsed.push(user.color);
 
-                return user;
+                    setIsLoadingUsuarios(false);
+                    return user;
+                });
+                setUsuarios(usuarios);
+
+
+            }).catch((err) => {
+                console.log(err);
             });
-
-            setUsuarios(usuarios);
-            setIsLoadingUsuarios(false);
-
-        }).catch((err) => {
-            console.log(err);
-        });
     }
+
+    const carregarPerfilSrc = async (perfilSrc) => {
+
+        if (!perfilSrc) return defaultAvatar;
+
+        return axiosInstance.get(`/usuario/imagem/${encodeURI(perfilSrc)}`, {
+            responseType: 'blob'
+        })
+            .then((response) => {
+                const file = new Blob([response.data], { type: response.data.type });
+                const fileURL = URL.createObjectURL(file);
+                return fileURL;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
 
     const carregarMensagens = () => {
 
@@ -164,6 +198,8 @@ const ChatContent = (props) => {
     useEffect(() => {
         if (isLoadingUsuarios) return;
 
+        console.log(isLoadingUsuarios);
+
         carregarMensagens();
 
     }, [isLoadingUsuarios]);
@@ -205,8 +241,6 @@ const ChatContent = (props) => {
 
         if (!mensagem.perfilSrc) {
             mensagem.perfilSrc = "src/assets/default-avatar.jpg";
-        } else if (mensagem.perfilSrc) {
-            mensagem.perfilSrc = `http://${ipUse}:8080/usuario/imagem/${encodeURI(mensagem.perfilSrc)}`;
         }
 
         mensagem.dtMensagem = formatarDataChat(mensagem.dtMensagem)
@@ -293,10 +327,11 @@ const ChatContent = (props) => {
                 {mensagens.map((msg, index) => (
                     <ChatMessage
                         msg={msg}
-                        key={index}
+                        key={`mensagens-${index}`}
                         index={index}
                         verImagem={verImagem}
                         mensagens={mensagens}
+                        usuarios={usuarios}
                     />
                 ))}
                 <button style={showRolar ? null : { display: "none" }} className={styles.rolar} onClick={rolarParaBaixo}>
