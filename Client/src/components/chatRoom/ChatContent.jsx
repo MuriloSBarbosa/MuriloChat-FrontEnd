@@ -198,8 +198,6 @@ const ChatContent = (props) => {
     useEffect(() => {
         if (isLoadingUsuarios) return;
 
-        console.log(isLoadingUsuarios);
-
         carregarMensagens();
 
     }, [isLoadingUsuarios]);
