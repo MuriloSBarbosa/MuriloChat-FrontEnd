@@ -234,7 +234,6 @@ export function verUsuariosDaSala(req, res) {
 
     service.verUsuariosDaSala(idSala)
         .then((usuarios) => {
-            console.log(usuarios);
             const admin = usuarios.find((usuario) => usuario.id == idUsuario && usuario["Chats.isAdmin"] == true);
 
             const isAdmin = admin ? true : false;
