@@ -18,6 +18,7 @@ function Usuarios(props) {
         socket.on("onlineUsers", usuariosOnline);
         socket.on("addUser", () => carregarUsuarios());
 
+
         return () => {
             socket.off('onlineUsers');
             socket.off('addUser');
@@ -29,7 +30,10 @@ function Usuarios(props) {
         // Nesse caso, só atualiza quando o valor de usuarios ou idsUsuariosOnline mudar
         // Assim, não precisa ficar ordenando toda vez que o componente atualizar, que é um processo lento
 
-        return [...usuarios].sort((a, b) => {
+        // Se usuario for isOut, não mostrar na lista
+        const usuariosNaSala = usuarios.filter((usuario) => !usuario["Chats.isOut"]);
+
+        return [...usuariosNaSala].sort((a, b) => {
             if (idsUsuariosOnline[a.id] && !idsUsuariosOnline[b.id]) return -1;
             if (!idsUsuariosOnline[a.id] && idsUsuariosOnline[b.id]) return 1;
             return 0;

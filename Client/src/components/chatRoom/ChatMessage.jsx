@@ -18,7 +18,7 @@ const ChatMessage = ({ msg, index, verImagem, mensagens, usuarios }) => {
             if (msg.nome === mensagens[index - 1].nome) return null;
         }
 
-        const usuario = usuarios.find((usuario) => usuario.id === msg["Usuario.id"]);
+        const usuario = usuarios.find((usuario) => usuario.id === msg["Usuario.id"]);      
 
         return (
             <div className={styles.userContent}>

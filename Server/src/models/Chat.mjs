@@ -14,6 +14,11 @@ const Chat = dataBase.define('Chat', {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
+    },
+    isOut: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
     }
 },
     {

@@ -15,7 +15,9 @@ export function cadastrarSala(nome, identificador) {
 
 export async function sairDaSala(idSala, idUser) {
     try {
-        await Chat.destroy({
+        await Chat.update({
+            isOut: true,
+        }, {
             where: {
                 fkSala: idSala,
                 fkUsuario: idUser
@@ -28,6 +30,7 @@ export async function sairDaSala(idSala, idUser) {
                 fkUsuario: {
                     [Op.ne]: null
                 },
+                isOut: false
             }
         });
 
@@ -45,7 +48,10 @@ export async function sairDaSala(idSala, idUser) {
 }
 
 export async function removerUsuarioSala(idSala, idUser) {
-    Chat.destroy({
+    Chat.update({
+        isOut: true,
+
+    }, {
         where: {
             fkSala: idSala,
             fkUsuario: idUser
@@ -80,6 +86,17 @@ export function inserirUser(fkSala, fkUsuario, isAdmin) {
         fkSala: fkSala,
         fkUsuario: fkUsuario,
         isAdmin: isAdmin
+    });
+}
+
+export function realocarUser(idSala, idUser) {
+    return Chat.update({
+        isOut: false
+    }, {
+        where: {
+            fkUsuario: idUser,
+            fkSala: idSala
+        }
     });
 }
 
@@ -120,7 +137,10 @@ export function listarChats(fkUsuario) {
             {
                 model: Chat,
                 attributes: ['fkUsuario', 'fkSala'],
-                where: { fkUsuario: fkUsuario },
+                where: {
+                    fkUsuario: fkUsuario,
+                    isOut: false
+                },
             }
         ],
     });
@@ -133,7 +153,7 @@ export function listarMensagens(fkSala, limit, skip) {
         include: [
             {
                 model: Usuario,
-                attributes: ['id','nome', 'perfilSrc']
+                attributes: ['id', 'nome', 'perfilSrc']
             }
         ],
         where: {
@@ -148,13 +168,14 @@ export function listarMensagens(fkSala, limit, skip) {
     })
 }
 
+
 export function verUsuariosDaSala(idSala) {
     return Usuario.findAll({
         attributes: ['id', 'nome', 'perfilSrc'],
         include: [
             {
                 model: Chat,
-                attributes: ['isAdmin'],
+                attributes: ['isAdmin', 'isOut'],
                 where: {
                     fkSala: idSala
                 }

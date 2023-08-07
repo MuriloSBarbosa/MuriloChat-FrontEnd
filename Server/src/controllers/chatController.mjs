@@ -84,10 +84,11 @@ export async function inserirUser(req, res) {
         const usuario = await service.verificarUsuarioNaSala(idSala, idUser);
 
         if (usuario.length > 0) {
-            return res.status(409).send("Usuário já está na sala");
+            await service.realocarUser(idSala, idUser);
+        } else {
+            await service.inserirUser(idSala, idUser);
         }
 
-        await service.inserirUser(idSala, idUser);
 
         const mensagem = {
             idSala,
@@ -233,6 +234,7 @@ export function verUsuariosDaSala(req, res) {
 
     service.verUsuariosDaSala(idSala)
         .then((usuarios) => {
+            console.log(usuarios);
             const admin = usuarios.find((usuario) => usuario.id == idUsuario && usuario["Chats.isAdmin"] == true);
 
             const isAdmin = admin ? true : false;

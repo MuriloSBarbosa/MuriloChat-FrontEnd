@@ -123,6 +123,7 @@ const ChatContent = (props) => {
 
                     return user;
                 }));
+
                 setIsLoadingUsuarios(false);
                 setUsuarios(updatedUsuarios);
 
@@ -160,7 +161,10 @@ const ChatContent = (props) => {
 
         axiosInstance.get(`/chat/mensagem/${idSala}?skip=${skip}&limit=100`)
             .then((res) => {
-                const newMessages = res.data.map(msg => formatarMensagens(msg)).reverse();
+
+                const mensagens = res.data;
+
+                const newMessages = mensagens.map(msg => formatarMensagens(msg)).reverse();
 
                 setMensagens((anteriores) => [...newMessages, ...anteriores]);
 
