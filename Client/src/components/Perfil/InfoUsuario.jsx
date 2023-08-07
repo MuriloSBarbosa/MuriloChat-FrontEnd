@@ -28,8 +28,8 @@ const InfoUsuario = ({ usuario }) => {
     const [isEditName, setIsEditName] = useState(false);
     const [isEditSenha, setIsEditSenha] = useState(false);
 
-    const [nome, setNome] = useState(null);
-    const [nomeEdit, setNomeEdit] = useState(null);
+    const [nome, setNome] = useState("");
+    const [nomeEdit, setNomeEdit] = useState("");
 
     const [canSaveNome, setCanSaveNome] = useState(false);
     const imgVerificacaoRef = useRef(null);
@@ -57,7 +57,7 @@ const InfoUsuario = ({ usuario }) => {
         const perfilSrc = usuario.perfilSrc ? URL.createObjectURL(usuario.perfilSrc) : defaultAvatar
 
         setFileUrl(perfilSrc);
-        setFile(usuario.perfilFile);
+        setFile(usuario.perfilSrc);
 
         setImagemPerfil(perfilSrc);
     }, []);

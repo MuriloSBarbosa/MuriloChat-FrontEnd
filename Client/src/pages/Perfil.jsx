@@ -49,7 +49,6 @@ const Perfil = () => {
 
     useEffect(() => {
         if (!usuario) return;
-        console.log(usuario);
         setConteudo(<InfoUsuario usuario={usuario} />);
     }, [usuario]);
 
