@@ -43,6 +43,7 @@ async function enviarMensagem(mensagem) {
 
         const novaMensagem = {
             nome,
+            "Usuario.id" : idUsuario,
             texto: mensagemDigitada,
             token: tokenUsuario,
             idColor: idUsuario,

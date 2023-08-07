@@ -182,6 +182,7 @@ export function alterarImagem(req, res) {
                     } else {
                         usuario = usuario[0];
                         const token = gerarTokenUsuario(usuario);
+                        Socket.emit('atualizarUsuarios');
                         res.status(200).send(token);
                     }
                 }).catch((erro) => {

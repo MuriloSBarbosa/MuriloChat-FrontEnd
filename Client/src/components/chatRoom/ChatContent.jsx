@@ -108,16 +108,12 @@ const ChatContent = (props) => {
 
                 let colorUsed = []
 
-                await usuarios.forEach(async (user) => {
-                    if (colorUsed.length == 7) {
+                const updatedUsuarios = await Promise.all(usuarios.map(async (user) => {
+                    if (colorUsed.length === 7) {
                         colorUsed = [];
                     }
 
-                    if (user.perfilSrc) {
-                        user.perfilSrc = await carregarPerfilSrc(user.perfilSrc);
-                    } else {
-                        user.perfilSrc = defaultAvatar;
-                    }
+                    user.perfilSrc = await carregarPerfilSrc(user.perfilSrc);
 
                     do {
                         user.color = ramdonColor();
@@ -125,10 +121,10 @@ const ChatContent = (props) => {
 
                     colorUsed.push(user.color);
 
-                    setIsLoadingUsuarios(false);
                     return user;
-                });
-                setUsuarios(usuarios);
+                }));
+                setIsLoadingUsuarios(false);
+                setUsuarios(updatedUsuarios);
 
 
             }).catch((err) => {
@@ -198,6 +194,8 @@ const ChatContent = (props) => {
     useEffect(() => {
         if (isLoadingUsuarios) return;
 
+        console.log(isLoadingUsuarios);
+
         carregarMensagens();
 
     }, [isLoadingUsuarios]);
@@ -238,7 +236,7 @@ const ChatContent = (props) => {
         }
 
         if (!mensagem.perfilSrc) {
-            mensagem.perfilSrc = "src/assets/default-avatar.jpg";
+            mensagem.perfilSrc = defaultAvatar;
         }
 
         mensagem.dtMensagem = formatarDataChat(mensagem.dtMensagem)

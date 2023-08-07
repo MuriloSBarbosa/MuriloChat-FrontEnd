@@ -21,6 +21,7 @@ export async function criarSala(req, res) {
 
         const mensagem = {
             idSala: sala.id,
+            "Usuario.id": idUsuario,
             room: identificador,
             texto: `${nomeUser} criou o chat`,
             tokenUsuario,
@@ -50,6 +51,7 @@ export async function sairDaSala(req, res) {
 
         const mensagem = {
             idSala,
+            "Usuario.id": id,
             room,
             texto: `${nome} saiu do chat`,
             tokenUsuario,
@@ -77,7 +79,7 @@ export async function inserirUser(req, res) {
     try {
         const { idSala, idUser, room, nomeUser, dtAdd } = req.body;
         const { tokenUsuario } = req.headers.authorization.split(" ")[1];
-        const { nome } = req.usuario;
+        const { id, nome } = req.usuario;
 
         const usuario = await service.verificarUsuarioNaSala(idSala, idUser);
 
@@ -89,6 +91,7 @@ export async function inserirUser(req, res) {
 
         const mensagem = {
             idSala,
+            "Usuario.id": id,
             room,
             texto: `${nome} adicionou ${nomeUser} ao chat`,
             tokenUsuario,
@@ -120,6 +123,7 @@ export async function removerUsuario(req, res) {
 
         const mensagem = {
             idSala,
+            "Usuario.id": idResponsavel,
             room,
             texto: `${nome} removeu ${nomeUsuario} do chat`,
             tokenUsuario,
@@ -158,6 +162,7 @@ export async function atualizarUsuario(req, res) {
 
         const mensagem = {
             idSala,
+            "Usuario.id": idResponsavel,
             room,
             texto,
             tokenUsuario,
@@ -257,7 +262,8 @@ export function inserirMensagemImagem(req, res) {
     const srcImage = encodeURI(filename);
 
     const mensagem = {
-        id,
+        idSala: fkSala,
+        "Usuario.id": idUsuario,
         nome,
         srcImage,
         token,
@@ -298,7 +304,8 @@ export function inserirMensagemDoc(req, res) {
     const srcDoc = encodeURI(filename);
 
     const mensagem = {
-        id,
+        idSala: fkSala,
+        "Usuario.id": id,
         nome,
         srcDoc,
         nomeDoc,
