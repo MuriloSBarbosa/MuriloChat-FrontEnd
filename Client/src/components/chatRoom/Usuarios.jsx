@@ -5,9 +5,8 @@ import coroa from "../../assets/coroa.png";
 import Modal from "../Modal/Modal";
 
 function Usuarios(props) {
-    const { usuarios, socket, carregarUsuarios, idSala, setUsuarios, room } = props;
+    const { usuarios, socket, carregarUsuarios, idSala, room } = props;
     const [idsUsuariosOnline, setIdsUsuariosOnline] = useState({});
-
     const [modal, setModal] = useState({
         title: '',
         text: ''
@@ -17,19 +16,18 @@ function Usuarios(props) {
     useEffect(() => {
         socket.on("onlineUsers", usuariosOnline);
         socket.on("addUser", () => carregarUsuarios());
-
-
         return () => {
             socket.off('onlineUsers');
             socket.off('addUser');
         }
     }, [usuarios]);
 
-    const sortedUsers = useMemo(() => {
+    const sortedUsers = React.useMemo(() => {
         // UseMemo serve para memorizar o valor de uma variavel, e só atualizar quando o valor de uma variavel mudar
         // Nesse caso, só atualiza quando o valor de usuarios ou idsUsuariosOnline mudar
         // Assim, não precisa ficar ordenando toda vez que o componente atualizar, que é um processo lento
 
+        if(!usuarios) return [];
         // Se usuario for isOut, não mostrar na lista
         const usuariosNaSala = usuarios.filter((usuario) => !usuario["Chats.isOut"]);
 

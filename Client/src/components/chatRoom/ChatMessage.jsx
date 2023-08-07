@@ -6,7 +6,7 @@ import fileImg from "../../assets/file.png";
 import { formatarBytes } from "../../utils/geral.mjs";
 import axiosInstance from "../../config/ipConfig";
 
-const ChatMessage = ({ msg, index, verImagem, mensagens, usuarios }) => {
+const ChatMessage = ({ msg, index, mensagens, usuarios, setShowImage }) => {
 
     const imageRef = React.useRef(null);
     const docRef = React.useRef(null);
@@ -18,7 +18,7 @@ const ChatMessage = ({ msg, index, verImagem, mensagens, usuarios }) => {
             if (msg.nome === mensagens[index - 1].nome) return null;
         }
 
-        const usuario = usuarios.find((usuario) => usuario.id === msg["Usuario.id"]);      
+        const usuario = usuarios.find((usuario) => usuario.id === msg["Usuario.id"]);
 
         return (
             <div className={styles.userContent}>
@@ -66,6 +66,9 @@ const ChatMessage = ({ msg, index, verImagem, mensagens, usuarios }) => {
             });
     }
 
+    const verImagem = () => {
+        setShowImage(imageRef.current.src);
+    }
 
     return (
         <div className={styles.mensagemContent} key={index}>

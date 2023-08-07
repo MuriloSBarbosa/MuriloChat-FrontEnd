@@ -264,7 +264,7 @@ export function inserirMensagemImagem(req, res) {
 
     const mensagem = {
         idSala: fkSala,
-        "Usuario.id": idUsuario,
+        "Usuario.id": id,
         nome,
         srcImage,
         token,
