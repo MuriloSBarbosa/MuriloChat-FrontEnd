@@ -4,6 +4,11 @@
 
 ---
 
+## Repositórios do Back-end
+- [@BackEnd em Node.js](https://github.com/MuriloSBarbosa/MuriloChat-BackEnd-Node)
+- [@BackEnd em Java - Spring Boot](https://github.com/MuriloSBarbosa/MuriloChat-BackEnd-Java)
+---
+
 ## Sobre o Projeto
 
 O MuriloChat é um chat em tempo real desenvolvido para proporcionar interações entre usuários. Utilizando tecnologias modernas, como React, MySQL, Node.js, Sequelize e Socket.IO, o projeto visa aprimorar as habilidades técnicas do desenvolvedor.
