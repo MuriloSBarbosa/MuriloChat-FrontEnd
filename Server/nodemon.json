@@ -1,5 +1,0 @@
-{
-    "events": {
-        "restart": "cls || clear"
-    }
-}
