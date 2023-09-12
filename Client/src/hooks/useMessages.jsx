@@ -86,7 +86,7 @@ export const useMessages = (
 
     const formatarMensagens = (mensagem) => {
         for (const user of usuarios) {
-            if (mensagem.idColor == user.id) {
+            if (mensagem.usuarioId == user.id) {
                 mensagem.color = user.color;
                 break;
             }
