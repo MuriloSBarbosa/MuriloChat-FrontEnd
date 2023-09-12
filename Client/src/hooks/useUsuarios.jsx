@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axiosInstance from '../config/ipConfig';
+import defaultAvatar from '../assets/default-avatar.jpg';
 
 const useUsuarios = (idSala) => {
     const [usuarios, setUsuarios] = useState([]);
@@ -10,7 +11,7 @@ const useUsuarios = (idSala) => {
         carregarUsuarios();
     }, [idSala]);
 
-    const carregarUsuarios = (a) => {
+    const carregarUsuarios = () => {
         axiosInstance.get("/chat/usuario/" + idSala)
             .then(async (res) => {
                 const usuarios = res.data.usuarios;
